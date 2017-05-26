@@ -1,0 +1,12 @@
+#+-- Plugin RP par stan1712 --+
+#+--   http://stan1712.fr   --+
+
+#Version of the plugin, please don't change it !
+Version: '>> Version 2.7'
+
+#Differents messages of the plugin
+RandomTeleport: '>> Teleportation a des milliers de blocs !'
+
+Help: '>> Besoin d''aide ? Tapez /seriousrp help'
+VersionHelp: '>> Version du plugin ? Tapez /seriousrp version'
+

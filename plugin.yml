@@ -1,0 +1,20 @@
+name: SeriousRP
+version: 3.7
+author: stan1712
+main: fr.stan1712.srp.srp
+commands:
+ seriousrp:
+  description: Affiche l'aide
+  permission: seriousrp.info
+ version:
+  description: Affiche la version du plugin
+  permission: seriousrp.info
+ help:
+  description: Affiche la page d'aide
+  permission: seriousrp.info
+ srtp:
+  description: Vous teleporte aleatoirement
+  permission: seriousrp.random
+ srtown:
+  description: Vous teleporte a la ville
+  permission: seriousrp.tptown

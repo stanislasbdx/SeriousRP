@@ -1,0 +1,36 @@
+#+-- Plugin RP by stan1712 (stan1712.fr) --+
+#+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (German)
+
+#Version of the plugin, please don"t change it !
+Version: "Version 3.7"
+
+#Modify your prefix here
+Prefix: "SeriousRP"
+
+#Messages of the help message
+HelpMsg:
+  Dsrtp: "Pouvoir se teleporter aleatoirement"
+  DVersion: "Connaitre la version du plugin"
+  DHelp: "Affiche l'aide"
+  DTown: "Permet de se teleporter a la ville"
+  DTownSet: "Permet de definir le point de spawn de la ville"
+
+#Differents messages of the plugin
+Teleports:
+  GoToTown: "Vous avez ete teleporter dans la ville"
+  SetTown: "Vous avez set le spawn de la ville"
+  GoToPort: "Vous avez ete teleporter dans le port"
+  SetPort: "Vous avez set le spawn du port"
+
+RandomTeleport: "Teleportation a des milliers de blocs !"
+
+Help: "Besoin d'aide ? Tapez /seriousrp help"
+VersionHelp: "Version du plugin ? Tapez /seriousrp version"
+
+Locations:
+  Town:
+    x: 0
+    y: 0
+    z: 0
+    WorldName: world
+   
