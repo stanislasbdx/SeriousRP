@@ -32,7 +32,8 @@ public class srp extends JavaPlugin implements Listener{
 	    pm.registerEvents(new commands(this), this);
 	    pm.registerEvents(new deaths(), this);
 	    pm.registerEvents(new falldamage(), this);
-	    //pm.registerEvents(new telephone(this), this);
+	    pm.registerEvents(new telephone(this), this);
+	    pm.registerEvents(new spawnitems(), this);
 	    
 	    //getCommand("broadcast").setExecutor(new broadcast(this));
 	    saveDefaultConfig();
