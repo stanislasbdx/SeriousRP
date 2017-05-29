@@ -22,7 +22,7 @@ public class srp extends JavaPlugin implements Listener{
 	    instance = this;
 	    
 	    System.out.println("[SeriousRP] #------------#");
-	    System.out.println("[SeriousRP] SeriousRP v3.7");
+	    System.out.println("[SeriousRP] SeriousRP v3.8");
 	    System.out.println("[SeriousRP] Activation plugin");
 	    System.out.println("[SeriousRP] Par stan1712");
 	    System.out.println("[SeriousRP] #------------#");
@@ -74,7 +74,7 @@ public class srp extends JavaPlugin implements Listener{
 	  public void onDisable()
 	  {
 	    System.out.println("[SeriousRP] #------------#");
-	    System.out.println("[SeriousRP] SeriousRP v3.7");
+	    System.out.println("[SeriousRP] SeriousRP v3.8");
 	    System.out.println("[SeriousRP] Desactivation plugin");
 	    System.out.println("[SeriousRP] Par stan1712");
 	    System.out.println("[SeriousRP] #------------#");
