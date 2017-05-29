@@ -1,13 +1,13 @@
 #+-- Plugin RP by stan1712 (stan1712.fr) --+
 #+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (German)
 
-#Version of the plugin, please don"t change it !
+#Version of the plugin, please don"t change it at own !
 Version: "Version 3.8"
 
 #Modify your prefix here
 Prefix: "SeriousRP"
 
-#Messages of the help message
+#Display messages for the help menu
 HelpMsg:
   Dsrtp: "Pouvoir se teleporter aleatoirement"
   DVersion: "Connaitre la version du plugin"
