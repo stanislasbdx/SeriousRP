@@ -18,3 +18,6 @@ commands:
  srtown:
   description: Vous teleporte a la ville
   permission: seriousrp.tptown
+ talk:
+  description: Call
+  permission: seriousrp.call

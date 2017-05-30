@@ -2,8 +2,6 @@ package fr.stan1712.srp;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,43 +16,28 @@ import net.md_5.bungee.api.ChatColor;
 
 public class telephone implements Listener {
 	
-  private FileConfiguration config;
-  private srp pl;
-  
-  public telephone(srp pl)
-  {
-    this.pl = pl;
-    this.config = pl.getConfig();
-  }
+	public telephone(srp srp) {}
 
 	@EventHandler
-	public void onInteract(PlayerInteractEvent e){
-		
-		Player player = e.getPlayer();
-		Action action = e.getAction();
-		ItemStack it = e.getItem();
-		
-		if(it.getType() == Material.TRIPWIRE_HOOK){
-          player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-          player.sendMessage(ChatColor.GOLD + "❱❱ Vous venez d'ouvrir votre téléphone.");
-          player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-          
-          if(e.getItem().getItemMeta().equals("Téléphone")){	
-  			if(e.getItem().getType() == Material.BARRIER){
-  				player.closeInventory();
-  				e.setCancelled(true);
-  			}
-  			if(e.getItem().getType() == Material.EMERALD_BLOCK){
-  				player.closeInventory();
-  				player.performCommand("tellraw @p ['',{'text':'+----- ----- ----- -----+','color':'aqua'},{'text':'\n'},{'text':'❱❱ Entrez le numéro de téléphone du destinataire : ','color':'gold'},{'text':'\n'},{'text':'+----- ----- ----- -----+','color':'aqua'}]");
-  				e.setCancelled(true);
-  			}
-  			if(e.getItem().getType() == Material.REDSTONE_BLOCK){
-  				player.closeInventory();
-  				player.performCommand("tellraw @p ['',{'text':'+----- ----- ----- -----+','color':'aqua'},{'text':'\n'},{'text':'❱❱ Appel raccroché !','color':'red'},{'text':'\n'},{'text':'+----- ----- ----- -----+','color':'aqua'}]");
-  				e.setCancelled(true);
-  			}
-  		}
+	public void onClickInventaire(InventoryClickEvent e){
+		if(e.getInventory().getTitle().equalsIgnoreCase("Telephone")){		
+			if(e.getCurrentItem().getType() == Material.BARRIER){
+				Player p = (Player) e.getWhoClicked();
+				p.closeInventory();
+				e.setCancelled(true);
+			}
+			if(e.getCurrentItem().getType() == Material.EMERALD_BLOCK){
+				Player p = (Player) e.getWhoClicked();
+				p.closeInventory();
+				p.performCommand("tellraw @p ['',{'text':'+----- ----- ----- -----+','color':'aqua'},{'text':'\n'},{'text':'❱❱ Entrez le numéro de téléphone du destinataire : ','color':'gold'},{'text':'\n'},{'text':'+----- ----- ----- -----+','color':'aqua'}]");;
+				e.setCancelled(true);
+			}
+			if(e.getCurrentItem().getType() == Material.REDSTONE_BLOCK){
+				Player p = (Player) e.getWhoClicked();
+				p.closeInventory();
+				p.performCommand("tellraw @p ['',{'text':'+----- ----- ----- -----+','color':'aqua'},{'text':'\n'},{'text':'❱❱ Appel raccroché !','color':'red'},{'text':'\n'},{'text':'+----- ----- ----- -----+','color':'aqua'}]");
+				e.setCancelled(true);
+			}
 		}
 	}
 	

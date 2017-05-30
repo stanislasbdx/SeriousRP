@@ -1,6 +1,12 @@
 package fr.stan1712.srp;
 
 import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.conversations.Conversable;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
@@ -71,6 +77,15 @@ public class srp extends JavaPlugin implements Listener{
 	    getServer().addRecipe(horsediamond);
 	    
 	  }
+    
+		public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
+			if(cmd.getName().equalsIgnoreCase("talk")){
+				ConversationFactory cf = new ConversationFactory(this);
+				Conversation conv = cf.withFirstPrompt(new ConvPrompt()).withLocalEcho(true).buildConversation((Player)sender);
+				conv.begin();
+			}
+			return true;
+		}
 	  
 	  public void onDisable()
 	  {
