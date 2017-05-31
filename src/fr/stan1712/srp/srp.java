@@ -1,19 +1,20 @@
 package fr.stan1712.srp;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import fr.stan1712.srp.commands;
 
 public class srp extends JavaPlugin implements Listener{
 	
@@ -22,6 +23,7 @@ public class srp extends JavaPlugin implements Listener{
 		return instance;
 	}
 
+	public HashMap<UUID, Inventory> inventories = new HashMap<UUID, Inventory>();
 
 	public void onEnable()
 	  {
@@ -40,9 +42,9 @@ public class srp extends JavaPlugin implements Listener{
 	    pm.registerEvents(new falldamage(), this);
 	    pm.registerEvents(new telephone(this), this);
 	    pm.registerEvents(new spawnitems(), this);
+	    pm.registerEvents(new backpack(), this);
 	    
 	    //getCommand("broadcast").setExecutor(new broadcast(this));
-	    saveDefaultConfig();
 	    
 	    ShapedRecipe saddle =  new ShapedRecipe(new ItemStack(Material.SADDLE, 1));
 	    saddle.shape(new String[] {" C ","CFC","I I"});
@@ -76,6 +78,7 @@ public class srp extends JavaPlugin implements Listener{
 	    horsediamond.setIngredient('B', Material.DIAMOND_BLOCK);
 	    getServer().addRecipe(horsediamond);
 	    
+	    saveDefaultConfig();	    
 	  }
     
 		public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){

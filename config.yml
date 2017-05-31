@@ -27,6 +27,10 @@ RandomTeleport: "Teleportation a des milliers de blocs !"
 Help: "Besoin d'aide ? Tapez /seriousrp help"
 VersionHelp: "Version du plugin ? Tapez /seriousrp version"
 
+BackPack Name: "&3Your Backpack"
+travja:
+  items: []
+
 Locations:
   Town:
     x: 0
