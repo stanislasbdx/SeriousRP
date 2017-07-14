@@ -22,9 +22,12 @@ public class srp extends JavaPlugin implements Listener{
 	    instance = this;
 	    
 	    System.out.println("[SeriousRP] #------------#");
-	    System.out.println("[SeriousRP] SeriousRP v3.9");
-	    System.out.println("[SeriousRP] Activation plugin");
-	    System.out.println("[SeriousRP] Par stan1712");
+	    System.out.println("[SeriousRP] SeriousRP "+getConfig().getString("Version").replace("&", "§"));
+	    System.out.println("[SeriousRP] Boot sequence started");
+	    System.out.println("[SeriousRP] Class Action started successfully !");
+	    System.out.println("[SeriousRP] Class Commands started successfully !");
+	    System.out.println("[SeriousRP] Class FallDamage started successfully !");
+	    System.out.println("[SeriousRP] Class SpawnItems started successfully !");
 	    System.out.println("[SeriousRP] #------------#");
 	    
 	    PluginManager pm = getServer().getPluginManager();
@@ -32,7 +35,6 @@ public class srp extends JavaPlugin implements Listener{
 	    pm.registerEvents(new commands(this), this);
 	    pm.registerEvents(new deaths(), this);
 	    pm.registerEvents(new falldamage(), this);
-	    pm.registerEvents(new telephone(this), this);
 	    pm.registerEvents(new spawnitems(), this);
 	    
 	    //getCommand("broadcast").setExecutor(new broadcast(this));
@@ -74,10 +76,13 @@ public class srp extends JavaPlugin implements Listener{
 	  
 	  public void onDisable()
 	  {
-	    System.out.println("[SeriousRP] #------------#");
-	    System.out.println("[SeriousRP] SeriousRP v3.9");
-	    System.out.println("[SeriousRP] Desactivation plugin");
-	    System.out.println("[SeriousRP] Par stan1712");
-	    System.out.println("[SeriousRP] #------------#");
+		    System.out.println("[SeriousRP] #------------#");
+		    System.out.println("[SeriousRP] SeriousRP "+getConfig().getString("Version").replace("&", "§"));
+		    System.out.println("[SeriousRP] Shutdown sequence started");
+		    System.out.println("[SeriousRP] Class Action stop successfully !");
+		    System.out.println("[SeriousRP] Class Commands stop successfully !");
+		    System.out.println("[SeriousRP] Class FallDamage stop successfully !");
+		    System.out.println("[SeriousRP] Class SpawnItems stop successfully !");
+		    System.out.println("[SeriousRP] #------------#");
 	  }
 	}
