@@ -1,8 +1,8 @@
 #+-- Plugin RP by stan1712 (stan1712.fr) --+
 #+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (German)
 
-#Version of the plugin, please don"t change it at own !
-Version: "Version 3.8"
+#Version of the plugin, do not change it !
+Version: "Version 3.9"
 
 #Modify your prefix here
 Prefix: "SeriousRP"
@@ -26,10 +26,6 @@ RandomTeleport: "Teleportation a des milliers de blocs !"
 
 Help: "Besoin d'aide ? Tapez /seriousrp help"
 VersionHelp: "Version du plugin ? Tapez /seriousrp version"
-
-BackPack Name: "&3Your Backpack"
-travja:
-  items: []
 
 Locations:
   Town:
