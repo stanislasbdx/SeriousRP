@@ -18,3 +18,6 @@ commands:
  srtown:
   description: Teleports you to the town
   permission: seriousrp.tptown
+ chat:
+  description: Blablabla
+  permission: seriousrp.chat

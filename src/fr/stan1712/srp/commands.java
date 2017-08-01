@@ -13,8 +13,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class commands
-  implements Listener
+public class commands implements Listener
 {
   private FileConfiguration config;
   private srp pl;
@@ -147,6 +146,6 @@ public class commands
         p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
         p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
       }
-     }
+     }    
     }
-  }
+}

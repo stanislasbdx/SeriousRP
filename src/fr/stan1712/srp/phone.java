@@ -77,7 +77,6 @@ public class phone implements Listener {
 				inv.setItem(11, getItem(Material.REDSTONE_BLOCK, "§cRaccrocher/Refuser"));
 				inv.setItem(28, getItem(Material.BARRIER, "§cEteindre"));
 				inv.setItem(34, getItem(Material.REDSTONE_LAMP_OFF, "§bVotre numéro de téléphone :"));
-				inv.setItem(31, getItem(Material.DIAMOND, "§bRéseau : §aExcellent"));
 				
 				p.openInventory(inv);
 				
