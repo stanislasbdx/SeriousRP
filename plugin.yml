@@ -4,17 +4,20 @@ author: stan1712
 main: fr.stan1712.srp.srp
 commands:
  seriousrp:
-  description: Affiche l'aide
+  description: Show the main menu
   permission: seriousrp.info
  version:
-  description: Affiche la version du plugin
+  description: Shows the version of the plugin
   permission: seriousrp.info
  help:
-  description: Affiche la page d'aide
+  description: Shows the help page
   permission: seriousrp.info
  srtp:
-  description: Vous teleporte aleatoirement
+  description: Teleports you randomly in a radius of 10000 blocks
   permission: seriousrp.random
  srtown:
-  description: Vous teleporte a la ville
+  description: Teleports you to the town
   permission: seriousrp.tptown
+ chat:
+  description: Blablabla
+  permission: seriousrp.chat
