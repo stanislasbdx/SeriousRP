@@ -2,7 +2,10 @@ package fr.stan1712.srp;
 
 import java.util.Arrays;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +23,15 @@ import net.md_5.bungee.api.ChatColor;
 
 public class phone implements Listener {
 	
+	  private FileConfiguration config;
+	  private srp pl;
+	  
+	  public phone(srp pl)
+	  {
+	    this.pl = pl;
+	    this.config = pl.getConfig();
+	  }
+	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event){
 		
@@ -27,8 +39,8 @@ public class phone implements Listener {
 		
 		ItemStack phone = new ItemStack(Material.COMPASS, 1);
 		ItemMeta customM = phone.getItemMeta();
-		customM.setDisplayName("ßbTÈlÈphone");
-		customM.setLore(Arrays.asList("ß9Voici votre tÈlÈphone","ß9Click droit pour l'ouvrir","ß6PropriÈtaire : "+p.getDisplayName()));
+		customM.setDisplayName("¬ßbT√©l√©phone");
+		customM.setLore(Arrays.asList("¬ß9Voici votre t√©l√©phone","¬ß9Click droit pour l'ouvrir","¬ß6Propri√©taire : "+p.getDisplayName()));
 		customM.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
 		phone.setItemMeta(customM);
 		
@@ -44,10 +56,10 @@ public class phone implements Listener {
 		
 		if(it == null) return;
 		
-		if(it.getType() == Material.COMPASS && it.hasItemMeta() && it.getItemMeta().hasDisplayName() && it.getItemMeta().getDisplayName().equalsIgnoreCase("ßbTÈlÈphone")){
+		if(it.getType() == Material.COMPASS && it.hasItemMeta() && it.getItemMeta().hasDisplayName() && it.getItemMeta().getDisplayName().equalsIgnoreCase("¬ßbT√©l√©phone")){
 			if(action == Action.RIGHT_CLICK_AIR){
 				
-				Inventory inv = Bukkit.createInventory(null, 36, "ßbTÈlÈphone de "+p.getDisplayName());
+				Inventory inv = Bukkit.createInventory(null, 36, "¬ßbT√©l√©phone de "+p.getDisplayName());
 				
 				ItemStack headskull = new ItemStack(Material.SKULL_ITEM, 1, (byte)3);
 				SkullMeta headskullM = (SkullMeta) headskull.getItemMeta();
@@ -73,10 +85,11 @@ public class phone implements Listener {
 				inv.setItem(4, headskull);
 				
 				//inv.setItem(4, getItem(Material.SKULL_ITEM, ChatColor.AQUA+p.getDisplayName()));
-				inv.setItem(10, getItem(Material.EMERALD_BLOCK, "ßaRÈpondre"));
-				inv.setItem(11, getItem(Material.REDSTONE_BLOCK, "ßcRaccrocher/Refuser"));
-				inv.setItem(28, getItem(Material.BARRIER, "ßcEteindre"));
-				inv.setItem(34, getItem(Material.REDSTONE_LAMP_OFF, "ßbVotre numÈro de tÈlÈphone :"));
+				inv.setItem(10, getItem(Material.EMERALD_BLOCK, "¬ßaR√©pondre"));
+				inv.setItem(11, getItem(Material.REDSTONE_BLOCK, "¬ßcRaccrocher/Refuser"));
+				inv.setItem(28, getItem(Material.BARRIER, "¬ßcEteindre"));
+				inv.setItem(34, getItem(Material.REDSTONE_LAMP_OFF, "¬ßbVotre num√©ro de t√©l√©phone :"));
+				inv.setItem(16, getItem(Material.NETHER_STAR, "¬ßaDirection : Ville"));
 				
 				p.openInventory(inv);
 				
@@ -92,22 +105,39 @@ public class phone implements Listener {
 		
 		if(current == null) return;
 		
-		if(inv.getName().equalsIgnoreCase("ßbTÈlÈphone de "+p.getDisplayName())){
+		if(inv.getName().equalsIgnoreCase("¬ßbT√©l√©phone de "+p.getDisplayName())){
 			
 			event.setCancelled(true);
 			
 			if(current.getType() == Material.EMERALD_BLOCK){
 				p.closeInventory();
-				p.sendMessage("ßbVous avez ßadÈcrochÈ");
+				p.sendMessage("¬ßbVous avez ¬ßad√©croch√©");
 			}
 			
 			if(current.getType() == Material.REDSTONE_BLOCK){
 				p.closeInventory();
-				p.sendMessage("ßbVous avez ßcraccrochÈ");
+				p.sendMessage("¬ßbVous avez ¬ßcraccroch√©");
 			}
 			
-			if(current.getType() == Material.BARRIER){
+			if(current.getType() == Material.REDSTONE_BLOCK){
 				p.closeInventory();
+				p.sendMessage("¬ßbVous avez ¬ßcraccroch√©");
+			}
+			
+			if(current.getType() == Material.NETHER_STAR){
+				p.closeInventory();
+				
+				double x = this.pl.getConfig().getDouble("Locations.Town.x");
+		        double y = this.pl.getConfig().getDouble("Locations.Town.y");
+		        double z = this.pl.getConfig().getDouble("Locations.Town.z");
+		        String monde = this.pl.getConfig().getString("Locations.Town.WorldName");
+		        World world = Bukkit.getWorld(monde);
+		        
+		        p.teleport(new Location(world, x, y, z));
+		        
+		        p.sendMessage(ChatColor.AQUA + "+----- ‚ôñ " + this.pl.getConfig().getString("Prefix").replace("&", "¬ß") + " ‚ôñ -----+");
+		        p.sendMessage(ChatColor.GOLD + "‚ù±‚ù± " + this.pl.getConfig().getString("Teleports.GoToTown").replace("&", "¬ß"));
+		        p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 			}
 		}
 	}

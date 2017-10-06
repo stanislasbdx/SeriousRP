@@ -2,7 +2,7 @@
 #+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (German) --+
 
 #Version of the plugin, do not change it !
-Version: "Version 3.9"
+Version: "Version 3.9.2"
 
 #Modify your prefix here
 Prefix: "SeriousRP"
@@ -17,8 +17,9 @@ HelpMsg:
 
 #Differents messages of the plugin
 Teleports:
-  GoToTown: "Vous avez ete teleporter dans la ville"
+  GoToTown: "Vous avez ete teleporte dans la ville"
   SetTown: "Vous avez set le spawn de la ville"
+  TownWhere: "Le spawn de la ville se trouve en :"
 
 RandomTeleport: "Teleportation a des milliers de blocs !"
 
