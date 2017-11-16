@@ -9,19 +9,19 @@ Prefix: "SeriousRP"
 
 #Display messages for the help menu
 HelpMsg:
-  Dsrtp: "Pouvoir se teleporter aleatoirement"
-  DVersion: "Connaitre la version du plugin"
-  DHelp: "Affiche l'aide"
-  DTown: "Permet de se teleporter a la ville"
-  DTownSet: "Permet de definir le point de spawn de la ville"
+  Dsrtp: "In der Lage sein, zufällig teleportieren zu können"
+  DVersion: "Kennen Sie die Version des Plugins"
+  DHelp: "Zeigt Hilfe an"
+  DTown: "Erlaubt, in die Stadt zu teleportieren"
+  DTownSet: "Ermöglicht es Ihnen, den Spawnpunkt der Stadt festzulegen"
 
 #Differents messages of the plugin
 Teleports:
-  GoToTown: "Vous avez ete teleporte dans la ville"
-  SetTown: "Vous avez set le spawn de la ville"
-  TownWhere: "Le spawn de la ville se trouve en :"
+  GoToTown: "Du wurdest in der Stadt teleportiert"
+  SetTown: "Du hast den Spawnpunkt der Stadt definiert"
+  TownWhere: "Der Spawnpunkt der Stadt ist in :"
 
-RandomTeleport: "Teleportation a des milliers de blocs !"
+RandomTeleport: "Teleportation zu Tausenden von Blöcken !"
 
 Help: "Besoin d'aide ? Tapez /seriousrp help"
 VersionHelp: "Version du plugin ? Tapez /seriousrp version"

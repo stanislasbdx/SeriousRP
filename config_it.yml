@@ -1,0 +1,34 @@
+#+-- Plugin RP by stan1712 (stan1712.fr) --+
+#+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (German) --+
+
+#Version of the plugin, do not change it !
+Version: "Version 3.9.2"
+
+#Modify your prefix here
+Prefix: "SeriousRP"
+
+#Display messages for the help menu
+HelpMsg:
+  Dsrtp: "Potere teleportare in modo casuale"
+  DVersion: "Conosci la versione del plugin"
+  DHelp: "Visualizza l'aiuto"
+  DTown: "Consente di teletrasmettere alla città"
+DTownSet: "Consente di definire il punto di spawn della città"
+
+#Differents messages of the plugin
+Teleports:
+  GoToTown: "Sei stato teleporte in città"
+  SetTown: "Hai definito la spawn della città"
+  TownWhere: "La spawn della città è in:"
+
+RandomTeleport: "La teletraspoto ha migliaia di biocchi !"
+
+Help: "Hai bisogno di aiuto Tipo /serious help"
+VersionHelp: "Versione plugin ? Tipo /seriousrp version"
+
+Locations:
+  Town:
+    x: 0
+    y: 0
+    z: 0
+    WorldName: world
