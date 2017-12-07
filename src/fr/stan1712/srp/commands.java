@@ -129,23 +129,48 @@ public class commands implements Listener
 		      this.pl.saveConfig();
 		    }
       }
-      //if (p.hasPermission("seriousrp.townwhere")){
-		//    if ((args.length == 2) && (args[1].equalsIgnoreCase("where"))){     
-		//      double x = this.pl.getConfig().getDouble("Locations.Town.x");
-		//      double y = this.pl.getConfig().getDouble("Locations.Town.y");
-		//      double z = this.pl.getConfig().getDouble("Locations.Town.z");
-		//      
-		//      p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-		//      p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("Teleports.TownWhere").replace("&", "§") + " " + x + ", " + y + ", " + z);
-		//      p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-		//    }
-      //}
+      if (p.hasPermission("seriousrp.townwhere")){
+		    if ((args.length == 2) && (args[1].equalsIgnoreCase("where"))){     
+		      double x = this.pl.getConfig().getDouble("Locations.Town.x");
+		      double y = this.pl.getConfig().getDouble("Locations.Town.y");
+		      double z = this.pl.getConfig().getDouble("Locations.Town.z");
+		      
+		      p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+		      p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("Teleports.TownWhere").replace("&", "§") + " " + x + ", " + y + ", " + z);
+		      p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+		    }
+      }
       else
       {
         p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
         p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
         p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
       }
-     }    
+     }
+    //if (args[0].equalsIgnoreCase("/chat")) {
+    //	if (p.hasPermission("seriousrp.chat"))
+    //    {
+    //    	Player target = Bukkit.getPlayer(args[0]);
+    //    	
+    //    	if(target != null){
+    //    		String message = "";
+    //    		
+    //    		for(int i = 1; i != args.length; i++)
+    //    			message += args[i] + " ";
+    //    			
+    //    		target.sendMessage(ChatColor.GOLD+"["+ChatColor.AQUA+p.getName()+ChatColor.GOLD+" -> "+ChatColor.AQUA+target.getName()+ChatColor.GOLD+"] : "+ChatColor.AQUA+ message);
+    //    		p.sendMessage(ChatColor.GOLD+"["+ChatColor.AQUA+target.getName()+ChatColor.GOLD+" <- "+ChatColor.AQUA+target.getName()+ChatColor.GOLD+"] : "+ChatColor.AQUA+ message);
+    //    		
+    //    	}
+    //    	else{
+    //    		p.sendMessage("§7Le joueur "+ChatColor.AQUA+target+"§7 n'est pas en ligne !");
+    //    	}
+    //    }
+    //    else
+    //    {
+    //      p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+    //      p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
+    //      p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+    //    }
     }
-}
+  }

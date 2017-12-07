@@ -1,0 +1,35 @@
+#+-- Plugin RP by stan1712 (stan1712.fr) --+
+#+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
+
+#Version of the plugin, do not change it !
+Version: "Version 3.9.3"
+
+#Modify your prefix here
+Prefix: "SeriousRP"
+
+#Display messages for the help menu
+HelpMsg:
+  Dsrtp: "In der Lage sein, zufällig teleportieren zu können"
+  DTown: "Erlaubt, in die Stadt zu teleportieren"
+  DTownSet: "Ermöglicht es Ihnen, den Spawnpunkt der Stadt festzulegen"
+  
+  DHelp: "Zeigt Hilfe an"
+  DVersion: "Kennen Sie die Version des Plugins"
+
+#Differents messages of the plugin
+Teleports:
+  GoToTown: "Du wurdest in der Stadt teleportiert"
+  SetTown: "Du hast den Spawnpunkt der Stadt definiert"
+  TownWhere: "Der Spawnpunkt der Stadt ist in :"
+
+RandomTeleport: "Teleportation zu Tausenden von Blöcken !"
+
+Help: "Besoin d'aide ? Tapez /seriousrp help"
+VersionHelp: "Version du plugin ? Tapez /seriousrp version"
+
+Locations:
+  Town:
+    x: 0
+    y: 0
+    z: 0
+    WorldName: world

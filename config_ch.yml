@@ -1,0 +1,36 @@
+#+-- Plugin RP by stan1712 (stan1712.fr) --+
+#+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
+
+#è¿™æ˜¯æ�’ä»¶ç‰ˆæœ¬ï¼Œä¸�è¦�æ”¹å�˜å®ƒ!
+Version: "Version 3.9.3"
+
+#æ�’ä»¶å��æ˜¾ç¤º
+Prefix: "SeriousRP"
+
+#å¸®åŠ©è�œå�•
+HelpMsg:
+  Dsrtp: "\u968f\u673a\u4f20\u9001"
+  DTown: "\u4f20\u9001\u5230\u4f20\u9001\u70b9"
+  DTownSet: "\u8bbe\u7f6e\u4f20\u9001\u70b9"
+  
+  DHelp: "\u67e5\u770b\u63d2\u4ef6\u7248\u672c"
+  DVersion: "\u67e5\u770b\u6307\u4ee4\u5e2e\u52a9"
+
+#è¾“å…¥æŒ‡ä»¤å�Žçš„æ˜¾ç¤ºè¯­è¨€
+Teleports:
+  GoToTown: "\u4f60\u5df2\u88ab\u4f20\u9001\u5f80\u4f20\u9001\u70b9"
+  SetTown: "\u4f60\u5df2\u8bbe\u7f6e\u4f20\u9001\u70b9"
+  TownWhere: "\u4f60\u7684\u4f20\u9001\u70b9\u5728 :"
+
+RandomTeleport: "\u4f60\u5df2\u88ab\u968f\u673a\u4f20\u9001 !"
+
+Help: "\u9700\u8981\u5e2e\u52a9\u5417 ? \u8f93\u5165 /seriousrp help"
+VersionHelp: "\u60f3\u8981\u67e5\u770b\u63d2\u4ef6\u7248\u672c ? \u8f93\u5165 /seriousrp version"
+
+#ä¼ é€�å��æ ‡
+Locations:
+  Town:
+    x: 0
+    y: 0
+    z: 0
+    WorldName: world
