@@ -1,8 +1,8 @@
 #+-- Plugin RP by stan1712 (stan1712.fr) --+
-#+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (German) --+
+#+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
 
 #Version of the plugin, do not change it !
-Version: "Version 3.9.2"
+Version: "Version 3.9.3"
 
 #Modify your prefix here
 Prefix: "SeriousRP"
@@ -10,10 +10,11 @@ Prefix: "SeriousRP"
 #Display messages for the help menu
 HelpMsg:
   Dsrtp: "Potere teleportare in modo casuale"
-  DVersion: "Conosci la versione del plugin"
-  DHelp: "Visualizza l'aiuto"
   DTown: "Consente di teletrasmettere alla città"
-DTownSet: "Consente di definire il punto di spawn della città"
+  DTownSet: "Consente di definire il punto di spawn della città"
+  
+  DHelp: "Visualizza l'aiuto"
+  DVersion: "Conosci la versione del plugin"
 
 #Differents messages of the plugin
 Teleports:

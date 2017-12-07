@@ -1,0 +1,35 @@
+#+-- RP Plugin by stan1712 (stan1712.fr) --+
+#+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
+
+#Version of the plugin, do not change it !
+Version: "Version 3.9.3"
+
+#Modify your prefix here
+Prefix: "SeriousRP"
+
+#Display messages for the help menu
+HelpMsg:
+  Dsrtp: "Be able to teleport randomly"
+  DTown: "Be able to teleport in the town"
+  DTownSet: Be able to set the teleport point of the town"
+  
+  DHelp: "Shows the help page"
+  DVersion: "Shows the version of this plugin"
+
+#Differents messages of the plugin
+Teleports:
+  GoToTown: "You have been teleported in the town !"
+  SetTown: "You set the teleport point of the town"
+  TownWhere: "The town is in : "
+
+RandomTeleport: "You have been randomly teleported at thousand blocks !"
+
+Help: "Need help ? Type /seriousrp help"
+VersionHelp: "Want to know the plugin version ? Type /seriousrp version"
+
+Locations:
+  Town:
+    x: 0
+    y: 0
+    z: 0
+    WorldName: world
