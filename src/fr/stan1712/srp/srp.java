@@ -1,5 +1,7 @@
 package fr.stan1712.srp;
 
+import java.io.File;
+
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -27,17 +29,20 @@ public void onEnable(){
 		System.out.println("[SeriousRP] Class Commands started successfully !");
 		System.out.println("[SeriousRP] Class FallDamage started successfully !");
 		System.out.println("[SeriousRP] Class SpawnItems started successfully !");
-		//System.out.println("[SeriousRP] Class Phone started successfully !");
+		System.out.println("[SeriousRP] Class Phone started successfully !");
 		System.out.println("[SeriousRP] #------------#");
 		
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new actions(), this);
 		pm.registerEvents(new commands(this), this);
-		pm.registerEvents(new deaths(), this);
+		pm.registerEvents(new deaths(this), this);
 		pm.registerEvents(new falldamage(), this);
 		pm.registerEvents(new spawnitems(), this);
-		//pm.registerEvents(new phone(this), this);
+		pm.registerEvents(new phone(/*this*/), this);
 		
+		if(!new File(this.getDataFolder(), "config.yml").exists()) {
+			this.saveDefaultConfig();
+		}
 		saveDefaultConfig();
 		
 		ShapedRecipe saddle =  new ShapedRecipe(new ItemStack(Material.SADDLE, 1));
@@ -118,7 +123,7 @@ public void onDisable(){
 		System.out.println("[SeriousRP] Class Commands stop successfully !");
 		System.out.println("[SeriousRP] Class FallDamage stop successfully !");
 		System.out.println("[SeriousRP] Class SpawnItems stop successfully !");
-		//System.out.println("[SeriousRP] Class Phone stop successfully !");
+		System.out.println("[SeriousRP] Class Phone stop successfully !");
 		System.out.println("[SeriousRP] #------------#");
 	}
 }
