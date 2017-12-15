@@ -15,6 +15,11 @@ HelpMsg:
   
   DHelp: "Shows the help page"
   DVersion: "Shows the version of this plugin"
+  
+#Modules du plugin
+NoModule: "The module is offline."
+DeathItems: true
+TownSystem: true
 
 #Differents messages of the plugin
 Teleports:

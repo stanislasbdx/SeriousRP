@@ -13,8 +13,8 @@ HelpMsg:
   DTown: "Permet de se teleporter a la ville"
   DTownSet: "Permet de definir le point de spawn de la ville"
   
-  DVersion: "Connaitre la version du plugin"
   DHelp: "Affiche l'aide"
+  DVersion: "Connaitre la version du plugin"
   
 #Modules du plugin
 NoModule: "Le module n'est pas actif."
