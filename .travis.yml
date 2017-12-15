@@ -5,3 +5,6 @@ script:
   - # do stuff with Java 8
   - jdk_switcher use openjdk7
   - # do stuff with Java 7
+  
+notifications:
+  webhooks: https://discordapp.com/api/webhooks/391377946558070784/CRf336TVjWnUzok5S2cBawfvJv1wjCgEuDxa0xYfGssneu_hOyMbyP16Jhfa6VZfg1gv/notifications
