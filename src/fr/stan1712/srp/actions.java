@@ -22,10 +22,10 @@ public class actions implements Listener {
 		Entity entity = e.getEntity();
 		Location entityloc = entity.getLocation();
 		
-	if(entity.getType() != EntityType.ITEM_FRAME){
-		entity.getWorld().playEffect(entityloc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+		if(entity.getType() != EntityType.ITEM_FRAME){
+			entity.getWorld().playEffect(entityloc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+		}
 	}
-}
 	public void onFall(EntityDamageEvent e){
 		if (!(e.getEntity() instanceof Player)) {
 			return;

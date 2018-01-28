@@ -1,14 +1,15 @@
 package fr.stan1712.srp;
 
-import java.io.File;
+import java.util.ArrayList;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import fr.stan1712.srp.commands;
 
 public class srp extends JavaPlugin implements Listener{
@@ -25,11 +26,7 @@ public void onEnable(){
 		System.out.println("[SeriousRP] #------------#");
 		System.out.println("[SeriousRP] SeriousRP "+getConfig().getString("Version").replace("&", "§"));
 		System.out.println("[SeriousRP] Boot sequence launched");
-		System.out.println("[SeriousRP] Class Action started successfully !");
-		System.out.println("[SeriousRP] Class Commands started successfully !");
-		System.out.println("[SeriousRP] Class FallDamage started successfully !");
-		System.out.println("[SeriousRP] Class SpawnItems started successfully !");
-		System.out.println("[SeriousRP] Class Phone started successfully !");
+		System.out.println("[SeriousRP] Classes loaded !");
 		System.out.println("[SeriousRP] #------------#");
 		
 		PluginManager pm = getServer().getPluginManager();
@@ -38,12 +35,11 @@ public void onEnable(){
 		pm.registerEvents(new deaths(this), this);
 		pm.registerEvents(new falldamage(), this);
 		pm.registerEvents(new spawnitems(), this);
-		pm.registerEvents(new phone(/*this*/), this);
+		pm.registerEvents(new phone(this), this);
+		pm.registerEvents(new bandage(this), this);
 		
-		if(!new File(this.getDataFolder(), "config.yml").exists()) {
-			this.saveDefaultConfig();
-		}
-		saveDefaultConfig();
+		getConfig().options().copyDefaults(false);
+	    saveDefaultConfig();
 		
 		ShapedRecipe saddle =  new ShapedRecipe(new ItemStack(Material.SADDLE, 1));
 		saddle.shape(new String[] {" C ","CFC","I I"});
@@ -82,7 +78,22 @@ public void onEnable(){
 		steak.setIngredient('B', Material.BOWL);
 		steak.setIngredient('R', Material.ROTTEN_FLESH);
 		getServer().addRecipe(steak);
-		    
+	    
+	    ItemStack bandage = new ItemStack(Material.PAPER, 1);
+	    ItemMeta meta = bandage.getItemMeta();
+	    meta.setDisplayName("§cBandage");
+	    ArrayList<String> lore = new ArrayList<String>();
+	    lore.add(ChatColor.RED + "Clique droit pour se soigner !");
+	    meta.setLore(lore);
+	    bandage.setItemMeta(meta);
+	    bandage.setItemMeta(meta);
+	    
+		ShapedRecipe hbandage = new ShapedRecipe(bandage); 
+		hbandage.shape(new String[] {"AAA", "SWS", "AAA" });
+		hbandage.setIngredient('W', Material.WOOL);
+		hbandage.setIngredient('S', Material.STRING);
+		hbandage.setIngredient('A', Material.AIR);
+	    getServer().addRecipe(hbandage);
 	}
 
 //public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
@@ -119,11 +130,7 @@ public void onDisable(){
 		System.out.println("[SeriousRP] #------------#");
 		System.out.println("[SeriousRP] SeriousRP "+getConfig().getString("Version").replace("&", "§"));
 		System.out.println("[SeriousRP] Shutdown sequence launched");
-		System.out.println("[SeriousRP] Class Action stop successfully !");
-		System.out.println("[SeriousRP] Class Commands stop successfully !");
-		System.out.println("[SeriousRP] Class FallDamage stop successfully !");
-		System.out.println("[SeriousRP] Class SpawnItems stop successfully !");
-		System.out.println("[SeriousRP] Class Phone stop successfully !");
+		System.out.println("[SeriousRP] Classes disabled");
 		System.out.println("[SeriousRP] #------------#");
 	}
 }

@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 //import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -23,14 +24,14 @@ import net.md_5.bungee.api.ChatColor;
 
 public class phone implements Listener {
 	
-	  //private FileConfiguration config;
+	  private FileConfiguration config;
 	  private srp pl;
 	  
-	  //public phone(srp pl)
-	  //{
-	  //  this.pl = pl;
-	  //  this.config = pl.getConfig();
-	  //}
+	  public phone(srp pl)
+	  {
+	    this.pl = pl;
+	    this.config = pl.getConfig();
+	  }
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event){
@@ -119,9 +120,8 @@ public class phone implements Listener {
 				p.sendMessage("§bVous avez §craccroché");
 			}
 			
-			if(current.getType() == Material.REDSTONE_BLOCK){
+			if(current.getType() == Material.BARRIER){
 				p.closeInventory();
-				p.sendMessage("§bVous avez §craccroché");
 			}
 			
 			if(current.getType() == Material.NETHER_STAR){
