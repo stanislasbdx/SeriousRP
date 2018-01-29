@@ -1,13 +1,9 @@
 package fr.stan1712.srp;
 
-import java.util.ArrayList;
-
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import fr.stan1712.srp.commands;
@@ -36,7 +32,6 @@ public void onEnable(){
 		pm.registerEvents(new falldamage(), this);
 		pm.registerEvents(new spawnitems(), this);
 		pm.registerEvents(new phone(this), this);
-		pm.registerEvents(new bandage(this), this);
 		
 		getConfig().options().copyDefaults(false);
 	    saveDefaultConfig();
@@ -78,53 +73,7 @@ public void onEnable(){
 		steak.setIngredient('B', Material.BOWL);
 		steak.setIngredient('R', Material.ROTTEN_FLESH);
 		getServer().addRecipe(steak);
-	    
-	    ItemStack bandage = new ItemStack(Material.PAPER, 1);
-	    ItemMeta meta = bandage.getItemMeta();
-	    meta.setDisplayName("§cBandage");
-	    ArrayList<String> lore = new ArrayList<String>();
-	    lore.add(ChatColor.RED + "Clique droit pour se soigner !");
-	    meta.setLore(lore);
-	    bandage.setItemMeta(meta);
-	    bandage.setItemMeta(meta);
-	    
-		ShapedRecipe hbandage = new ShapedRecipe(bandage); 
-		hbandage.shape(new String[] {"AAA", "SWS", "AAA" });
-		hbandage.setIngredient('W', Material.WOOL);
-		hbandage.setIngredient('S', Material.STRING);
-		hbandage.setIngredient('A', Material.AIR);
-	    getServer().addRecipe(hbandage);
 	}
-
-//public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-//    if (cmd.getName().equalsIgnoreCase("chat")) {
-//    	if (sender.hasPermission("seriousrp.chat"))
-//        {
-//        	Player target = Bukkit.getPlayer(args[0]);
-//        	
-//        	if(target != null){
-//        		String message = "";
-//        		
-//        		for(int i = 1; i != args.length; i++)
-//        			message += args[i] + " ";
-//        			
-//        		target.sendMessage(ChatColor.GOLD+"["+ChatColor.AQUA+sender.getName()+ChatColor.GOLD+" -> "+ChatColor.AQUA+target.getName()+ChatColor.GOLD+"] : "+ChatColor.AQUA+ message);
-//        		sender.sendMessage(ChatColor.GOLD+"["+ChatColor.AQUA+target.getName()+ChatColor.GOLD+" <- "+ChatColor.AQUA+sender.getName()+ChatColor.GOLD+"] : "+ChatColor.AQUA+ message);
-//        		
-//        	}
-//        	else{
-//        		sender.sendMessage("§7Le joueur "+ChatColor.AQUA+target+"&7n'est pas en ligne");
-//        	}
-//        }
-//        else
-//        {
-//          sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-//          sender.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
-//          sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-//        }
-//    }
-//	return true;
-//}
   
 public void onDisable(){
 		System.out.println("[SeriousRP] #------------#");

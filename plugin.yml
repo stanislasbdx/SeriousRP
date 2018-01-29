@@ -1,5 +1,5 @@
 name: SeriousRP
-version: 3.9.4
+version: 3.9.7
 author: stan1712
 main: fr.stan1712.srp.srp
 commands:
@@ -21,3 +21,6 @@ commands:
  chat:
   description: Blablabla
   permission: seriousrp.chat
+ phone:
+  description: Allow you to give a phone
+  permission: seriousrp.givephone

@@ -151,7 +151,7 @@ public class commands implements Listener
      }
     else {
 			p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("NoModule").replace("&", "§"));
-		}
+	}
     //if (args[0].equalsIgnoreCase("/chat")) {
     //	if (p.hasPermission("seriousrp.chat"))
     //    {

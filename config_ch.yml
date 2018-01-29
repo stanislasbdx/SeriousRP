@@ -1,22 +1,44 @@
 #+-- Plugin RP by stan1712 (stan1712.fr) --+
 #+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
 
-#è¿™æ˜¯æ�’ä»¶ç‰ˆæœ¬ï¼Œä¸�è¦�æ”¹å�˜å®ƒ!
-Version: "Version 3.9.4"
+#Ã¨Â¿â„¢Ã¦ËœÂ¯Ã¦ï¿½â€™Ã¤Â»Â¶Ã§â€°Ë†Ã¦Å“Â¬Ã¯Â¼Å’Ã¤Â¸ï¿½Ã¨Â¦ï¿½Ã¦â€�Â¹Ã¥ï¿½ËœÃ¥Â®Æ’!
+Version: "Version 3.9.7"
 
-#æ�’ä»¶å��æ˜¾ç¤º
+#Ã¦ï¿½â€™Ã¤Â»Â¶Ã¥ï¿½ï¿½Ã¦ËœÂ¾Ã§Â¤Âº
 Prefix: "SeriousRP"
 
-#å¸®åŠ©è�œå�•
+#Ã¥Â¸Â®Ã¥Å Â©Ã¨ï¿½Å“Ã¥ï¿½â€¢
 HelpMsg:
   Dsrtp: "\u968f\u673a\u4f20\u9001"
   DTown: "\u4f20\u9001\u5230\u4f20\u9001\u70b9"
   DTownSet: "\u8bbe\u7f6e\u4f20\u9001\u70b9"
+  DPhone: "Shows the phone GUI"
   
   DHelp: "\u67e5\u770b\u63d2\u4ef6\u7248\u672c"
   DVersion: "\u67e5\u770b\u6307\u4ee4\u5e2e\u52a9"
+  
+#SeriousRP modules
+NoModule: "The module is offline."
+DeathItems: true
+TownSystem: true
 
-#è¾“å…¥æŒ‡ä»¤å�Žçš„æ˜¾ç¤ºè¯­è¨€
+#Phone Menu
+Phone:
+  LorePhone1: "&9Here is your phone"
+  LorePhone2: "&9Right click to open it"
+  LorePhone3: "&6Owner :"
+
+  Answer: "&cSoon..."
+  HangUp: "&cSoon..."
+  Shutdown: "&cSwitch Off"
+  
+  You: "&aYes, this is you, you are beautiful isn't it ?"
+  Music: "&cSoon..."
+
+  GoToTown: "&aDirection : Town"
+  YourNumber: "&cSoon..."
+
+#Ã¨Â¾â€œÃ¥â€¦Â¥Ã¦Å’â€¡Ã¤Â»Â¤Ã¥ï¿½Å½Ã§Å¡â€žÃ¦ËœÂ¾Ã§Â¤ÂºÃ¨Â¯Â­Ã¨Â¨â‚¬
 Teleports:
   GoToTown: "\u4f60\u5df2\u88ab\u4f20\u9001\u5f80\u4f20\u9001\u70b9"
   SetTown: "\u4f60\u5df2\u8bbe\u7f6e\u4f20\u9001\u70b9"
@@ -27,7 +49,7 @@ RandomTeleport: "\u4f60\u5df2\u88ab\u968f\u673a\u4f20\u9001 !"
 Help: "\u9700\u8981\u5e2e\u52a9\u5417 ? \u8f93\u5165 /seriousrp help"
 VersionHelp: "\u60f3\u8981\u67e5\u770b\u63d2\u4ef6\u7248\u672c ? \u8f93\u5165 /seriousrp version"
 
-#ä¼ é€�å��æ ‡
+#Ã¤Â¼Â Ã©â‚¬ï¿½Ã¥ï¿½ï¿½Ã¦Â â€¡
 Locations:
   Town:
     x: 0
