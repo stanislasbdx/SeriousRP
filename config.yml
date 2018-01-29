@@ -9,10 +9,10 @@ Prefix: "SeriousRP"
 
 #Messages affichés lors du /seriousrp help
 HelpMsg:
-  Dsrtp: "Pouvoir se teleporter aleatoirement"
+  DSrtp: "Pouvoir se teleporter aleatoirement"
   DTown: "Permet de se teleporter a la ville"
   DTownSet: "Permet de definir le point de spawn de la ville"
-  DPhone: "Affiche le menu du téléphone"
+  DPhone: "Affiche le menu du telephone"
   
   DHelp: "Affiche l'aide"
   DVersion: "Connaitre la version du plugin"
@@ -24,9 +24,9 @@ TownSystem: true
 
 #Menu du téléphone
 Phone:
-  LorePhone1: "&9Voici votre téléphone"
+  LorePhone1: "&9Voici votre telephone"
   LorePhone2: "&9Clic droit pour l'ouvrir"
-  LorePhone3: "&6Propriétaire :"
+  LorePhone3: "&6Proprietaire :"
 
   Answer: "&cBientot..."
   HangUp: "&cBientot..."
