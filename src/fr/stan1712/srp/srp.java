@@ -6,7 +6,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import fr.stan1712.srp.commands;
 
 public class srp extends JavaPlugin implements Listener{
@@ -23,22 +22,19 @@ public void onEnable(){
 		System.out.println("[SeriousRP] #------------#");
 		System.out.println("[SeriousRP] SeriousRP "+getConfig().getString("Version").replace("&", "§"));
 		System.out.println("[SeriousRP] Boot sequence launched");
-		System.out.println("[SeriousRP] Class Action started successfully !");
-		System.out.println("[SeriousRP] Class Commands started successfully !");
-		System.out.println("[SeriousRP] Class FallDamage started successfully !");
-		System.out.println("[SeriousRP] Class SpawnItems started successfully !");
-		//System.out.println("[SeriousRP] Class Phone started successfully !");
+		System.out.println("[SeriousRP] Classes loaded !");
 		System.out.println("[SeriousRP] #------------#");
 		
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new actions(), this);
 		pm.registerEvents(new commands(this), this);
-		pm.registerEvents(new deaths(), this);
+		pm.registerEvents(new deaths(this), this);
 		pm.registerEvents(new falldamage(), this);
 		pm.registerEvents(new spawnitems(), this);
-		//pm.registerEvents(new phone(this), this);
+		pm.registerEvents(new phone(this), this);
 		
-		saveDefaultConfig();
+		getConfig().options().copyDefaults(false);
+	    saveDefaultConfig();
 		
 		ShapedRecipe saddle =  new ShapedRecipe(new ItemStack(Material.SADDLE, 1));
 		saddle.shape(new String[] {" C ","CFC","I I"});
@@ -77,48 +73,13 @@ public void onEnable(){
 		steak.setIngredient('B', Material.BOWL);
 		steak.setIngredient('R', Material.ROTTEN_FLESH);
 		getServer().addRecipe(steak);
-		    
 	}
-
-//public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-//    if (cmd.getName().equalsIgnoreCase("chat")) {
-//    	if (sender.hasPermission("seriousrp.chat"))
-//        {
-//        	Player target = Bukkit.getPlayer(args[0]);
-//        	
-//        	if(target != null){
-//        		String message = "";
-//        		
-//        		for(int i = 1; i != args.length; i++)
-//        			message += args[i] + " ";
-//        			
-//        		target.sendMessage(ChatColor.GOLD+"["+ChatColor.AQUA+sender.getName()+ChatColor.GOLD+" -> "+ChatColor.AQUA+target.getName()+ChatColor.GOLD+"] : "+ChatColor.AQUA+ message);
-//        		sender.sendMessage(ChatColor.GOLD+"["+ChatColor.AQUA+target.getName()+ChatColor.GOLD+" <- "+ChatColor.AQUA+sender.getName()+ChatColor.GOLD+"] : "+ChatColor.AQUA+ message);
-//        		
-//        	}
-//        	else{
-//        		sender.sendMessage("§7Le joueur "+ChatColor.AQUA+target+"&7n'est pas en ligne");
-//        	}
-//        }
-//        else
-//        {
-//          sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-//          sender.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
-//          sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-//        }
-//    }
-//	return true;
-//}
   
 public void onDisable(){
 		System.out.println("[SeriousRP] #------------#");
 		System.out.println("[SeriousRP] SeriousRP "+getConfig().getString("Version").replace("&", "§"));
 		System.out.println("[SeriousRP] Shutdown sequence launched");
-		System.out.println("[SeriousRP] Class Action stop successfully !");
-		System.out.println("[SeriousRP] Class Commands stop successfully !");
-		System.out.println("[SeriousRP] Class FallDamage stop successfully !");
-		System.out.println("[SeriousRP] Class SpawnItems stop successfully !");
-		//System.out.println("[SeriousRP] Class Phone stop successfully !");
+		System.out.println("[SeriousRP] Classes disabled");
 		System.out.println("[SeriousRP] #------------#");
 	}
 }

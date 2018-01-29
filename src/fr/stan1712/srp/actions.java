@@ -26,19 +26,15 @@ public class actions implements Listener {
 			entity.getWorld().playEffect(entityloc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 		}
 	}
-	
-	  public void onFall(EntityDamageEvent e)
-	  {
-	    if (!(e.getEntity() instanceof Player)) {
-	      return;
-	    }
-	    if (e.getCause() == EntityDamageEvent.DamageCause.FALL)
-	    {
-	      if (e.getDamage() >= 2.0D)
-	      {
-	        LivingEntity entity = (LivingEntity)e.getEntity();
-	        entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, (int)Math.round(e.getDamage() / 2.0D - 1.0D)));
-	      }
-	    }
-	  }
+	public void onFall(EntityDamageEvent e){
+		if (!(e.getEntity() instanceof Player)) {
+			return;
+		}
+		if (e.getCause() == EntityDamageEvent.DamageCause.FALL){
+			if (e.getDamage() >= 2.0D){
+				LivingEntity entity = (LivingEntity)e.getEntity();
+				entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, (int)Math.round(e.getDamage() / 2.0D - 1.0D)));
+			}
+		}
+	}
 }

@@ -2,7 +2,7 @@
 #+-- Traductors : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
 
 #Version of the plugin, do not change it !
-Version: "Version 3.9.3"
+Version: "Version 3.9.7"
 
 #Modify your prefix here
 Prefix: "SeriousRP"
@@ -12,9 +12,31 @@ HelpMsg:
   Dsrtp: "Potere teleportare in modo casuale"
   DTown: "Consente di teletrasmettere alla città"
   DTownSet: "Consente di definire il punto di spawn della città"
+  DPhone: "Shows the phone GUI"
   
   DHelp: "Visualizza l'aiuto"
   DVersion: "Conosci la versione del plugin"
+  
+#SeriousRP modules
+NoModule: "The module is offline."
+DeathItems: true
+TownSystem: true
+
+#Phone Menu
+Phone:
+  LorePhone1: "&9Here is your phone"
+  LorePhone2: "&9Right click to open it"
+  LorePhone3: "&6Owner :"
+
+  Answer: "&cSoon..."
+  HangUp: "&cSoon..."
+  Shutdown: "&cSwitch Off"
+  
+  You: "&aYes, this is you, you are beautiful isn't it ?"
+  Music: "&cSoon..."
+
+  GoToTown: "&aDirection : Town"
+  YourNumber: "&cSoon..."
 
 #Differents messages of the plugin
 Teleports:
