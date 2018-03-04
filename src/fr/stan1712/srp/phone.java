@@ -71,7 +71,7 @@ public class phone implements Listener {
 		customM.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
 		phone.setItemMeta(customM);
 		
-		if (args[0].equalsIgnoreCase("/phone")){
+		if (args[0].equalsIgnoreCase("/mobile")){
 			if(p.getInventory().contains(phone) == true){
 				Inventory inv = Bukkit.createInventory(null, 36, "§bTéléphone de "+p.getDisplayName());
 				
