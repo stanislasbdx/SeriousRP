@@ -21,6 +21,6 @@ commands:
  chat:
   description: Blablabla
   permission: seriousrp.chat
- phone:
+ mobile:
   description: Allow you to give a phone
   permission: seriousrp.givephone
