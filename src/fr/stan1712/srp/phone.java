@@ -53,7 +53,7 @@ public class phone implements Listener {
 			System.out.println("[SeriousRP] "+ p.getName() + " already got a phone, no need to give him another.");
 		}
 		else{
-			p.getInventory().setItemInMainHand(phone);
+			p.getInventory().addItem(phone);
 			p.updateInventory();
 		};
 	}
@@ -111,7 +111,7 @@ public class phone implements Listener {
 				p.openInventory(inv);
 			}
 			else{
-				p.getInventory().setItemInMainHand(phone);
+				p.getInventory().addItem(phone);
 				p.updateInventory();
 			};
 		}
