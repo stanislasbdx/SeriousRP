@@ -2,24 +2,27 @@
 #+-- Traducteurs : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
 
 #Version du plugin, il ne faut pas la changer !
-Version: "Version 3.9.7"
+Version: "Version 3.9.8 Beta"
 
 #Modifiez le prefix ici
 Prefix: "SeriousRP"
 
 #Messages affichés lors du /seriousrp help
 HelpMsg:
-  DSrtp: "Pouvoir se teleporter aleatoirement"
+  Dsrtp: "Pouvoir se teleporter aleatoirement"
   DTown: "Permet de se teleporter a la ville"
   DTownSet: "Permet de definir le point de spawn de la ville"
   DPhone: "Affiche le menu du telephone"
+  
+  DRevive: "Permet de réanimer un joueur"
+  DMedInfo: "Permet de connaître les statistiques d'un joueur"
   
   DHelp: "Affiche l'aide"
   DVersion: "Connaitre la version du plugin"
   
 #Modules du plugin
 NoModule: "Le module n'est pas actif."
-RPDeath: true
+RPDeath: false
 Medics: true
 TownSystem: true
 
