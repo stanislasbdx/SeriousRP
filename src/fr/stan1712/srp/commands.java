@@ -28,6 +28,7 @@ public class commands implements Listener
   public void onCommandes(PlayerCommandPreprocessEvent e)
   {
     Player p = e.getPlayer();
+    String pseudo = p.getDisplayName();
     String msg = e.getMessage();
     String[] args = msg.split(" ");
 
@@ -154,30 +155,84 @@ public class commands implements Listener
     else {
 			p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("NoModule").replace("&", "§"));
 	}
-    //if (args[0].equalsIgnoreCase("/chat")) {
-    //	if (p.hasPermission("seriousrp.chat"))
-    //    {
-    //    	Player target = Bukkit.getPlayer(args[0]);
-    //    	
-    //    	if(target != null){
-    //    		String message = "";
-    //    		
-    //    		for(int i = 1; i != args.length; i++)
-    //    			message += args[i] + " ";
-    //    			
-    //    		target.sendMessage(ChatColor.GOLD+"["+ChatColor.AQUA+p.getName()+ChatColor.GOLD+" -> "+ChatColor.AQUA+target.getName()+ChatColor.GOLD+"] : "+ChatColor.AQUA+ message);
-    //    		p.sendMessage(ChatColor.GOLD+"["+ChatColor.AQUA+target.getName()+ChatColor.GOLD+" <- "+ChatColor.AQUA+target.getName()+ChatColor.GOLD+"] : "+ChatColor.AQUA+ message);
-    //    		
-    //    	}
-    //    	else{
-    //    		p.sendMessage("§7Le joueur "+ChatColor.AQUA+target+"§7 n'est pas en ligne !");
-    //    	}
-    //    }
-    //    else
-    //    {
-    //      p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-    //      p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
-    //      p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-    //    }
+    if(this.pl.getConfig().getBoolean("Medics") == true ) {
+	    if (args[0].equalsIgnoreCase("/revive"))
+	    {
+	      if (p.hasPermission("seriousrp.medicrevive"))
+	      {
+	    	  Player cible = Bukkit.getPlayer(args[1]);
+	    	  
+	    	  if(cible != null){	
+	    		  if(p.getHealth() < 10) {
+						p.setHealth(20);
+						p.sendMessage(this.pl.getConfig().getString("Medic.Revive").replace("&", "§") + " " + pseudo);
+						
+						p.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+						p.removePotionEffect(PotionEffectType.SLOW);
+						p.removePotionEffect(PotionEffectType.BLINDNESS);
+	    		  }
+	    		  else {
+	    			  p.sendMessage(this.pl.getConfig().getString("Medic.NoNeed").replace("&", "§"));
+	    		  }
+	    	  }
+        	  else{
+        	  	  p.sendMessage(ChatColor.DARK_RED + args[1] + " " + this.pl.getConfig().getString("Medic.Error").replace("&", "§"));
+        	  }
+	      }
+	      else
+	      {
+	        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+	        p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
+	        p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+	      }
+      }
+     }
+    else {
+			p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("NoModule").replace("&", "§"));
+	}
+    if(this.pl.getConfig().getBoolean("Medics") == true ) {
+	    if (args[0].equalsIgnoreCase("/medinfo"))
+	    {
+	      if (p.hasPermission("seriousrp.medinfo"))
+	      {
+	    	  Player cible = Bukkit.getPlayer(args[1]);
+	    	  
+	    	  if(cible != null){	    		
+	    		double vie = cible.getHealth();
+	    		double faim = cible.getFoodLevel();
+	    		
+	    		int x = Integer.valueOf(p.getLocation().getBlockX());
+	    		int y = Integer.valueOf(p.getLocation().getBlockY());
+	    		int z = Integer.valueOf(p.getLocation().getBlockZ());
+	    		String monde = cible.getWorld().getName();
+	    		
+	    		p.sendMessage(ChatColor.AQUA + "+----- ♖ MedInfo " + pseudo + " ♖ -----+");
+	    		if(vie > 10){
+	    			p.sendMessage("§a" + this.pl.getConfig().getString("MedInfo.Health").replace("&", "§") + " " + vie/2 + " " + this.pl.getConfig().getString("MedInfo.Hearts").replace("&", "§"));
+	    		}
+	    		else if(vie <= 9){
+	    			p.sendMessage("§c" + this.pl.getConfig().getString("MedInfo.Health").replace("&", "§") + " " + vie/2 + " " + this.pl.getConfig().getString("MedInfo.Hearts").replace("&", "§"));
+	    		}
+	    		p.sendMessage("§a" + this.pl.getConfig().getString("MedInfo.Food").replace("&", "§") + " " + faim/2 + " / 10");
+	    		p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+	    		p.sendMessage("§a" + pseudo + " " + this.pl.getConfig().getString("MedInfo.Coordinates").replace("&", "§") + " " + x + ", " + y + ", " + z + " > " + monde);
+	    		p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+	    		
+	    	  }
+        	  else{
+        	  	  p.sendMessage(ChatColor.DARK_RED + args[1] + " " + this.pl.getConfig().getString("Medic.Error").replace("&", "§"));
+        	  }
+	      }
+	      else
+	      {
+	        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+	        p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
+	        p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+	      }
+      }
+     }
+    else {
+			p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("NoModule").replace("&", "§"));
+	}
     }
   }

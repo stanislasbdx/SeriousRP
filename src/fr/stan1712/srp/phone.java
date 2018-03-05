@@ -14,7 +14,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,7 +25,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class phone implements Listener {
 	
-	  @SuppressWarnings("unused")
+	@SuppressWarnings("unused")
 	private FileConfiguration config;
 	  private srp pl;
 	  
@@ -35,28 +34,6 @@ public class phone implements Listener {
 	    this.pl = pl;
 	    this.config = pl.getConfig();
 	  }
-	
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event){
-		
-		Player p = event.getPlayer();
-		
-		ItemStack phone = new ItemStack(Material.END_CRYSTAL, 1);
-		ItemMeta customM = phone.getItemMeta();
-		customM.setDisplayName("§bTéléphone");
-		customM.setLore(Arrays.asList(this.pl.getConfig().getString("Phone.LorePhone1").replace("&", "§"),this.pl.getConfig().getString("Phone.LorePhone2").replace("&", "§"),this.pl.getConfig().getString("Phone.LorePhone3").replace("&", "§")+" "+p.getDisplayName()));
-		customM.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
-		phone.setItemMeta(customM);
-		
-		if(p.getInventory().contains(phone) == true){
-			p.sendMessage("Vous avez déjà un téléphone !");
-			System.out.println("[SeriousRP] "+ p.getName() + " already got a phone, no need to give him another.");
-		}
-		else{
-			p.getInventory().addItem(phone);
-			p.updateInventory();
-		};
-	}
 	
 	@EventHandler
 	public void onCommandes(PlayerCommandPreprocessEvent e){

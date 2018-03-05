@@ -24,3 +24,9 @@ commands:
  mobile:
   description: Allow you to give a phone
   permission: seriousrp.givephone
+ revive:
+  description: Allow you to revive a player
+  permission: seriousrp.medicrevive
+ medinfo:
+  description: Allow you to know some info about a player
+  permission: seriousrp.medinfo

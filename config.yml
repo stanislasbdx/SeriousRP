@@ -7,7 +7,7 @@ Version: "Version 3.9.7"
 #Modifiez le prefix ici
 Prefix: "SeriousRP"
 
-#Messages affichÈs lors du /seriousrp help
+#Messages affich√©s lors du /seriousrp help
 HelpMsg:
   DSrtp: "Pouvoir se teleporter aleatoirement"
   DTown: "Permet de se teleporter a la ville"
@@ -19,10 +19,22 @@ HelpMsg:
   
 #Modules du plugin
 NoModule: "Le module n'est pas actif."
-DeathItems: true
+RPDeath: true
+Medics: true
 TownSystem: true
 
-#Menu du tÈlÈphone
+#Messages des medics
+Medic:
+  Revive: "&aVous avez bien reanime le joueur"
+  Error: "&cn'est pas en ligne ou vous avez mal orthographie son pseudo !"
+  NoNeed: "&cLe joueur n'a pas besoin de se faire r√©animer"
+MedInfo:
+  Health: "Vie :"
+  Hearts: "coeurs"
+  Food: "Nourriture :"
+  Coordinates: "est en :"
+
+#Menu du t√©l√©phone
 Phone:
   LorePhone1: "&9Voici votre telephone"
   LorePhone2: "&9Clic droit pour l'ouvrir"
@@ -38,7 +50,7 @@ Phone:
   GoToTown: "&aDirection : Ville"
   YourNumber: "&cBientot..."
 
-#DiffÈrents messages du plugin
+#Diff√©rents messages du plugin
 Teleports:
   GoToTown: "Vous avez ete teleporte dans la ville"
   SetTown: "Vous avez set le spawn de la ville"
@@ -48,6 +60,8 @@ RandomTeleport: "Teleportation a des milliers de blocs !"
 
 Help: "Besoin d'aide ? Tapez /seriousrp help"
 VersionHelp: "Version du plugin ? Tapez /seriousrp version"
+
+NoPerms: "Vous n'avez pas la permission !"
 
 Locations:
   Town:
