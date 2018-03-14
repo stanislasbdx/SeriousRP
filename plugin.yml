@@ -1,5 +1,5 @@
 name: SeriousRP
-version: 3.9.7
+version: 3.9.8-0.2b
 author: stan1712
 main: fr.stan1712.srp.srp
 commands:
@@ -27,6 +27,9 @@ commands:
  revive:
   description: Allow you to revive a player
   permission: seriousrp.medicrevive
+ hrprevive:
+  description: Allow you to revive a player HRP
+  permission: seriousrp.medichrp
  medinfo:
   description: Allow you to know some info about a player
   permission: seriousrp.medinfo

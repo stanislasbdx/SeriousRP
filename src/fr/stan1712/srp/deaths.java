@@ -48,6 +48,7 @@ public class deaths implements Listener {
 		    p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, 1000));
 		    p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1000000, 5));
 		    p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 1000));
+		    p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1000000, 1000));
 	        
 			p.setHealth(0.5);
 			p.setFoodLevel(1);

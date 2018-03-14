@@ -163,13 +163,16 @@ public class commands implements Listener
 	    	  Player cible = Bukkit.getPlayer(args[1]);
 	    	  
 	    	  if(cible != null){	
-	    		  if(p.getHealth() < 10) {
-						p.setHealth(20);
-						p.sendMessage(this.pl.getConfig().getString("Medic.Revive").replace("&", "§") + " " + pseudo);
+	    		  if(cible.getHealth() < 10) {
+	    			  	cible.setHealth(20);
+	    			  	p.sendMessage(this.pl.getConfig().getString("Medic.Revive").replace("&", "§") + " " + args[1]);
 						
-						p.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-						p.removePotionEffect(PotionEffectType.SLOW);
-						p.removePotionEffect(PotionEffectType.BLINDNESS);
+						cible.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+						cible.removePotionEffect(PotionEffectType.SLOW);
+						cible.removePotionEffect(PotionEffectType.BLINDNESS);
+						cible.removePotionEffect(PotionEffectType.HUNGER);
+						
+						cible.setFoodLevel(10);
 	    		  }
 	    		  else {
 	    			  p.sendMessage(this.pl.getConfig().getString("Medic.NoNeed").replace("&", "§"));
@@ -186,11 +189,32 @@ public class commands implements Listener
 	        p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 	      }
       }
-     }
-    else {
-			p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("NoModule").replace("&", "§"));
-	}
-    if(this.pl.getConfig().getBoolean("Medics") == true ) {
+	    if (args[0].equalsIgnoreCase("/hrprevive"))
+	    {
+	      if (p.hasPermission("seriousrp.medichrp"))
+	      {    	  
+			  if(p.getHealth() < 10) {
+				  	p.setHealth(20);
+				  	p.sendMessage(this.pl.getConfig().getString("Medic.Revive").replace("&", "§") + " " + pseudo);
+					
+					p.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+					p.removePotionEffect(PotionEffectType.SLOW);
+					p.removePotionEffect(PotionEffectType.BLINDNESS);
+					p.removePotionEffect(PotionEffectType.HUNGER);
+					
+					p.setFoodLevel(10);
+			  }
+    		  else {
+    			  p.sendMessage(this.pl.getConfig().getString("Medic.NoNeed").replace("&", "§"));
+    		  }
+	      }
+	      else
+	      {
+	        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+	        p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
+	        p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+	      }
+	    }
 	    if (args[0].equalsIgnoreCase("/medinfo"))
 	    {
 	      if (p.hasPermission("seriousrp.medinfo"))
@@ -201,12 +225,12 @@ public class commands implements Listener
 	    		double vie = cible.getHealth();
 	    		double faim = cible.getFoodLevel();
 	    		
-	    		int x = Integer.valueOf(p.getLocation().getBlockX());
-	    		int y = Integer.valueOf(p.getLocation().getBlockY());
-	    		int z = Integer.valueOf(p.getLocation().getBlockZ());
+	    		int x = Integer.valueOf(cible.getLocation().getBlockX());
+	    		int y = Integer.valueOf(cible.getLocation().getBlockY());
+	    		int z = Integer.valueOf(cible.getLocation().getBlockZ());
 	    		String monde = cible.getWorld().getName();
 	    		
-	    		p.sendMessage(ChatColor.AQUA + "+----- ♖ MedInfo " + pseudo + " ♖ -----+");
+	    		p.sendMessage(ChatColor.AQUA + "+----- ♖ MedInfo " + args[1] + " ♖ -----+");
 	    		if(vie > 10){
 	    			p.sendMessage("§a" + this.pl.getConfig().getString("MedInfo.Health").replace("&", "§") + " " + vie/2 + " " + this.pl.getConfig().getString("MedInfo.Hearts").replace("&", "§"));
 	    		}
@@ -215,13 +239,12 @@ public class commands implements Listener
 	    		}
 	    		p.sendMessage("§a" + this.pl.getConfig().getString("MedInfo.Food").replace("&", "§") + " " + faim/2 + " / 10");
 	    		p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-	    		p.sendMessage("§a" + pseudo + " " + this.pl.getConfig().getString("MedInfo.Coordinates").replace("&", "§") + " " + x + ", " + y + ", " + z + " > " + monde);
+	    		p.sendMessage("§a" + args[1] + " " + this.pl.getConfig().getString("MedInfo.Coordinates").replace("&", "§") + " " + x + ", " + y + ", " + z + " > " + monde);
 	    		p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-	    		
 	    	  }
-        	  else{
-        	  	  p.sendMessage(ChatColor.DARK_RED + args[1] + " " + this.pl.getConfig().getString("Medic.Error").replace("&", "§"));
-        	  }
+	    	  else{
+	    	  	  p.sendMessage(ChatColor.DARK_RED + args[1] + " " + this.pl.getConfig().getString("Medic.Error").replace("&", "§"));
+	    	  }
 	      }
 	      else
 	      {
@@ -229,10 +252,10 @@ public class commands implements Listener
 	        p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
 	        p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 	      }
-      }
-     }
+	  }
+    }
     else {
 			p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("NoModule").replace("&", "§"));
 	}
-    }
+  	}
   }

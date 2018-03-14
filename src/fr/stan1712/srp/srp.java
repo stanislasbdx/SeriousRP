@@ -22,6 +22,15 @@ public void onEnable(){
 		System.out.println("[SeriousRP] #------------#");
 		System.out.println("[SeriousRP] SeriousRP "+getConfig().getString("Version").replace("&", "§"));
 		System.out.println("[SeriousRP] Boot sequence launched");
+		if(getConfig().getBoolean("RPDeath") == true) {
+			System.out.println("[SeriousRP] RealDeath module activated");
+		}
+		if(getConfig().getBoolean("Medics") == true) {
+			System.out.println("[SeriousRP] Medics module activated");
+		}
+		if(getConfig().getBoolean("TownSystem") == true) {
+			System.out.println("[SeriousRP] Town module activated");
+		}
 		System.out.println("[SeriousRP] Classes loaded !");
 		System.out.println("[SeriousRP] #------------#");
 		
