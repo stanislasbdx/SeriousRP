@@ -15,7 +15,6 @@ public static srp getInstance(){
 		return instance;
 	}
 
-
 public void onEnable(){
 		instance = this;
 		
