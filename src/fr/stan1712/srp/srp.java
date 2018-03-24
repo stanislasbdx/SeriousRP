@@ -30,7 +30,7 @@ public void onEnable(){
 		if(getConfig().getBoolean("TownSystem") == true) {
 			System.out.println("[SeriousRP] Town module activated");
 		}
-		System.out.println("[SeriousRP] Classes loaded !");
+		System.out.println("[SeriousRP] All classes are loaded !");
 		System.out.println("[SeriousRP] #------------#");
 		
 		PluginManager pm = getServer().getPluginManager();
