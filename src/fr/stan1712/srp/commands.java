@@ -81,16 +81,20 @@ public class commands implements Listener
         p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
         p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("RandomTeleport").replace("&", "§"));
         p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-        
+
 	    p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 50, 100));
 	    p.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 50, 100));
 	    p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
         
         int x = p.getLocation().getBlockX() + r.nextInt(10000);
-        int y = p.getWorld().getMaxHeight() - 150;
         int z = p.getLocation().getBlockZ() + r.nextInt(10000);
+
+        int rtpcheck = p.getWorld().getHighestBlockYAt(x, z);
         
-        Location rtp = new Location(p.getWorld(), x, y, z);
+        int rtpdone = rtpcheck + 1;
+        
+        Location rtp = new Location(p.getWorld(), x, rtpdone, z);
+
         p.teleport(rtp);
         
         e.setCancelled(true);
