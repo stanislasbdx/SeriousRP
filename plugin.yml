@@ -1,5 +1,5 @@
 name: SeriousRP
-version: 3.9.8-0.3b
+version: 3.9.8-0.7b
 author: stan1712
 main: fr.stan1712.srp.srp
 commands:
@@ -18,9 +18,6 @@ commands:
  srtown:
   description: Teleports you to the town
   permission: seriousrp.tptown
- chat:
-  description: Blablabla
-  permission: seriousrp.chat
  mobile:
   description: Allow you to give a phone
   permission: seriousrp.givephone
