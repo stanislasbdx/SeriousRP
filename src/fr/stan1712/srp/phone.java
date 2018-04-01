@@ -41,7 +41,7 @@ public class phone implements Listener {
 		String msg = e.getMessage();
 		String[] args = msg.split(" ");
 		
-		ItemStack phone = new ItemStack(Material.END_CRYSTAL, 1);
+		ItemStack phone = new ItemStack(Material.WATCH, 1);
 		ItemMeta customM = phone.getItemMeta();
 		customM.setDisplayName("§bTéléphone");
 		customM.setLore(Arrays.asList(this.pl.getConfig().getString("Phone.LorePhone1").replace("&", "§"),this.pl.getConfig().getString("Phone.LorePhone2").replace("&", "§"),this.pl.getConfig().getString("Phone.LorePhone3").replace("&", "§")+" "+p.getDisplayName()));
@@ -102,7 +102,7 @@ public class phone implements Listener {
 		
 		if(it == null) return;
 		
-		if(it.getType() == Material.END_CRYSTAL && it.hasItemMeta() && it.getItemMeta().hasDisplayName() && it.getItemMeta().getDisplayName().equalsIgnoreCase("§bTéléphone")){
+		if(it.getType() == Material.WATCH && it.hasItemMeta() && it.getItemMeta().hasDisplayName() && it.getItemMeta().getDisplayName().equalsIgnoreCase("§bTéléphone")){
 			if(action == Action.RIGHT_CLICK_AIR){
 				
 				Inventory inv = Bukkit.createInventory(null, 36, "§bTéléphone de "+p.getDisplayName());
@@ -158,15 +158,15 @@ public class phone implements Listener {
 			
 			event.setCancelled(true);
 			
-			//if(current.getType() == Material.EMERALD_BLOCK){
-			//	p.closeInventory();
-			//	p.sendMessage("§bVous avez §adécroché");
-			//}
+			if(current.getType() == Material.EMERALD_BLOCK){
+				p.closeInventory();
+				p.performCommand("phone answer");
+			}
 			
-			//if(current.getType() == Material.REDSTONE_BLOCK){
-			//	p.closeInventory();
-			//	p.sendMessage("§bVous avez §craccroché");
-			//}
+			if(current.getType() == Material.REDSTONE_BLOCK){
+				p.closeInventory();
+				p.performCommand("phone end");
+			}
 			
 			if(current.getType() == Material.BARRIER){
 				p.closeInventory();
