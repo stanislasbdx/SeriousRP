@@ -2,26 +2,27 @@
 #+-- Traducteurs : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
 
 #Version du plugin, il ne faut pas la changer !
-Version: "Version 3.9.8-0.3b"
+Version: "Version 3.9.8-0.7b"
 
 #Modifiez le prefix ici
 Prefix: "SeriousRP"
 
 #Messages affichés lors du /seriousrp help
 HelpMsg:
-  Dsrtp: "Pouvoir se teleporter aleatoirement"
-  DTown: "Permet de se teleporter a la ville"
-  DTownSet: "Permet de definir le point de spawn de la ville"
+  Dsrtp: "Pouvoir se téléporter aléatoirement"
+  DTown: "Permet de se téléporter dans la ville"
+  DTownSet: "Permet de définir le point de spawn de la ville"
   DPhone: "Affiche le menu du telephone"
   
   DRevive: "Permet de réanimer un joueur"
   DMedInfo: "Permet de connaître les statistiques d'un joueur"
   
   DHelp: "Affiche l'aide"
-  DVersion: "Connaitre la version du plugin"
+  DVersion: "Connaître la version du plugin"
   
 #Modules du plugin
 NoModule: "Le module n'est pas actif."
+CustomRecipes: true
 RPDeath: false
 Medics: true
 TownSystem: true
@@ -39,27 +40,27 @@ MedInfo:
 
 #Menu du téléphone
 Phone:
-  LorePhone1: "&9Voici votre telephone"
+  LorePhone1: "&9Voici votre téléphone"
   LorePhone2: "&9Clic droit pour l'ouvrir"
-  LorePhone3: "&6Proprietaire :"
+  LorePhone3: "&6Propriétaire :"
 
-  Answer: "&cBientot..."
-  HangUp: "&cBientot..."
+  Answer: "&aDécrocher"
+  HangUp: "&cRaccrocher"
   Shutdown: "&cEteindre"
   
-  You: "&aOui, c'est vous, vous etes beau non ?"
-  Music: "&cBientot..."
+  You: "&aOui, c'est vous, vous êtes beau non ?"
+  Music: "&cBientôt..."
 
   GoToTown: "&aDirection : Ville"
-  YourNumber: "&cBientot..."
+  YourNumber: "&cBientôt..."
 
 #Différents messages du plugin
 Teleports:
-  GoToTown: "Vous avez ete teleporte dans la ville"
-  SetTown: "Vous avez set le spawn de la ville"
+  GoToTown: "Vous avez été téléporté dans la ville"
+  SetTown: "Vous avez défini le spawn de la ville"
   TownWhere: "Le spawn de la ville se trouve en :"
 
-RandomTeleport: "Teleportation a des milliers de blocs !"
+RandomTeleport: "Téléportation à des milliers de blocs !"
 
 Help: "Besoin d'aide ? Tapez /seriousrp help"
 VersionHelp: "Version du plugin ? Tapez /seriousrp version"
