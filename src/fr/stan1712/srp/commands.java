@@ -1,5 +1,6 @@
 package fr.stan1712.srp;
 
+import java.util.Collection;
 import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,7 +27,7 @@ public class commands implements Listener
   
   @EventHandler
   public void onCommandes(PlayerCommandPreprocessEvent e)
-  {
+  {	
     Player p = e.getPlayer();
     String pseudo = p.getDisplayName();
     String msg = e.getMessage();
@@ -41,6 +42,7 @@ public class commands implements Listener
           p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
           p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("Help").replace("&", "§"));
           p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("VersionHelp").replace("&", "§"));
+          p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("DiscordHelp").replace("&", "§"));
           p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
         }
         if (args.length == 2)
@@ -51,14 +53,20 @@ public class commands implements Listener
             p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("Version").replace("&", "§"));
             p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
           }
+          if (args[1].equalsIgnoreCase("discord"))
+          {
+            p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+            p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("Discord").replace("&", "§"));
+            p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+          }
           if (args[1].equalsIgnoreCase("help"))
           {
             p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
             p.sendMessage(ChatColor.GOLD + "❱❱ /srtp = " + this.pl.getConfig().getString("HelpMsg.Dsrtp").replace("&", "§"));
             p.sendMessage(ChatColor.GOLD + "❱❱ /srtown = " + this.pl.getConfig().getString("HelpMsg.DTown").replace("&", "§"));
             p.sendMessage(ChatColor.GOLD + "❱❱ /srtown set = " + this.pl.getConfig().getString("HelpMsg.DTownSet").replace("&", "§"));
+            p.sendMessage(ChatColor.GOLD + "❱❱ /srtown where = " + this.pl.getConfig().getString("HelpMsg.DTownWhere").replace("&", "§"));
             p.sendMessage(ChatColor.GOLD + "❱❱ /mobile = " + this.pl.getConfig().getString("HelpMsg.DPhone").replace("&", "§"));
-            p.sendMessage(ChatColor.GOLD + "❱❱ /phone = " + this.pl.getConfig().getString("HelpMsg.DPhone").replace("&", "§"));
             p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
             p.sendMessage(ChatColor.GOLD + "❱❱ /seriousrp help = " + this.pl.getConfig().getString("HelpMsg.DVersion").replace("&", "§"));
             p.sendMessage(ChatColor.GOLD + "❱❱ /seriousrp version = " + this.pl.getConfig().getString("HelpMsg.DHelp").replace("&", "§"));
@@ -229,6 +237,8 @@ public class commands implements Listener
 	    		double vie = cible.getHealth();
 	    		double faim = cible.getFoodLevel();
 	    		
+	    		Collection<PotionEffect> effects = cible.getActivePotionEffects();
+	    		
 	    		int x = Integer.valueOf(cible.getLocation().getBlockX());
 	    		int y = Integer.valueOf(cible.getLocation().getBlockY());
 	    		int z = Integer.valueOf(cible.getLocation().getBlockZ());
@@ -242,6 +252,8 @@ public class commands implements Listener
 	    			p.sendMessage("§c" + this.pl.getConfig().getString("MedInfo.Health").replace("&", "§") + " " + vie/2 + " " + this.pl.getConfig().getString("MedInfo.Hearts").replace("&", "§"));
 	    		}
 	    		p.sendMessage("§a" + this.pl.getConfig().getString("MedInfo.Food").replace("&", "§") + " " + faim/2 + " / 10");
+	    		p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+	    		p.sendMessage("§a" + this.pl.getConfig().getString("MedInfo.Effects").replace("&", "§") + effects);
 	    		p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 	    		p.sendMessage("§a" + args[1] + " " + this.pl.getConfig().getString("MedInfo.Coordinates").replace("&", "§") + " " + x + ", " + y + ", " + z + " > " + monde);
 	    		p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
