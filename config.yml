@@ -2,7 +2,7 @@
 #+-- Traducteurs : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
 
 #Version du plugin, il ne faut pas la changer !
-Version: "Version 3.9.8-0.7b"
+Version: "Version 3.9.8-1.0b"
 
 #Modifiez le prefix ici
 Prefix: "SeriousRP"
@@ -12,6 +12,7 @@ HelpMsg:
   Dsrtp: "Pouvoir se téléporter aléatoirement"
   DTown: "Permet de se téléporter dans la ville"
   DTownSet: "Permet de définir le point de spawn de la ville"
+  DTownWhere: "Permet de savoir ou se trouve la ville"
   DPhone: "Affiche le menu du telephone"
   
   DRevive: "Permet de réanimer un joueur"
@@ -26,6 +27,7 @@ CustomRecipes: true
 RPDeath: false
 Medics: true
 TownSystem: true
+RPMobile: true
 
 #Messages des medics
 Medic:
@@ -37,6 +39,7 @@ MedInfo:
   Hearts: "coeurs"
   Food: "Nourriture :"
   Coordinates: "est en :"
+  Effects: "Effets"
 
 #Menu du téléphone
 Phone:
@@ -64,6 +67,8 @@ RandomTeleport: "Téléportation à des milliers de blocs !"
 
 Help: "Besoin d'aide ? Tapez /seriousrp help"
 VersionHelp: "Version du plugin ? Tapez /seriousrp version"
+DiscordHelp: "Rejoignez notre discord ! /seriousrp discord"
+Discord: "Notre discord : https://discord.gg/DkQSQa7"
 
 NoPerms: "Vous n'avez pas la permission !"
 
