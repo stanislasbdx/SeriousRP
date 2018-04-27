@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="C:/Users/stani/Documents/spigot-1.11.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/stani/Documents/spigot-1.11.jar"/>
 	<classpathentry kind="lib" path="C:/Users/stani/Documents/spigot-1.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/stani/Downloads/Vault.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
