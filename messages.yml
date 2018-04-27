@@ -1,0 +1,43 @@
+
+		  HelpMsg.Dsrtp", "Pouvoir se téléporter aléatoirement");
+		  HelpMsg.DTown", "Permet de se téléporter dans la ville");
+		  HelpMsg.DTownSet", "Permet de définir le point de spawn de la ville");
+		  HelpMsg.DTownWhere", "Permet de savoir ou se trouve la ville");
+		  HelpMsg.DPhone", "Affiche le menu du telephone");
+		  HelpMsg.DRevive", "Permet de réanimer un joueur");
+		  HelpMsg.DMedInfo", "Permet de connaître les statistiques d'un joueur");
+		  HelpMsg.DHelp", "Affiche l'aide");
+		  HelpMsg.DVersion", "Connaître la version du plugin");
+		  
+		  
+
+		  Medic.Revive", "&aVous avez bien reanimé le joueur");
+		  Medic.Error", "&cn''est pas en ligne ou vous avez mal orthographie son pseudo !");
+		  Medic.NoNeed", "&cLe joueur n''a pas besoin de se faire réanimer");
+		  
+		  
+
+		  MedInfo.Health", "Vie :");
+		  MedInfo.Hearts", "coeurs");
+		  MedInfo.Food", "Nourriture :");
+		  MedInfo.Coordinates", "est en :");
+		  MedInfo.Effects", "Effets");
+		  
+
+
+		  Phone.LorePhone1", "&9Voici votre téléphone");
+		  Phone.LorePhone2", "&9Clic droit pour l''ouvrir");
+		  Phone.LorePhone3", "&6Propriétaire :");
+		  Phone.Answer", "&aDécrocher");
+		  Phone.HangUp", "&cRaccrocher");
+		  Phone.Shutdown", "&cEteindre");
+		  Phone.You", "&aOui, c''est vous, vous êtes beau non ?");
+		  Phone.Music", "&cBientôt...");
+		  Phone.GoToTown", "&aDirection : Ville");
+		  Phone.YourNumber", "&cBientôt...");
+		  
+
+
+		  Teleports.GoToTown", "Vous avez été téléporté dans la ville");
+		  Teleports.SetTown", "Vous avez défini le spawn de la ville");
+		  Teleports.TownWhere", "Le spawn de la ville se trouve en :");
