@@ -1,5 +1,5 @@
 name: SeriousRP
-version: 3.9.8-0.7b
+version: 3.9.8-2.3b
 author: stan1712
 main: fr.stan1712.srp.srp
 commands:
@@ -30,3 +30,6 @@ commands:
  medinfo:
   description: Allow you to know some info about a player
   permission: seriousrp.medinfo
+ srpmobile:
+  description: Op only
+  permission: seriousrp.mobilesee

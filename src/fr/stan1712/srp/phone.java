@@ -92,6 +92,31 @@ public class phone implements Listener {
 				p.updateInventory();
 			};
 		}
+		
+	    if(this.pl.getConfig().getBoolean("TownSystem") == true ) {
+		    if (args[0].equalsIgnoreCase("/srpmobile"))
+		    {
+		      if (p.hasPermission("seriousrp.mobilesee")){
+		    	  Player cible = Bukkit.getPlayer(args[1]);
+		    	  
+		    	  if(cible != null){	
+		    		  p.sendMessage("La personne que vous avez ciblée est : " + cible);
+		    	  }
+	        	  else{
+	        	  	  p.sendMessage(ChatColor.DARK_RED + args[1] + " " + this.pl.getConfig().getString("Medic.Error").replace("&", "§"));
+	        	  }
+		      }
+		      else
+		      {
+		        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+		        p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
+		        p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+		      }
+	      }
+	     }
+	    else {
+				p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("NoModule").replace("&", "§"));
+		}
 	}
 	
 	@EventHandler
