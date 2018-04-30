@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
@@ -30,7 +33,6 @@ public static srp getInstance(){
 	}
 
 FileConfiguration config = getConfig();
-FileConfiguration messages = getConfig();
 
 public void onEnable(){
 		instance = this;
@@ -66,10 +68,10 @@ public void onEnable(){
 		pm.registerEvents(new phone(this), this);
 		pm.registerEvents(new configupdate(this), this);
 		
-		  File messages = new File("plugins/SeriousRP", "messages.yml");
-	      if (!messages.exists()) {
+		  File msg = new File("plugins/SeriousRP", "messages.yml");
+	      if (!msg.exists()) {
 	          try {
-	        	  messages.createNewFile();
+	        	  msg.createNewFile();
 	          } catch (IOException e) {
 	              e.printStackTrace();
 	          }
@@ -82,6 +84,7 @@ public void onEnable(){
 	              e.printStackTrace();
 	          }
 	      }
+	      
 	    saveConfig();
 		
 	    if(getConfig().getBoolean("CustomRecipes") == true) {
