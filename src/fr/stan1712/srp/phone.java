@@ -14,7 +14,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,7 +25,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class phone implements Listener {
 	
-	  @SuppressWarnings("unused")
+	@SuppressWarnings("unused")
 	private FileConfiguration config;
 	  private srp pl;
 	  
@@ -37,34 +36,12 @@ public class phone implements Listener {
 	  }
 	
 	@EventHandler
-	public void onJoin(PlayerJoinEvent event){
-		
-		Player p = event.getPlayer();
-		
-		ItemStack phone = new ItemStack(Material.END_CRYSTAL, 1);
-		ItemMeta customM = phone.getItemMeta();
-		customM.setDisplayName("§bTéléphone");
-		customM.setLore(Arrays.asList(this.pl.getConfig().getString("Phone.LorePhone1").replace("&", "§"),this.pl.getConfig().getString("Phone.LorePhone2").replace("&", "§"),this.pl.getConfig().getString("Phone.LorePhone3").replace("&", "§")+" "+p.getDisplayName()));
-		customM.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
-		phone.setItemMeta(customM);
-		
-		if(p.getInventory().contains(phone) == true){
-			p.sendMessage("Vous avez déjà un téléphone !");
-			System.out.println("[SeriousRP] "+ p.getName() + " already got a phone, no need to give him another.");
-		}
-		else{
-			p.getInventory().addItem(phone);
-			p.updateInventory();
-		};
-	}
-	
-	@EventHandler
 	public void onCommandes(PlayerCommandPreprocessEvent e){
 		Player p = e.getPlayer();
 		String msg = e.getMessage();
 		String[] args = msg.split(" ");
 		
-		ItemStack phone = new ItemStack(Material.END_CRYSTAL, 1);
+		ItemStack phone = new ItemStack(Material.WATCH, 1);
 		ItemMeta customM = phone.getItemMeta();
 		customM.setDisplayName("§bTéléphone");
 		customM.setLore(Arrays.asList(this.pl.getConfig().getString("Phone.LorePhone1").replace("&", "§"),this.pl.getConfig().getString("Phone.LorePhone2").replace("&", "§"),this.pl.getConfig().getString("Phone.LorePhone3").replace("&", "§")+" "+p.getDisplayName()));
@@ -115,6 +92,31 @@ public class phone implements Listener {
 				p.updateInventory();
 			};
 		}
+		
+	    if(this.pl.getConfig().getBoolean("TownSystem") == true ) {
+		    if (args[0].equalsIgnoreCase("/srpmobile"))
+		    {
+		      if (p.hasPermission("seriousrp.mobilesee")){
+		    	  Player cible = Bukkit.getPlayer(args[1]);
+		    	  
+		    	  if(cible != null){	
+		    		  p.sendMessage("La personne que vous avez ciblée est : " + cible);
+		    	  }
+	        	  else{
+	        	  	  p.sendMessage(ChatColor.DARK_RED + args[1] + " " + this.pl.getConfig().getString("Medic.Error").replace("&", "§"));
+	        	  }
+		      }
+		      else
+		      {
+		        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+		        p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
+		        p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+		      }
+	      }
+	     }
+	    else {
+				p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("NoModule").replace("&", "§"));
+		}
 	}
 	
 	@EventHandler
@@ -125,7 +127,7 @@ public class phone implements Listener {
 		
 		if(it == null) return;
 		
-		if(it.getType() == Material.END_CRYSTAL && it.hasItemMeta() && it.getItemMeta().hasDisplayName() && it.getItemMeta().getDisplayName().equalsIgnoreCase("§bTéléphone")){
+		if(it.getType() == Material.WATCH && it.hasItemMeta() && it.getItemMeta().hasDisplayName() && it.getItemMeta().getDisplayName().equalsIgnoreCase("§bTéléphone")){
 			if(action == Action.RIGHT_CLICK_AIR){
 				
 				Inventory inv = Bukkit.createInventory(null, 36, "§bTéléphone de "+p.getDisplayName());
@@ -181,15 +183,15 @@ public class phone implements Listener {
 			
 			event.setCancelled(true);
 			
-			//if(current.getType() == Material.EMERALD_BLOCK){
-			//	p.closeInventory();
-			//	p.sendMessage("§bVous avez §adécroché");
-			//}
+			if(current.getType() == Material.EMERALD_BLOCK){
+				p.closeInventory();
+				p.performCommand("phone answer");
+			}
 			
-			//if(current.getType() == Material.REDSTONE_BLOCK){
-			//	p.closeInventory();
-			//	p.sendMessage("§bVous avez §craccroché");
-			//}
+			if(current.getType() == Material.REDSTONE_BLOCK){
+				p.closeInventory();
+				p.performCommand("phone end");
+			}
 			
 			if(current.getType() == Material.BARRIER){
 				p.closeInventory();

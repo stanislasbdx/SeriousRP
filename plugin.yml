@@ -1,5 +1,5 @@
 name: SeriousRP
-version: 3.9.7
+version: 3.9.8-3.0g
 author: stan1712
 main: fr.stan1712.srp.srp
 commands:
@@ -18,9 +18,18 @@ commands:
  srtown:
   description: Teleports you to the town
   permission: seriousrp.tptown
- chat:
-  description: Blablabla
-  permission: seriousrp.chat
  mobile:
   description: Allow you to give a phone
   permission: seriousrp.givephone
+ revive:
+  description: Allow you to revive a player
+  permission: seriousrp.medicrevive
+ hrprevive:
+  description: Allow you to revive a player HRP
+  permission: seriousrp.medichrp
+ medinfo:
+  description: Allow you to know some info about a player
+  permission: seriousrp.medinfo
+ srpmobile:
+  description: Op only
+  permission: seriousrp.mobilesee

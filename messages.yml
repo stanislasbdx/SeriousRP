@@ -1,0 +1,39 @@
+HelpMsg:
+ Dsrtp: "Pouvoir se téléporter aléatoirement"
+ DTown: "Permet de se téléporter dans la ville"
+ DTownSet: "Permet de définir le point de spawn de la ville"
+ DTownWhere: "Permet de savoir ou se trouve la ville"
+ DPhone: "Affiche le menu du telephone"
+ DRevive: "Permet de réanimer un joueur"
+ DMedInfo: "Permet de connaître les statistiques d'un joueur"
+ DHelp: "Affiche l'aide"
+ DVersion: "Connaître la version du plugin"
+		  
+Medic	  
+ Revive: "&aVous avez bien reanimé le joueur"
+ Error: "&cn''est pas en ligne ou vous avez mal orthographie son pseudo !"
+ NoNeed: "&cLe joueur n''a pas besoin de se faire réanimer"
+		  
+MedInfo
+ Health: "Vie :"
+ Hearts: "coeurs"
+ Food: "Nourriture :"
+ Coordinates: "est en :"
+ Effects: "Effets"
+		  
+Phone
+ LorePhone1: "&9Voici votre téléphone"
+ LorePhone2: "&9Clic droit pour l''ouvrir"
+ LorePhone3: "&6Propriétaire :"
+ Answer: "&aDécrocher"
+ HangUp: "&cRaccrocher"
+ Shutdown: "&cEteindre"
+ You: "&aOui, c''est vous, vous êtes beau non ?"
+ Music: "&cBientôt..."
+ GoToTown: "&aDirection : Ville"
+ YourNumber: "&cBientôt..."
+
+Teleports
+ GoToTown: "Vous avez été téléporté dans la ville"
+ SetTown: "Vous avez défini le spawn de la ville"
+ TownWhere: "Le spawn de la ville se trouve en :"
