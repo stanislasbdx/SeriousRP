@@ -2,7 +2,8 @@
 #+-- Traducteurs : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
 
 #Version du plugin, il ne faut pas la changer !
-Version: "Version 3.9.8-1.0b"
+Version: "Version 3.9.8-3.0g"
+ConfigFix: true
 
 #Modifiez le prefix ici
 Prefix: "SeriousRP"
