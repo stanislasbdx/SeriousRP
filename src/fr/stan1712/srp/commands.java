@@ -253,7 +253,7 @@ public class commands implements Listener
 	    		}
 	    		p.sendMessage("§a" + this.pl.getConfig().getString("MedInfo.Food").replace("&", "§") + " " + faim/2 + " / 10");
 	    		p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-	    		p.sendMessage("§a" + this.pl.getConfig().getString("MedInfo.Effects").replace("&", "§") + effects);
+	    		p.sendMessage("§a" + this.pl.getConfig().getString("MedInfo.Effects").replace("&", "§") + " " + effects);
 	    		p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 	    		p.sendMessage("§a" + args[1] + " " + this.pl.getConfig().getString("MedInfo.Coordinates").replace("&", "§") + " " + x + ", " + y + ", " + z + " > " + monde);
 	    		p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
