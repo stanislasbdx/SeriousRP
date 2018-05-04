@@ -14,13 +14,12 @@ HelpMsg:
   DTown: "Permet de se téléporter dans la ville"
   DTownSet: "Permet de définir le point de spawn de la ville"
   DTownWhere: "Permet de savoir ou se trouve la ville"
-  DPhone: "Affiche le menu du telephone"
-  
-  DRevive: "Permet de réanimer un joueur"
-  DMedInfo: "Permet de connaître les statistiques d'un joueur"
-  
+  DPhone: "Affiche le menu du telephone"  
   DHelp: "Affiche l'aide"
   DVersion: "Connaître la version du plugin"
+  DRevive: Réanime et soigne un joueur
+  DMedinfo: Permet de savoir l'etat de santé d'un joueur
+  DHRRevive: Vous réanime et vous soigne
   
 #Modules du plugin
 NoModule: "Le module n'est pas actif."
