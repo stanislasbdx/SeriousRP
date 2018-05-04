@@ -1,0 +1,59 @@
+# SeriousRP | Owner : stan1712 
+# Traductors : ErHak_ / legaming04 -> https://github.com/stan1712/SeriousRP/wiki/Translations 
+# Our Discord : https://discord.gg/DkQSQa7
+Version: "Version 3.9.7"
+ConfigFix: false
+Prefix: SeriousRP
+HelpMsg:
+  Dsrtp: "Possibilità di teletrasportarsi a caso"
+  DTown: "Consente di teletrasmettere alla citta"
+  DTownSet: "Consente di definire il punto di spawn della citta"
+  DTownWhere: "ti consente di sapere dove si trova la città"
+  DPhone: "Mostra il menu del telefono"
+  DRevive: "Consente di far rianimato un giocatore"
+  DMedInfo: "Ti consente di conoscere le statistiche di un giocatore"
+  DHelp: "Visualizza l'aiuto"
+  DVersion: "Conosci la versione del plugin"
+NoModule: "Il modulo e offline."
+CustomRecipes: true
+RPDeath: false
+Medics: true
+TownSystem: true
+RPMobile: true
+Medic:
+  Revive: "&aHai rianimato il giocatore"
+  Error: "&cnon è online o hai falsificato il suo soprannome!"
+  NoNeed: "&cIl giocatore non ha bisogno di rianimato"
+MedInfo:
+  Health: "vita:"
+  Hearts: cuori
+  Food: cibo
+  Coordinates: "è in:"
+  Effects: effetti
+Phone:
+  LorePhone1: "&9Ecco il tuo telefono"
+  LorePhone2: "&9Fare clic con il tasto destro per aprirlo"
+  LorePhone3: "&Proprietario :"
+  Answer: "&cPresto..."
+  HangUp: "&cPresto..."
+  Shutdown: "&cSpegnere"
+  You: "&ae si, questo sei tu, sei bello non e vero?"
+  Music: "&cPresto..."
+  GoToTown: "&aDirezione la cita"
+  YourNumber: "&cSoon..."
+Teleports:
+  GoToTown: "Sei stato teleporte in citta"
+  SetTown: "Hai definito la spawn della citta"
+  TownWhere: "La spawn della citta e in:"
+RandomTeleport: "La teletraspoto ha migliaia di biocchi !"
+Help: "Hai bisogno di aiuto? Scrivi / aiuto seriousrp"
+VersionHelp: "Versione di plugin ? Tipo /seriousrp version"
+DiscordHelp: "Unisciti alla nostra discordia! /seriousrp discord"
+Discord: "Nostro discord https://discord.gg/DkQSQa7"
+NoPerms: "Non hai il permesso !"
+Locations:
+  Town:
+    x: 0
+    y: 0
+    z: 0
+    WorldName: world
