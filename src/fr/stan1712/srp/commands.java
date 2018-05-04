@@ -39,53 +39,44 @@ public class commands implements Listener
       {
         if (args.length == 1)
         {
-          p.sendMessage(ChatColor.AQUA + "+----- ♖ " + pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-          p.sendMessage(ChatColor.GOLD + "❱❱ " + pl.getConfig().getString("Help").replace("&", "§"));
-          p.sendMessage(ChatColor.GOLD + "❱❱ " + pl.getConfig().getString("VersionHelp").replace("&", "§"));
-          p.sendMessage(ChatColor.GOLD + "❱❱ " + pl.getConfig().getString("DiscordHelp").replace("&", "§"));
+          p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+          p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("Help").replace("&", "§"));
+          p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("VersionHelp").replace("&", "§"));
+          p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("DiscordHelp").replace("&", "§"));
           p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
         }
         if (args.length == 2)
         {
           if (args[1].equalsIgnoreCase("version"))
           {
-            p.sendMessage(ChatColor.AQUA + "+----- ♖ " + pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-            p.sendMessage(ChatColor.GOLD + "❱❱ " + pl.getConfig().getString("Version").replace("&", "§"));
+            p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+            p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("Version").replace("&", "§"));
             p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
           }
           if (args[1].equalsIgnoreCase("discord"))
           {
-            p.sendMessage(ChatColor.AQUA + "+----- ♖ " + pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-            p.sendMessage(ChatColor.GOLD + "❱❱ " + pl.getConfig().getString("Discord").replace("&", "§"));
+            p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+            p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("Discord").replace("&", "§"));
             p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
           }
           if (args[1].equalsIgnoreCase("help"))
           {
-            p.sendMessage(ChatColor.AQUA + "+----- ♖ " + pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-            p.sendMessage(ChatColor.GOLD + "❱❱ /srtp = " + pl.getConfig().getString("HelpMsg.Dsrtp").replace("&", "§"));
-            if(this.pl.getConfig().getBoolean("TownSystem") == true ) {
-                p.sendMessage(ChatColor.GOLD + "❱❱ /srtown = " + pl.getConfig().getString("HelpMsg.DTown").replace("&", "§"));
-                p.sendMessage(ChatColor.GOLD + "❱❱ /srtown set = " + pl.getConfig().getString("HelpMsg.DTownSet").replace("&", "§"));
-                p.sendMessage(ChatColor.GOLD + "❱❱ /srtown where = " + pl.getConfig().getString("HelpMsg.DTownWhere").replace("&", "§"));
-            }
-            if(this.pl.getConfig().getBoolean("RPMobile") == true ) {
-            	p.sendMessage(ChatColor.GOLD + "❱❱ /mobile = " + pl.getConfig().getString("HelpMsg.DPhone").replace("&", "§"));	
-            }
-            if(this.pl.getConfig().getBoolean("Medics") == true ) {
-            	p.sendMessage(ChatColor.GOLD + "❱❱ /revive <player> = " + pl.getConfig().getString("HelpMsg.DPhone").replace("&", "§"));
-            	p.sendMessage(ChatColor.GOLD + "❱❱ /hrprevive = " + pl.getConfig().getString("HelpMsg.DPhone").replace("&", "§"));
-            	p.sendMessage(ChatColor.GOLD + "❱❱ /medinfo <player> = " + pl.getConfig().getString("HelpMsg.DPhone").replace("&", "§"));
-            }
+            p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+            p.sendMessage(ChatColor.GOLD + "❱❱ /srtp = " + this.pl.getConfig().getString("HelpMsg.Dsrtp").replace("&", "§"));
+            p.sendMessage(ChatColor.GOLD + "❱❱ /srtown = " + this.pl.getConfig().getString("HelpMsg.DTown").replace("&", "§"));
+            p.sendMessage(ChatColor.GOLD + "❱❱ /srtown set = " + this.pl.getConfig().getString("HelpMsg.DTownSet").replace("&", "§"));
+            p.sendMessage(ChatColor.GOLD + "❱❱ /srtown where = " + this.pl.getConfig().getString("HelpMsg.DTownWhere").replace("&", "§"));
+            p.sendMessage(ChatColor.GOLD + "❱❱ /mobile = " + this.pl.getConfig().getString("HelpMsg.DPhone").replace("&", "§"));
             p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-            p.sendMessage(ChatColor.GOLD + "❱❱ /seriousrp help = " + pl.getConfig().getString("HelpMsg.DVersion").replace("&", "§"));
-            p.sendMessage(ChatColor.GOLD + "❱❱ /seriousrp version = " + pl.getConfig().getString("HelpMsg.DHelp").replace("&", "§"));
+            p.sendMessage(ChatColor.GOLD + "❱❱ /seriousrp help = " + this.pl.getConfig().getString("HelpMsg.DVersion").replace("&", "§"));
+            p.sendMessage(ChatColor.GOLD + "❱❱ /seriousrp version = " + this.pl.getConfig().getString("HelpMsg.DHelp").replace("&", "§"));
             p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
           }
         }
       }
       else
       {
-        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
         p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
         p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
       }
@@ -95,8 +86,8 @@ public class commands implements Listener
       if (p.hasPermission("seriousrp.random"))
       {
         Random r = new Random();
-        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-        p.sendMessage(ChatColor.GOLD + "❱❱ " + pl.getConfig().getString("RandomTeleport").replace("&", "§"));
+        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+        p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("RandomTeleport").replace("&", "§"));
         p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 
 	    p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 50, 100));
@@ -118,39 +109,39 @@ public class commands implements Listener
       }
       else
       {
-        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
         p.sendMessage(ChatColor.RED + "❱❱ Vous n'avez pas la permission !");
         p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
       }
     }
-    if(pl.getConfig().getBoolean("TownSystem") == true ) {
+    if(this.pl.getConfig().getBoolean("TownSystem") == true ) {
 	    if (args[0].equalsIgnoreCase("/srtown"))
 	    {
 	      if ((p.hasPermission("seriousrp.tptown")) && 
 	        (args.length == 1))
 	      {
-	        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-	        p.sendMessage(ChatColor.GOLD + "❱❱ " + pl.getConfig().getString("Teleports.GoToTown").replace("&", "§"));
+	        p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+	        p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("Teleports.GoToTown").replace("&", "§"));
 	        p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 	        
-	        double x = pl.getConfig().getDouble("Locations.Town.x");
-	        double y = pl.getConfig().getDouble("Locations.Town.y");
-	        double z = pl.getConfig().getDouble("Locations.Town.z");
-	        String monde = pl.getConfig().getString("Locations.Town.WorldName");
+	        double x = this.pl.getConfig().getDouble("Locations.Town.x");
+	        double y = this.pl.getConfig().getDouble("Locations.Town.y");
+	        double z = this.pl.getConfig().getDouble("Locations.Town.z");
+	        String monde = this.pl.getConfig().getString("Locations.Town.WorldName");
 	        World world = Bukkit.getWorld(monde);
 	        
 	        p.teleport(new Location(world, x, y, z));
 	      }
 	      if (p.hasPermission("seriousrp.townset")){
 			    if ((args.length == 2) && (args[1].equalsIgnoreCase("set"))){
-			      p.sendMessage(ChatColor.AQUA + "+----- ♖ " + pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-			      p.sendMessage(ChatColor.GOLD + "❱❱ " + pl.getConfig().getString("Teleports.SetTown").replace("&", "§"));
+			      p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+			      p.sendMessage(ChatColor.GOLD + "❱❱ " + this.pl.getConfig().getString("Teleports.SetTown").replace("&", "§"));
 			      p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 			      
-			      config.set("Locations.Town.x", Integer.valueOf(p.getLocation().getBlockX()));
-			      config.set("Locations.Town.y", Integer.valueOf(p.getLocation().getBlockY()));
-			      config.set("Locations.Town.z", Integer.valueOf(p.getLocation().getBlockZ()));
-			      config.set("Locations.Town.WorldName", p.getWorld().getName());
+			      this.config.set("Locations.Town.x", Integer.valueOf(p.getLocation().getBlockX()));
+			      this.config.set("Locations.Town.y", Integer.valueOf(p.getLocation().getBlockY()));
+			      this.config.set("Locations.Town.z", Integer.valueOf(p.getLocation().getBlockZ()));
+			      this.config.set("Locations.Town.WorldName", p.getWorld().getName());
 			      this.pl.saveConfig();
 			    }
 	      }
