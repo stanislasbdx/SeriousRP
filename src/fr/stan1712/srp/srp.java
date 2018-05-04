@@ -24,32 +24,32 @@ FileConfiguration config = getConfig();
 public void onEnable(){
 		instance = this;
 		
-		System.out.println("[SeriousRP] #------------#");
-		System.out.println("[SeriousRP] SeriousRP "+getConfig().getString("Version").replace("&", "§"));
+		System.out.println("[SeriousRP] #------ SRP ------#");
+		System.out.println("[SeriousRP] SeriousRP " + getConfig().getString("Version").replace("&", "§"));
 		System.out.println("[SeriousRP] Boot sequence launched");
 		if(getConfig().getBoolean("RPDeath") == true) {
-			System.out.println("[SeriousRP] RealDeath module activated");
+			System.out.println("[SeriousRP] >> Roleplay Deaths << module activated");
 		}
 		if(getConfig().getBoolean("Medics") == true) {
-			System.out.println("[SeriousRP] Medics module activated");
+			System.out.println("[SeriousRP] >> Medics System << module activated");
 		}
 		if(getConfig().getBoolean("TownSystem") == true) {
-			System.out.println("[SeriousRP] Town module activated");
+			System.out.println("[SeriousRP] >> Town System << module activated");
 		}
 		if(getConfig().getBoolean("CustomRecipes") == true) {
-			System.out.println("[SeriousRP] Custom recipes module activated");
+			System.out.println("[SeriousRP] >> Custom Recipes << module activated");
 		}
 		if(getConfig().getBoolean("RPMobile") == true) {
-			System.out.println("[SeriousRP] Roleplay Mobile module activated");
+			System.out.println("[SeriousRP] >> Roleplay Mobile << module activated");
 		}
-		System.out.println("[SeriousRP] All classes are loaded !");
-		System.out.println("[SeriousRP] Config file up and runnning !");
-		System.out.println("[SeriousRP] #------------#");
+		System.out.println("[SeriousRP] All classes have been loaded");
+
 		
 		File config = new File("plugins/SeriousRP", "config.yml");
 		if (!config.exists()) {
 			try {
 				config.createNewFile();
+				System.out.println("[SeriousRP] Config created !");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -65,6 +65,9 @@ public void onEnable(){
 		pm.registerEvents(new configupdate(this), this);
 		
 	    saveConfig();
+	    
+		System.out.println("[SeriousRP] Config file up and runnning !");
+		System.out.println("[SeriousRP] #------ SRP ------#");
 		
 	    if(getConfig().getBoolean("CustomRecipes") == true) {
 			ShapedRecipe saddle =  new ShapedRecipe(new ItemStack(Material.SADDLE, 1));
@@ -119,21 +122,21 @@ public void onDisable(){
 		System.out.println("[SeriousRP] SeriousRP "+getConfig().getString("Version").replace("&", "§"));
 		System.out.println("[SeriousRP] Shutdown sequence launched");
 		if(getConfig().getBoolean("RPDeath") == true) {
-			System.out.println("[SeriousRP] RealDeath module deactivated");
+			System.out.println("[SeriousRP] >> Roleplay Deaths << module deactivated");
 		}
 		if(getConfig().getBoolean("Medics") == true) {
-			System.out.println("[SeriousRP] Medics module deactivated");
+			System.out.println("[SeriousRP] >> Medics System << module deactivated");
 		}
 		if(getConfig().getBoolean("TownSystem") == true) {
-			System.out.println("[SeriousRP] Town module deactivated");
+			System.out.println("[SeriousRP] >> Town System << deactivated");
 		}
 		if(getConfig().getBoolean("CustomRecipes") == true) {
-			System.out.println("[SeriousRP] Custom recipes module deactivated");
+			System.out.println("[SeriousRP] >> Custom recipes << module deactivated");
 		}
 		if(getConfig().getBoolean("RPMobile") == true) {
-			System.out.println("[SeriousRP] Roleplay Mobile module deactivated");
+			System.out.println("[SeriousRP] >> Roleplay Mobile << module deactivated");
 		}
-		System.out.println("[SeriousRP] Classes disabled");
+		System.out.println("[SeriousRP] All classes have been disabled");
 		System.out.println("[SeriousRP] #------------#");
 	}
 }
