@@ -1,4 +1,6 @@
----
+# SeriousRP | Owner : stan1712 
+# Traductors : ErHak_ / legaming04 -> https://github.com/stan1712/SeriousRP/wiki/Translations 
+# Our Discord : https://discord.gg/DkQSQa7
 Version: "Version 3.9.8-3.0g"
 ConfigFix: false
 Prefix: SeriousRP
@@ -54,7 +56,6 @@ NoPerms: "Du hast die Erlaubnis nicht"
 Locations:
   Town:
     x: 0
-    ? "y"
-    : 0
+    y: 0
     z: 0
     WorldName: world
