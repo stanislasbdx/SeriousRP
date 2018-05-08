@@ -5,25 +5,25 @@ import org.bukkit.event.Listener;
 
 public class configupdate implements Listener {
 	
-	private srp pl;
+	private Main pl;
 	
 	private void versionupdate() {		  
 		FileConfiguration config = pl.getConfig();
 		pl.getConfig();
 		  
-		config.set("Version", "Version 3.9.8-3.0g"); //Changement de version du plugin
+		config.set("Version", "Version 3.9.8-3.6b"); //Changement de version du plugin
 	}
 	
 	private void newaddings() {		  
 		FileConfiguration config = pl.getConfig();
 		pl.getConfig();
 		  
-		config.set("HelpMsg.DRevive", "Réanime et soigne un joueur");
-		config.set("HelpMsg.DMedinfo", "Permet de savoir l'etat de santé d'un joueur");
-		config.set("HelpMsg.DHRRevive", "Vous réanime et vous soigne");
+		config.set("HelpMsg.DRevive", "RÃ©anime et soigne un joueur");
+		config.set("HelpMsg.DMedinfo", "Permet de savoir l'etat de santÃ© d'un joueur");
+		config.set("HelpMsg.DHRRevive", "Vous rÃ©anime et vous soigne");
 	}
 	
-	public configupdate(srp pl)
+	public configupdate(Main pl)
 	  {
 		  this.pl = pl;
 		  FileConfiguration config = pl.getConfig();

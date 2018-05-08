@@ -14,9 +14,9 @@ import org.bukkit.potion.PotionEffectType;
 
 public class deaths implements Listener {
 	
-	  private srp pl;
+	  private Main pl;
 	  
-	  public deaths(srp pl)
+	  public deaths(Main pl)
 	  {
 	    this.pl = pl;
 	  }

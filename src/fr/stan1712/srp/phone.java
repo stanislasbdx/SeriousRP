@@ -27,9 +27,9 @@ public class phone implements Listener {
 	
 	@SuppressWarnings("unused")
 	private FileConfiguration config;
-	  private srp pl;
+	  private Main pl;
 	  
-	  public phone(srp pl)
+	  public phone(Main pl)
 	  {
 	    this.pl = pl;
 	    this.config = pl.getConfig();

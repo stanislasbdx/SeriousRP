@@ -17,9 +17,9 @@ import org.bukkit.potion.PotionEffectType;
 public class commands implements Listener
 {
   private FileConfiguration config;
-  private srp pl;
+  private Main pl;
   
-  public commands(srp pl)
+  public commands(Main pl)
   {
     this.pl = pl;
     this.config = pl.getConfig();
