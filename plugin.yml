@@ -1,7 +1,8 @@
 name: SeriousRP
-version: 3.9.8-3.0g
+version: 3.9.8-3.6b
 author: stan1712
-main: fr.stan1712.srp.srp
+website: http://www.stan1712.fr
+main: fr.stan1712.srp.Main
 commands:
  seriousrp:
   description: Show the main menu
@@ -30,6 +31,3 @@ commands:
  medinfo:
   description: Allow you to know some info about a player
   permission: seriousrp.medinfo
- srpmobile:
-  description: Op only
-  permission: seriousrp.mobilesee
