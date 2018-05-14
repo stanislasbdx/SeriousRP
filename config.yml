@@ -22,12 +22,14 @@ HelpMsg:
   DHRRevive: Vous réanime et vous soigne
   
 #Modules du plugin
-NoModule: "Le module n'est pas actif."
-CustomRecipes: true
-RPDeath: false
-Medics: true
-TownSystem: true
-RPMobile: true
+Modules:
+  NoModule: "Le module n'est pas actif."
+  CustomRecipes: true
+  RPDeath: false
+  Medics: true
+  TownSystem: true
+  RPMobile: true
+  Chairs: true
 
 #Messages des medics
 Medic:
