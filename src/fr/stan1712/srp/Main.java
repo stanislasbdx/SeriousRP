@@ -2,10 +2,12 @@ package fr.stan1712.srp;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
@@ -21,6 +23,7 @@ public static Main getInstance(){
 	}
 
 FileConfiguration config = getConfig();
+public HashMap<String, ArmorStand> ass = new HashMap<String, ArmorStand>();
 
 public boolean isLatest()
 {
@@ -70,7 +73,7 @@ public void onEnable(){
 		instance = this;
 		
 		System.out.println("[SeriousRP] #------ ------#");
-		System.out.println("[SeriousRP] SeriousRP " + getConfig().getString("Version").replace("&", "§"));
+		System.out.println("[SeriousRP] SeriousRP " + getConfig().getString("Version").replace("&", "�"));
 		System.out.println("[SeriousRP] Boot sequence launched");
 
 		System.out.println("[SeriousRP] ");
@@ -90,6 +93,9 @@ public void onEnable(){
 		}
 		if(getConfig().getBoolean("RPMobile") == true) {
 			System.out.println("[SeriousRP] Roleplay Mobile module activated");
+		}
+		if (getConfig().getBoolean("Chairs") == true) {
+			System.out.println("[SeriousRP] Chairs module activated");
 		}
 		
 
@@ -181,14 +187,14 @@ public void onEnable(){
 			gunpowder.setIngredient('R', Material.REDSTONE);
 			gunpowder.setIngredient('S', Material.SUGAR);
 			getServer().addRecipe(gunpowder);
-	    }
+		}
 	}
 
 public void onDisable(){
 		PluginManager pm = getServer().getPluginManager();
 
 		System.out.println("[SeriousRP] #------ ------#");
-		System.out.println("[SeriousRP] SeriousRP " + getConfig().getString("Version").replace("&", "§"));
+		System.out.println("[SeriousRP] SeriousRP " + getConfig().getString("Version").replace("&", "�"));
 		System.out.println("[SeriousRP] Shutdown sequence launched");
 
 		System.out.println("[SeriousRP] ");
@@ -207,6 +213,9 @@ public void onDisable(){
 		}
 		if(getConfig().getBoolean("RPMobile") == true) {
 			System.out.println("[SeriousRP] Roleplay Mobile module deactivated");
+		}
+		if (getConfig().getBoolean("Chairs") == true) {
+			System.out.println("[SeriousRP] Chairs module deactivated");
 		}
 
 		System.out.println("[SeriousRP] All classes have been disabled");
