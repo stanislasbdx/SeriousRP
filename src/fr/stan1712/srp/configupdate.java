@@ -11,13 +11,27 @@ public class configupdate implements Listener {
 		FileConfiguration config = pl.getConfig();
 		pl.getConfig();
 		  
-		config.set("Version", "Version 3.9.8-3.6b"); //Changement de version du plugin
+		config.set("Version", "Version 3.9.8-3.8b"); //Changement de version du plugin
 	}
 	
 	private void newaddings() {		  
 		FileConfiguration config = pl.getConfig();
 		pl.getConfig();
 		  
+		config.createSection("Modules");
+		config.set("Modules.NoModule", "Le module n'est pas actif.");
+		config.set("Modules.CustomRecipes", true);
+		config.set("Modules.RPDeath", false);
+		config.set("Modules.Medics", true);
+		config.set("Modules.TownSystem", true);
+		config.set("Modules.RPMobile", true);
+		config.set("Modules.Chairs", true);
+
+		config.createSection("heal");
+		config.set("heal.checkRate", 20);
+		config.set("heal.amount", 1);
+		config.set("heal.enabled", true);
+
 		config.set("HelpMsg.DRevive", "Réanime et soigne un joueur");
 		config.set("HelpMsg.DMedinfo", "Permet de savoir l'etat de santé d'un joueur");
 		config.set("HelpMsg.DHRRevive", "Vous réanime et vous soigne");
