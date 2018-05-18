@@ -8,25 +8,32 @@ ConfigFix: true
 #Modifiez le prefix ici
 Prefix: "SeriousRP"
 
-#Messages affichés lors du /seriousrp help
+#
+# SI JE MEURT ICI RAPPELLE TOI QUE A TON REVEIL IL FAUT QUE
+# TU NETTOIE LE CODE ET IL FAUT L'INDENTER AUSSI !
+# Bonne nuit Stan :)
+#
+
+#Messages affiches lors du /seriousrp help
 HelpMsg:
-  Dsrtp: "Pouvoir se téléporter aléatoirement"
-  DTown: "Permet de se téléporter dans la ville"
-  DTownSet: "Permet de définir le point de spawn de la ville"
+  Dsrtp: "Pouvoir se teleporter aleatoirement"
+  DTown: "Permet de se teleporter dans la ville"
+  DTownSet: "Permet de definir le point de spawn de la ville"
   DTownWhere: "Permet de savoir ou se trouve la ville"
   DPhone: "Affiche le menu du telephone"  
   DHelp: "Affiche l'aide"
   DVersion: "Connaître la version du plugin"
-  DRevive: Réanime et soigne un joueur
-  DMedinfo: Permet de savoir l'etat de santé d'un joueur
-  DHRRevive: Vous réanime et vous soigne
+  DRevive: "Reanime et soigne un joueur"
+  DMedinfo: "Permet de savoir l'etat de sante d'un joueur"
+  DHRPRevive: "Vous reanime et vous soigne"
   
 #Modules du plugin
 Modules:
   NoModule: "Le module n'est pas actif."
+  Error: "Une erreur a ete trouvee ! Regardez la console ainsi que votre fichier 'config.yml'"
   CustomRecipes: true
-  RPDeath: false
-  Medics: true
+  RPDeath: true
+  Medics: false
   TownSystem: true
   RPMobile: true
   Chairs: true
@@ -35,7 +42,7 @@ Modules:
 Medic:
   Revive: "&aVous avez bien reanime le joueur"
   Error: "&cn'est pas en ligne ou vous avez mal orthographie son pseudo !"
-  NoNeed: "&cLe joueur n'a pas besoin de se faire réanimer"
+  NoNeed: "&cLe joueur n'a pas besoin de se faire reanimer"
 MedInfo:
   Health: "Vie :"
   Hearts: "coeurs"
@@ -43,13 +50,13 @@ MedInfo:
   Coordinates: "est en :"
   Effects: "Effets"
 
-#Menu du téléphone
+#Menu du telephone
 Phone:
-  LorePhone1: "&9Voici votre téléphone"
+  LorePhone1: "&9Voici votre telephone"
   LorePhone2: "&9Clic droit pour l'ouvrir"
-  LorePhone3: "&6Propriétaire :"
+  LorePhone3: "&6Proprietaire :"
 
-  Answer: "&aDécrocher"
+  Answer: "&aDecrocher"
   HangUp: "&cRaccrocher"
   Shutdown: "&cEteindre"
   
@@ -59,13 +66,13 @@ Phone:
   GoToTown: "&aDirection : Ville"
   YourNumber: "&cBientôt..."
 
-#Différents messages du plugin
+#Differents messages du plugin
 Teleports:
-  GoToTown: "Vous avez été téléporté dans la ville"
-  SetTown: "Vous avez défini le spawn de la ville"
+  GoToTown: "Vous avez ete teleporte dans la ville"
+  SetTown: "Vous avez defini le spawn de la ville"
   TownWhere: "Le spawn de la ville se trouve en :"
 
-RandomTeleport: "Téléportation à des milliers de blocs !"
+RandomTeleport: "Teleportation a des milliers de blocs !"
 
 Help: "Besoin d'aide ? Tapez /seriousrp help"
 VersionHelp: "Version du plugin ? Tapez /seriousrp version"

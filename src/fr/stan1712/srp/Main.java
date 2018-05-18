@@ -2,12 +2,10 @@ package fr.stan1712.srp;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
@@ -23,23 +21,23 @@ public static Main getInstance(){
 	}
 
 FileConfiguration config = getConfig();
-public HashMap<String, ArmorStand> ass = new HashMap<String, ArmorStand>();
 
-public boolean isLatest()
-{
-	if(Bukkit.getServer().getVersion().contains("1.12")){
-		System.out.println("[SeriousRP] Server version : 1.12");
+String version = Bukkit.getServer().getVersion();
+
+public boolean isLatest(){
+	if(version.contains("1.12")){
+		System.out.println("[SeriousRP] Server version : " + version);
 		System.out.println("[SeriousRP] Version check !");
 	}
-	else if(Bukkit.getServer().getVersion().contains("1.11")){
-		System.out.println("[SeriousRP] Server version : 1.11");
+	else if(version.contains("1.11")){
+		System.out.println("[SeriousRP] Server version : " + version);
 		System.out.println("[SeriousRP] Version check !");
 	}
 	else{
 		System.out.println("[SeriousRP] ** WARNING **");
 		System.out.println("[SeriousRP] SeriousRP is not supported on version inferior to 1.11.X");
 		System.out.println("[SeriousRP] be careful, no support will be given !");
-		System.out.println("[SeriousRP] ** ** **");
+		System.out.println("[SeriousRP] ** ** * ** **");
 	}
 	return false;
 }
@@ -49,31 +47,34 @@ public void depencies(){
 	File Vdirect = new File("plugins/Vault");
 
 	if(!Tdirect.exists()){
-		System.out.println("[SeriousRP] ** WARNING **");
-		System.out.println("[SeriousRP] Telecom was not found !");
-		System.out.println("[SeriousRP] Deactivation of the module RPMobile.");
-		System.out.println("[SeriousRP] If you want to use SRP mobile, you will need Telecom");
-		System.out.println("[SeriousRP] ** ** **");
+		System.out.println("[SeriousRP] {Telecom} ** WARNING **");
+		System.out.println("[SeriousRP] {Telecom} Telecom was not found !");
+		System.out.println("[SeriousRP] {Telecom} Deactivation of the module RPMobile.");
+		System.out.println("[SeriousRP] {Telecom} If you want to use SRP mobile, you will need Telecom");
+		System.out.println("[SeriousRP] {Telecom} ** ** **");
 
 		getConfig().set("RPMobile", false);
 	}
 	else{
-		System.out.println("[SeriousRP] Telecom found !");
+		System.out.println("[SeriousRP] {Telecom} Telecom found !");
 	}
 
 	if (!Vdirect.exists()) {
-		System.out.println("[SeriousRP] Vault was not found");
+		System.out.println("[SeriousRP] {Vault} Vault was not found");
 	} else {
-		System.out.println("[SeriousRP] Vault found !");
-		
+		System.out.println("[SeriousRP] {Vault} Vault found !");
 	}
+}
+
+public void vaultini(){
+	System.out.println("[SeriousRP] Soon...");
 }
 
 public void onEnable(){
 		instance = this;
 		
 		System.out.println("[SeriousRP] #------ ------#");
-		System.out.println("[SeriousRP] SeriousRP " + getConfig().getString("Version").replace("&", "�"));
+		System.out.println("[SeriousRP] SeriousRP " + getConfig().getString("Version"));
 		System.out.println("[SeriousRP] Boot sequence launched");
 
 		System.out.println("[SeriousRP] ");
@@ -125,6 +126,10 @@ public void onEnable(){
 		pm.registerEvents(new spawnitems(), this);
 		pm.registerEvents(new phone(this), this);
 		pm.registerEvents(new configupdate(this), this);
+
+		//Api Class 
+		pm.registerEvents(new VaultApi(this), this);
+
 		System.out.println("[SeriousRP] All classes have been loaded");
 
 		System.out.println("[SeriousRP] ");
@@ -134,6 +139,10 @@ public void onEnable(){
 		System.out.println("[SeriousRP] ");
 		System.out.println("[SeriousRP] #- Version check -#");
 		isLatest();
+
+		System.out.println("[SeriousRP] ");
+		System.out.println("[SeriousRP] #- Vault API check -#");
+		vaultini();
 
 		System.out.println("[SeriousRP] ");
 		System.out.println("[SeriousRP] #- Config writer, writing and creating configs files -#");
@@ -194,7 +203,7 @@ public void onDisable(){
 		PluginManager pm = getServer().getPluginManager();
 
 		System.out.println("[SeriousRP] #------ ------#");
-		System.out.println("[SeriousRP] SeriousRP " + getConfig().getString("Version").replace("&", "�"));
+		System.out.println("[SeriousRP] SeriousRP " + getConfig().getString("Version"));
 		System.out.println("[SeriousRP] Shutdown sequence launched");
 
 		System.out.println("[SeriousRP] ");

@@ -43,14 +43,14 @@ public class phone implements Listener {
 		
 		ItemStack phone = new ItemStack(Material.WATCH, 1);
 		ItemMeta customM = phone.getItemMeta();
-		customM.setDisplayName("§bTéléphone");
+		customM.setDisplayName("§bNokia 3310");
 		customM.setLore(Arrays.asList(this.pl.getConfig().getString("Phone.LorePhone1").replace("&", "§"),this.pl.getConfig().getString("Phone.LorePhone2").replace("&", "§"),this.pl.getConfig().getString("Phone.LorePhone3").replace("&", "§")+" "+p.getDisplayName()));
 		customM.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true);
 		phone.setItemMeta(customM);
 		
 		if (args[0].equalsIgnoreCase("/mobile")){
 			if(p.getInventory().contains(phone) == true){
-				Inventory inv = Bukkit.createInventory(null, 36, "§bTéléphone de "+p.getDisplayName());
+				Inventory inv = Bukkit.createInventory(null, 36, "§bNokia 3310 > " + p.getDisplayName());
 				
 				ItemStack headskull = new ItemStack(Material.SKULL_ITEM, 1, (byte)3);
 				SkullMeta headskullM = (SkullMeta) headskull.getItemMeta();
