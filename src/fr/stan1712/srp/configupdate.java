@@ -32,6 +32,9 @@ public class configupdate implements Listener {
 		config.set("heal.amount", 1);
 		config.set("heal.enabled", true);
 
+		config.createSection("RandomWords");
+		config.set("RandomWords.to", "à");
+
 		config.set("HelpMsg.DRevive", "Réanime et soigne un joueur");
 		config.set("HelpMsg.DMedinfo", "Permet de savoir l'etat de santé d'un joueur");
 		config.set("HelpMsg.DHRRevive", "Vous réanime et vous soigne");
