@@ -15,9 +15,23 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+<<<<<<< HEAD
 public class commands implements Listener{
     private FileConfiguration config;
     private Main pl;
+=======
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+
+public class commands implements Listener{
+    private FileConfiguration config;
+    private Main pl;
+    
+    private static Economy econ = null;
+    private static Permission perms = null;
+    private static Chat chat = null;
+>>>>>>> 55488b8a3892094e7464b0e76f8439ac235a8369
   
     public commands(Main pl)
     {
@@ -33,7 +47,11 @@ public class commands implements Listener{
         String[] args = msg.split(" ");
 
         // /seriousrp <help/version/discord>
+<<<<<<< HEAD
         if(args[0].equalsIgnoreCase("/seriousrp")){
+=======
+        if (args[0].equalsIgnoreCase("/seriousrp")){
+>>>>>>> 55488b8a3892094e7464b0e76f8439ac235a8369
             if (p.hasPermission("seriousrp.info")){
                 if (args.length == 1){
                     p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
@@ -65,6 +83,7 @@ public class commands implements Listener{
                         p.sendMessage(ChatColor.GOLD + "❱❱ /seriousrp version = " + this.pl.getConfig().getString("HelpMsg.DHelp").replace("&", "§"));
                         p.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
                     }
+<<<<<<< HEAD
                     if(args[1].equalsIgnoreCase("modules")) {
                         if(this.pl.getConfig().getBoolean("RPDeath") == true) {
                         	System.out.println("[SeriousRP] Roleplay Deaths module activated");
@@ -85,6 +104,8 @@ public class commands implements Listener{
                             System.out.println("[SeriousRP] Chairs module activated");
                         }
                     }
+=======
+>>>>>>> 55488b8a3892094e7464b0e76f8439ac235a8369
                 }
             }
             else{
@@ -96,7 +117,11 @@ public class commands implements Listener{
         }
 
         // /srtp
+<<<<<<< HEAD
         if(args[0].equalsIgnoreCase("/srtp")){
+=======
+        if (args[0].equalsIgnoreCase("/srtp")){
+>>>>>>> 55488b8a3892094e7464b0e76f8439ac235a8369
             if (p.hasPermission("seriousrp.random")){
                 Random r = new Random();
                 p.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
@@ -128,7 +153,11 @@ public class commands implements Listener{
         }
 
         // Module TownSystem
+<<<<<<< HEAD
         if(this.pl.getConfig().getBoolean("TownSystem") == true){
+=======
+        if(this.pl.getConfig().getBoolean("TownSystem") == true ){
+>>>>>>> 55488b8a3892094e7464b0e76f8439ac235a8369
             // /srtown <set/where>
             if (args[0].equalsIgnoreCase("/srtown")){
                 if ((p.hasPermission("seriousrp.tptown")) && (args.length == 1)){
@@ -190,7 +219,11 @@ public class commands implements Listener{
         }
         
         // Module Medics
+<<<<<<< HEAD
         if(this.pl.getConfig().getBoolean("Medics") == true && this.pl.getConfig().getBoolean("RPDeath") == false){
+=======
+        if(this.pl.getConfig().getBoolean("Medics") == true ){
+>>>>>>> 55488b8a3892094e7464b0e76f8439ac235a8369
             // /revive <player>
             if (args[0].equalsIgnoreCase("/revive")){
                 if (p.hasPermission("seriousrp.medicrevive")){
