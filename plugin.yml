@@ -1,19 +1,24 @@
 name: SeriousRP
-version: 3.9.8-3.0g
+version: 3.9.8-4.2b
 author: stan1712
-main: fr.stan1712.srp.srp
+website: http://www.stan1712.fr
+main: fr.stan1712.srp.Main
 commands:
  seriousrp:
   description: Show the main menu
+  usage: /seriousrp
   permission: seriousrp.info
  version:
   description: Shows the version of the plugin
+  usage: /seriousrp version
   permission: seriousrp.info
  help:
   description: Shows the help page
+  usage: /seriousrp help
   permission: seriousrp.info
  srtp:
   description: Teleports you randomly in a radius of 10000 blocks
+  usage: /srtp
   permission: seriousrp.random
  srtown:
   description: Teleports you to the town
@@ -30,6 +35,3 @@ commands:
  medinfo:
   description: Allow you to know some info about a player
   permission: seriousrp.medinfo
- srpmobile:
-  description: Op only
-  permission: seriousrp.mobilesee

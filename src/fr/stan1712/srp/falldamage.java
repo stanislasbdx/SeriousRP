@@ -11,11 +11,11 @@ import org.bukkit.potion.PotionEffectType;
 public class falldamage
   implements Listener
 {
-  srp plugin;
+  Main plugin;
   
   public falldamage()
   {
-    this.plugin = srp.getInstance();
+    this.plugin = Main.getInstance();
   }
   
   @EventHandler
