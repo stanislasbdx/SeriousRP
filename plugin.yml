@@ -6,15 +6,19 @@ main: fr.stan1712.srp.Main
 commands:
  seriousrp:
   description: Show the main menu
+  usage: /seriousrp
   permission: seriousrp.info
  version:
   description: Shows the version of the plugin
+  usage: /seriousrp version
   permission: seriousrp.info
  help:
   description: Shows the help page
+  usage: /seriousrp help
   permission: seriousrp.info
  srtp:
   description: Teleports you randomly in a radius of 10000 blocks
+  usage: /srtp
   permission: seriousrp.random
  srtown:
   description: Teleports you to the town

@@ -8,12 +8,6 @@ ConfigFix: true
 #Modifiez le prefix ici
 Prefix: "SeriousRP"
 
-#
-# SI JE MEURT ICI RAPPELLE TOI QUE A TON REVEIL IL FAUT QUE
-# TU NETTOIE LE CODE ET IL FAUT L'INDENTER AUSSI !
-# Bonne nuit Stan :)
-#
-
 #Messages affiches lors du /seriousrp help
 HelpMsg:
   Dsrtp: "Pouvoir se teleporter aleatoirement"
