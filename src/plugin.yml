@@ -1,5 +1,11 @@
 name: SeriousRP
+description: Free Roleplay Plugin
 author: stan1712
 version: 3.9.9
 main: fr.stan1712.seriousrp.Main
-description: Free Roleplay Plugin
+
+commands:
+  seriousrp:
+    usage: /seriousrp <version/info/commands>
+    permission: seriousrp.info
+    description: Plugin's notice
