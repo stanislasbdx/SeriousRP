@@ -1,5 +1,13 @@
 language: java
-
+notifications:
+  - webhooks: 
+      urls:
+      - https://skyhook.glitch.me/api/webhooks/479331690595221507/SKlBd5XWKykmNhdZ9WhUKix8XOkDzDH5_9BoXLWbC6kfL0KnV-hVvhEUIKpm0heJqWWW/travis
+    on_success: always
+    on_failure: always
+    on_start: always
+    on_cancel: always
+    on_error: always
 script:
   - jdk_switcher use oraclejdk8
   - # do stuff with Java 8
