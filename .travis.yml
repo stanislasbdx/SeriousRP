@@ -1,9 +1,12 @@
 language: java
+os: linux
 sudo: false
+
 script:
   - jdk_switcher use oraclejdk8
 jdk:
   - oraclejdk8
+  
 notifications:
   webhooks: https://skyhook.glitch.me/api/webhooks/479331690595221507/SKlBd5XWKykmNhdZ9WhUKix8XOkDzDH5_9BoXLWbC6kfL0KnV-hVvhEUIKpm0heJqWWW/travis
   email:
