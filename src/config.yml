@@ -2,7 +2,7 @@
 #+-- Traducteurs : stan1712 (French) | stan1712 (English) | legaming04 (Italian) | Starsaaa (Chinese) | ErHak_ (German) --+
 
 #Version du plugin, il ne faut pas la changer !
-Version: "Version"
+Version: "Version "
 ConfigFix: true
 
 #Modifiez le prefix ici
@@ -16,7 +16,7 @@ HelpMsg:
   DTownWhere: "Permet de savoir ou se trouve la ville"
   DPhone: "Affiche le menu du telephone"  
   DHelp: "Affiche l'aide"
-  DVersion: "Conna��tre la version du plugin"
+  DVersion: "Connaitre la version du plugin"
   DRevive: "Reanime et soigne un joueur"
   DMedinfo: "Permet de savoir l'etat de sante d'un joueur"
   DHRPRevive: "Vous reanime et vous soigne"
@@ -54,7 +54,7 @@ Phone:
   HangUp: "&cRaccrocher"
   Shutdown: "&cEteindre"
   
-  You: "&aOui, c'est vous, vous ��tes beau non ?"
+  You: "&aOui, c'est vous, vous etes beau non ?"
   Music: "&cBient��t..."
 
   GoToTown: "&aDirection : Ville"
