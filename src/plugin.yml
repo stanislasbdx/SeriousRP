@@ -8,4 +8,19 @@ commands:
   seriousrp:
     usage: /seriousrp <version/info/commands>
     permission: seriousrp.info
-    description: Plugin's notice
+  srtp:
+    usage: /srtp
+    permission: seriousrp.randomtp
+  srtown:
+    usage: /srtown <set/where>
+    permission: seriousrp.town
+  revive:
+    usage: /revive [pseudo]
+    permission: seriousrp.medrevive
+  hrprevive:
+    usage: /hrprevive
+    permission: seriousrp.medhrprevive
+  medinfo:
+    usage: /medinfo [pseudo]
+    permission: seriousrp.medinfo
+    
