@@ -1,4 +1,4 @@
-package fr.stan1712.srp;
+package fr.stan1712.seriousrp;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -14,27 +14,27 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class actions implements Listener {
-
+public class Events implements Listener {
+	
 	@EventHandler
-	public void onSang(EntityDamageByEntityEvent e){
-		
-		Entity entity = e.getEntity();
-		Location entityloc = entity.getLocation();
-		
-		if(entity.getType() != EntityType.ITEM_FRAME){
-			entity.getWorld().playEffect(entityloc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
-		}
-	}
-	public void onFall(EntityDamageEvent e){
+	public void onFall(EntityDamageEvent e) {
 		if (!(e.getEntity() instanceof Player)) {
 			return;
 		}
-		if (e.getCause() == EntityDamageEvent.DamageCause.FALL){
-			if (e.getDamage() >= 2.0D){
+		if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
+			if (e.getDamage() >= 2.0D) {
 				LivingEntity entity = (LivingEntity)e.getEntity();
-				entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, (int)Math.round(e.getDamage() / 2.0D - 1.0D)));
+				entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 75, (int)Math.round(e.getDamage() / 2.0D - 1.0D)));
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onSang(EntityDamageByEntityEvent e) {
+		Entity entity = e.getEntity();
+		Location entityloc = entity.getLocation();
+		if (entity.getType() != EntityType.ITEM_FRAME) {
+			entity.getWorld().playEffect(entityloc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 		}
 	}
 }

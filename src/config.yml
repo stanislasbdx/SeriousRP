@@ -1,0 +1,73 @@
+# SeriousRP | Owner : stan1712 
+# Traductors : ErHak_ / legaming04 -> https://github.com/stan1712/SeriousRP/wiki/Translations 
+# Our Discord : https://discord.gg/DkQSQa7
+Version: Version 3.9.9
+ConfigFix: false
+Prefix: SeriousRP
+
+#Core messages
+Core:
+  Discord: "Notre discord : https://discord.gg/DkQSQa7"
+  NoPerms: "Vous n'avez pas la permission !"
+  HelpMsg:
+    Help: "Besoin d'aide ? Tapez /seriousrp help"
+    VersionHelp: "Version du plugin ? Tapez /seriousrp version"
+    DiscordHelp: "Rejoignez notre discord ! /seriousrp discord"
+    Dsrtp: "Pouvoir se teleporter aleatoirement"
+    DTown: "Permet de se teleporter dans la ville"
+    DTownSet: "Permet de definir le point de spawn de la ville"
+    DTownWhere: "Permet de savoir ou se trouve la ville"
+    DPhone: "Affiche le menu du telephone"
+    DHelp: "Affiche l'aide"
+    DVersion: "Connaitre la version du plugin"
+    DRevive: "Reanime et soigne un joueur"
+    DMedinfo: "Permet de savoir l'etat de sante d'un joueur"
+    DHRPRevive: "Vous reanime et vous soigne"
+  Modules:
+    Error: "Une erreur a ete trouvee ! Regardez la console ainsi que votre fichier 'config.yml'"
+    CustomRecipes: true
+    RPDeath: true
+    Medics: false
+    TownSystem: true
+    RPMobile: true
+    Chairs: true
+    
+#Modules sections
+MicroModules:
+  RandomTeleport: "Teleportation a des milliers de blocs !"
+  
+Medics:
+  MedRevive:
+    Revive: "&aVous avez bien reanime le joueur"
+    Error: "&cn'est pas en ligne ou vous avez mal orthographie son pseudo !"
+    NoNeed: "&cLe joueur n'a pas besoin de se faire reanimer"
+  Medinfo:
+    Health: "Vie :"
+    Hearts: "coeurs"
+    Food: "Nourriture :"
+    Coordinates: "est en :"
+    Effects: "Effets"
+    
+TownSystem:
+  Teleports:
+    GoToTown: "Vous avez ete teleporte dans la ville"
+    SetTown: "Vous avez defini le spawn de la ville"
+    TownWhere: "Le spawn de la ville se trouve en :"
+  Locations:
+    Town:
+      x: 0
+      y: 0
+      z: 0
+      WorldName: world
+    
+RPMobiles:
+  LorePhone1: "&9Voici votre telephone"
+  LorePhone2: "&9Clic droit pour l'ouvrir"
+  LorePhone3: "&6Proprietaire :"
+  Answer: "&aDecrocher"
+  HangUp: "&cRaccrocher"
+  Shutdown: "&cEteindre"
+  You: "&aOui, c'est vous, vous etes beau non ?"
+  Music: "&cBientot..."
+  GoToTown: "&aDirection : Ville"
+  YourNumber: "&cBientot..."
