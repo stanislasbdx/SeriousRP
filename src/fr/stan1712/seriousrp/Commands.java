@@ -62,7 +62,7 @@ public class Commands extends CommandExecute implements Listener, CommandExecuto
 						}
 						else if(args[0].equalsIgnoreCase("discord")) {
 							sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-				            sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.Discord").replace("&", "§"));
+				            sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.Discord").replace("&", "§") + " https://discord.gg/EkcARah");
 				            sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 				            return true;
 						}

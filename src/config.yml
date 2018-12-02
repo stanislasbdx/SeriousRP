@@ -7,7 +7,7 @@ Prefix: SeriousRP
 
 #Core messages
 Core:
-  Discord: "Notre discord : https://discord.gg/DkQSQa7"
+  Discord: "Notre discord :"
   NoPerms: "Vous n'avez pas la permission !"
   HelpMsg:
     Help: "Besoin d'aide ? Tapez /seriousrp help"
