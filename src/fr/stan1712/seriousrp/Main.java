@@ -18,23 +18,27 @@ public class Main extends JavaPlugin implements Listener {
 				console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "If you got issues, you can report them on Github");
 			}
 			else if(version.contains("1.11")){
-				console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "Version check !");
-				console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "If you got issues, you can report them on Github");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** WARNING ***");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* 1.11 is not supported by SeriousRP *");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* If you got errors, report it on Github *");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** ***");
 			}
 			else if(version.contains("1.10")){
-				console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "Version check !");
-				console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "If you got issues, you can report them on Github");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** WARNING ***");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* 1.10 is not supported by SeriousRP *");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* If you got errors, don't report it on Github *");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** ***");
 			}
 			else if(version.contains("1.9")){
 				console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** WARNING ***");
 				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* 1.9 is not supported by SeriousRP *");
-				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* If you got error, don't report it on Github *");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* If you got errors, don't report it on Github *");
 				console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** ***");
 			}
 			else if(version.contains("1.8")){
 				console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** WARNING ***");
 				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* 1.8 is not supported by SeriousRP *");
-				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* If you got error, don't report it on Github *");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* If you got errors, don't report it on Github *");
 				console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** ***");
 			}
 		}
@@ -42,6 +46,7 @@ public class Main extends JavaPlugin implements Listener {
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "***  ***  UNKNOWN VERSION  ***  ***");
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* The plugin will be disabled now *");
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** *** *** *** *** *** *** ***");
+			pm.disablePlugins();
 		}
 	}
 	
@@ -73,8 +78,16 @@ public class Main extends JavaPlugin implements Listener {
 	
 	public void onEnable() {
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "# ------ SeriousRP ------ #");
+		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "SeriousRP " + getConfig().getString("Version"));
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "Boot sequence launched !");
+		
+		/*
+		 * Version checker
+		 */
+		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
+		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Version check -#");
+		versionCheck();
 		
 		/* 
 		 * Modules in config.yml
@@ -171,13 +184,7 @@ public class Main extends JavaPlugin implements Listener {
 		pm.registerEvents(new Config(), this);
 		saveConfig();
 
-		/*
-		 * Version checker
-		 */
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
-		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Version check -#");
-		versionCheck();
-
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "# ------ SeriousRP ------ #");
 	}
 	
@@ -190,9 +197,9 @@ public class Main extends JavaPlugin implements Listener {
 		 * Disable statement
 		 */
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
-		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Plugin manager -#");
+		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Goodbye ! -#");
 		
-
+		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "# ------ SeriousRP ------ #");
 	}
 }
