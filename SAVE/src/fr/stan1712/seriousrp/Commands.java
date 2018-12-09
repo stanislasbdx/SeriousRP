@@ -206,10 +206,11 @@ public class Commands extends CommandExecute implements Listener, CommandExecuto
 						((Player) sender).setHealth(20.0D);
 						sender.sendMessage(plugin.getConfig().getString("Medics.MedRevive.Revive").replace("&", "§") + " " + args[0]);
 						
-						((Player) sender).removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+						/*((Player) sender).removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 						((Player) sender).removePotionEffect(PotionEffectType.SLOW);
 						((Player) sender).removePotionEffect(PotionEffectType.BLINDNESS);
-						((Player) sender).removePotionEffect(PotionEffectType.HUNGER);
+						((Player) sender).removePotionEffect(PotionEffectType.HUNGER);*/
+						((Player) sender).removePotionEffect(PotionEffectType.SLOW);
 						((Player) sender).setFoodLevel(10);
 						return true;
 					}
