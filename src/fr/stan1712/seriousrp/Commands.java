@@ -34,9 +34,10 @@ public class Commands extends CommandExecute implements Listener, CommandExecuto
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
+		Player player = (Player) sender;
 		
 		if(sender instanceof Player) {
-			
 			// /seriousrp <version/commands/info>
 			if(cmd.getName().equalsIgnoreCase(seriousrp)) {
 				if(sender.hasPermission("seriousrp.info")) {
@@ -136,9 +137,9 @@ public class Commands extends CommandExecute implements Listener, CommandExecuto
 					sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("MicroModules.RandomTeleport").replace("&", "§"));
 					sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					
-					((Player) sender).addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 50, 100));
-					((Player) sender).addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 50, 100));
-					((Player) sender).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 50, 100));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 50, 100));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
 					
 					int x = ((Player) sender).getLocation().getBlockX() + r.nextInt(10000);
 					int z = ((Player) sender).getLocation().getBlockX() + r.nextInt(10000);
@@ -242,18 +243,19 @@ public class Commands extends CommandExecute implements Listener, CommandExecuto
 				}
 			}
 			// /hrprevive
-			if(cmd.getName().equalsIgnoreCase(hrprevive)) {
+			if(cmd.getName().equalsIgnoreCase("hrprevive")) {
 				if(sender.hasPermission("seriousrp.medhrprevive")) {
-					if(((Player) sender).getHealth() < 10.0D) {
-						((Player) sender).setHealth(20.0D);
+					if(player.getHealth() < 10.0D) {
 						sender.sendMessage(plugin.getConfig().getString("Medics.MedRevive.Revive").replace("&", "§") + " " + args[0]);
 						
-						/*((Player) sender).removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-						((Player) sender).removePotionEffect(PotionEffectType.SLOW);
-						((Player) sender).removePotionEffect(PotionEffectType.BLINDNESS);
-						((Player) sender).removePotionEffect(PotionEffectType.HUNGER);*/
-						((Player) sender).removePotionEffect(PotionEffectType.SLOW);
-						((Player) sender).setFoodLevel(10);
+						player.setFoodLevel(10);
+						player.setHealth(20.0D);
+						
+						player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+						player.removePotionEffect(PotionEffectType.SLOW);
+						player.removePotionEffect(PotionEffectType.BLINDNESS);
+						player.removePotionEffect(PotionEffectType.HUNGER);
+						player.removePotionEffect(PotionEffectType.SLOW);
 						return true;
 					}
 					else {
