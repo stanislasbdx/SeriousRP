@@ -2,7 +2,7 @@
 # Traductors : ErHak_ / legaming04 -> https://github.com/stan1712/SeriousRP/wiki/Translations 
 # Our Discord : https://discord.gg/DkQSQa7
 Version: Version 3.9.9
-ConfigFix: false
+ConfigFix: true
 Prefix: SeriousRP
 
 #Core messages
