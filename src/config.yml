@@ -13,6 +13,7 @@ Core:
     Help: "Besoin d'aide ? Tapez /seriousrp help"
     VersionHelp: "Version du plugin ? Tapez /seriousrp version"
     DiscordHelp: "Rejoignez notre discord ! /seriousrp discord"
+    StatusHelp: "Quels sont les modules activés ? /seriousrp status"
     Dsrtp: "Pouvoir se teleporter aleatoirement"
     DTown: "Permet de se teleporter dans la ville"
     DTownSet: "Permet de definir le point de spawn de la ville"
@@ -24,7 +25,7 @@ Core:
     DMedinfo: "Permet de savoir l'etat de sante d'un joueur"
     DHRPRevive: "Vous reanime et vous soigne"
   Modules:
-    Error: "Une erreur a ete trouvee ! Regardez la console ainsi que votre fichier 'config.yml'"
+    Error: "Une erreur a ete trouvee ! Regardez la console ainsi que votre fichier config.yml"
     CustomRecipes: true
     RPDeath: true
     Medics: false
