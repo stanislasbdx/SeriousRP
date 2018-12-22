@@ -62,7 +62,48 @@ public class Commands extends CommandExecute implements Listener, CommandExecuto
 						}
 						else if(args[0].equalsIgnoreCase("discord")) {
 							sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-				            sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.Discord").replace("&", "§") + " https://discord.gg/EkcARah");
+				            sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.Discord").replace("&", "§") + " https://discord.gg/DkQSQa7");
+				            sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+				            return true;
+						}
+						else if(args[0].equalsIgnoreCase("status")) {
+							sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+							if(plugin.getConfig().getBoolean("Core.Modules.CustomRecipes") == true) {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "CustomRecipes > ON");
+							}
+							else {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "CustomRecipes > OFF");
+							}
+							if(plugin.getConfig().getBoolean("Core.Modules.RPDeath") == true) {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "RPDeath > ON");
+							}
+							else {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "RPDeath > OFF");
+							}
+							if(plugin.getConfig().getBoolean("Core.Modules.Medics") == true) {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "Medics > ON");
+							}
+							else {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "Medics > OFF");
+							}
+							if(plugin.getConfig().getBoolean("Core.Modules.TownSystem") == true) {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "TownSystem > ON");
+							}
+							else {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "TownSystem > OFF");
+							}
+							if(plugin.getConfig().getBoolean("Core.Modules.RPMobiles") == true) {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "RPMobiles > ON");
+							}
+							else {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "RPMobiles > OFF");
+							}
+							if(plugin.getConfig().getBoolean("Core.Modules.Chairs") == true) {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "Chairs > ON");
+							}
+							else {
+								sender.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "Chairs > OFF");
+							}
 				            sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 				            return true;
 						}
@@ -75,6 +116,7 @@ public class Commands extends CommandExecute implements Listener, CommandExecuto
 						sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.HelpMsg.Help").replace("&", "§"));
 						sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.HelpMsg.VersionHelp").replace("&", "§"));
 						sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.HelpMsg.DiscordHelp").replace("&", "§"));
+						sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.HelpMsg.StatusHelp").replace("&", "§"));
 						sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 						return true;
 					}
