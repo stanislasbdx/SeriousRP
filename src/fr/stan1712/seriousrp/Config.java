@@ -13,7 +13,7 @@ public class Config implements Listener {
 		FileConfiguration config = plugin.getConfig();
 		plugin.getConfig();
 		    
-		config.set("Version", "Version 3.9.9");
+		config.set("Version", "Version 3.9.9-0.3g");
 	}
 	
 	public Config() {
