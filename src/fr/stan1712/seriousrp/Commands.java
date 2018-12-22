@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -15,10 +16,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_12_R1.CommandExecute;
-
-public class Commands extends CommandExecute implements Listener, CommandExecutor {	
+public class Commands implements Listener, CommandExecutor {	
 	private Plugin plugin = Main.getPlugin(Main.class);
 	
 	public String seriousrp = "seriousrp";
@@ -243,7 +241,7 @@ public class Commands extends CommandExecute implements Listener, CommandExecuto
 				}
 			}
 			// /hrprevive
-			if(cmd.getName().equalsIgnoreCase("hrprevive")) {
+			if(cmd.getName().equalsIgnoreCase(hrprevive)) {
 				if(sender.hasPermission("seriousrp.medhrprevive")) {
 					if(player.getHealth() < 10.0D) {
 						sender.sendMessage(plugin.getConfig().getString("Medics.MedRevive.Revive").replace("&", "§") + " " + args[0]);
@@ -251,11 +249,9 @@ public class Commands extends CommandExecute implements Listener, CommandExecuto
 						player.setFoodLevel(10);
 						player.setHealth(20.0D);
 						
-						player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-						player.removePotionEffect(PotionEffectType.SLOW);
-						player.removePotionEffect(PotionEffectType.BLINDNESS);
-						player.removePotionEffect(PotionEffectType.HUNGER);
-						player.removePotionEffect(PotionEffectType.SLOW);
+				        for (PotionEffect effect : player.getActivePotionEffects()) {
+				        	player.removePotionEffect(effect.getType());
+				        }
 						return true;
 					}
 					else {
