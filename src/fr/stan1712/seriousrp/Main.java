@@ -164,6 +164,7 @@ public class Main extends JavaPlugin implements Listener {
 			getCommand(commands.revive).setExecutor(commands);
 			getCommand(commands.hrprevive).setExecutor(commands);
 			getCommand(commands.medinfo).setExecutor(commands);
+			console.sendMessage("[SeriousRP] " + ChatColor.GOLD + "* Medics system is bugged for now use at your own risk *");
 		}
 		console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All commands have been loaded");
 		
@@ -173,7 +174,9 @@ public class Main extends JavaPlugin implements Listener {
 		if(getConfig().getBoolean("Core.Modules.CustomRecipes") == true) {
 			console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 			console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Custom recipes [Module] -#");
-			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All recipes have been added !");
+			console.sendMessage("[SeriousRP] " + ChatColor.GOLD + "* Custom Recipes will not work in this version, deactivation *");
+			getConfig().set("Core.Modules.CustomRecipes", Boolean.valueOf(false));
+			//console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All recipes have been added !");
 		}
 		
 		/*
