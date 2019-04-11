@@ -8,12 +8,14 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Config implements Listener {
 	private Plugin plugin = Main.getPlugin(Main.class);
+	
+	String version = "Version 3.9.9-1.3g";
 
 	private void VersionUpdate() {
 		FileConfiguration config = plugin.getConfig();
 		plugin.getConfig();
 		    
-		config.set("Version", "Version 3.9.9-0.3g");
+		config.set("Version", version);
 	}
 	
 	public Config() {
@@ -23,8 +25,7 @@ public class Config implements Listener {
 	    VersionUpdate();
 	    
 	    config.options().header("SeriousRP | Owner : stan1712 \nTraductors : ErHak_ / legaming04 -> https://github.com/stan1712/SeriousRP/wiki/Translations \nOur Discord : https://discord.gg/DkQSQa7");
-	    if (this.plugin.getConfig().getBoolean("ConfigFix"))
-	    {
+	    if(this.plugin.getConfig().getBoolean("ConfigFix")) {
 	      config.options().copyDefaults(true);
 	      config.options().copyHeader(true);
 	      

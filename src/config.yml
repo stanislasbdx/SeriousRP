@@ -1,7 +1,7 @@
 # SeriousRP | Owner : stan1712 
 # Traductors : ErHak_ / legaming04 -> https://github.com/stan1712/SeriousRP/wiki/Translations 
 # Our Discord : https://discord.gg/DkQSQa7
-Version: Version 3.9.9
+Version: VERSION NOT SET PLEASE SET ConfigFix TO true
 ConfigFix: true
 Prefix: SeriousRP
 
@@ -21,6 +21,8 @@ Core:
     DPhone: "Affiche le menu du telephone"
     DHelp: "Affiche l'aide"
     DVersion: "Connaitre la version du plugin"
+    DStatus: "Affiche l'état des modules"
+    DDiscord: "Affiche le lien du discord"
     DRevive: "Réanime et soigne un joueur"
     DMedinfo: "Permet de savoir l'état de santé d'un joueur"
     DHRPRevive: "Vous réanime et vous soigne"
@@ -38,11 +40,13 @@ MicroModules:
   RandomTeleport: "Téléportation a des milliers de blocs !"
   
 Medics:
+  Comate: "&cVous êtes dans le coma, appelez les Urgentistes ou faites /hrprevive s'il ne sont pas disponibles"
   MedRevive:
     Revive: "&aVous avez bien réanimé le joueur"
+    Self: "&aVous vous êtes bien réanimé"
     Error: "&cn'est pas en ligne ou vous avez mal orthographié son pseudo !"
     NoNeed: "&cLe joueur n'a pas besoin de se faire réanimer"
-  Medinfo:
+  MedInfo:
     Health: "Vie :"
     Hearts: "coeurs"
     Food: "Nourriture :"

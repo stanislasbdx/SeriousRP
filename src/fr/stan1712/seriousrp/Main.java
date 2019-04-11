@@ -139,7 +139,6 @@ public class Main extends JavaPlugin implements Listener {
 		 */
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Class manager, loading classes -#");
-		pm.registerEvents(new Commands(), this);
 		pm.registerEvents(new Events(), this);
 		pm.registerEvents(new Deaths(), this);
 		console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All classes have been loaded");
@@ -156,19 +155,7 @@ public class Main extends JavaPlugin implements Listener {
 		 */
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Commands manager, loading commands -#");
-		Commands commands = new Commands();
-		getCommand(commands.seriousrp).setExecutor(commands);
-		getCommand(commands.srtp).setExecutor(commands);
-		
-		if(getConfig().getBoolean("Core.Modules.TownSystem") == true) {
-			getCommand(commands.srtown).setExecutor(commands);
-		}
-		if(getConfig().getBoolean("Core.Modules.Medics") == true) {
-			getCommand(commands.revive).setExecutor(commands);
-			getCommand(commands.hrprevive).setExecutor(commands);
-			getCommand(commands.medinfo).setExecutor(commands);
-			console.sendMessage("[SeriousRP] " + ChatColor.GOLD + "* Medics system is bugged for now use at your own risk *");
-		}
+		pm.registerEvents(new Commands(this), this);
 		console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All commands have been loaded");
 		
 		/*
