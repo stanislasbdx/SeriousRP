@@ -1,26 +1,20 @@
 name: SeriousRP
 description: Free Roleplay Plugin
 author: stan1712
-version: 3.9.9-0.3g
+version: 3.9.9-1.3g
 main: fr.stan1712.seriousrp.Main
 
 commands:
   seriousrp:
-    usage: /seriousrp <version/info/commands/status>
     permission: seriousrp.info
   srtp:
-    usage: /srtp
     permission: seriousrp.randomtp
   srtown:
-    usage: /srtown <set/where>
     permission: seriousrp.town
   revive:
-    usage: /revive [pseudo]
     permission: seriousrp.medrevive
   hrprevive:
-    usage: /hrprevive
     permission: seriousrp.medhrprevive
   medinfo:
-    usage: /medinfo [pseudo]
     permission: seriousrp.medinfo
     
