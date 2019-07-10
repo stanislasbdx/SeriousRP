@@ -38,6 +38,7 @@ Core:
 #Modules sections
 MicroModules:
   RandomTeleport: "Téléportation a des milliers de blocs !"
+  RandomBlocks: 1000
   
 Medics:
   Comate: "&cVous êtes dans le coma, appelez les Urgentistes ou faites /hrprevive s'il ne sont pas disponibles"
@@ -76,3 +77,19 @@ RPMobiles:
   Music: "&cBientot..."
   GoToTown: "&aDirection : Ville"
   YourNumber: "&cBientot..."
+  
+Chairs:
+  - WOOD_STAIRS
+  - SPRUCE_WOOD_STAIRS
+  - JUNGLE_WOOD_STAIRS
+  - BIRCH_WOOD_STAIRS
+  - SANDSTONE_STAIRS
+  - COBBLESTONE_STAIRS
+  - BRICK_STAIRS
+  - SMOOTH_STAIRS
+  - NETHER_BRICK_STAIRS
+  - QUARTZ_STAIRS
+  - ACACIA_STAIRS
+  - DARK_OAK_STAIRS
+  - WOOL
+  - STONE_SLAB
