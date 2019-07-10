@@ -3,11 +3,8 @@ package fr.stan1712.seriousrp;
 import java.io.File;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -57,22 +54,22 @@ public class Main extends JavaPlugin implements Listener {
 		File Tdirect = new File("plugins/Telecom");
 		File Vdirect = new File("plugins/Vault");
 		if (!Tdirect.exists()) {
-			console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** WARNING ***");
-			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Telecom} Telecom was not found ! *");
-			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Telecom} Deactivation of the module RPMobile. *");
-			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Telecom} If you want to use SRP mobile, you will need Telecom *");
-			console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** *** *** *** *** *** *** ***");
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** *** *** *** *** *** WARNING *** *** *** *** *** *** *** ***");
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Telecom} Telecom was not found !	                       *");
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Telecom} Deactivation of the module RPMobile.	               *");
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Telecom} If you want to use SRP mobile, you will need Telecom. *");
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***");
 			  
 			getConfig().set("Core.Modules.RPMobile", Boolean.valueOf(false));
 		}
 		else {
-			System.out.println("[SeriousRP] {Telecom} Telecom found !");
+			System.out.println("[SeriousRP] {Telecom} Telecom hooked !");
 		}
 		if (!Vdirect.exists()) {
 			System.out.println("[SeriousRP] {Vault} Vault was not found");
 		}
 		else {
-			System.out.println("[SeriousRP] {Vault} Vault found !");
+			System.out.println("[SeriousRP] {Vault} Vault hooked !");
 		}
 	}
 	
@@ -139,7 +136,7 @@ public class Main extends JavaPlugin implements Listener {
 		 */
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Class manager, loading classes -#");
-		pm.registerEvents(new Events(), this);
+		pm.registerEvents(new Events(this), this);
 		pm.registerEvents(new Deaths(), this);
 		console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All classes have been loaded");
 
@@ -164,50 +161,7 @@ public class Main extends JavaPlugin implements Listener {
 		if(getConfig().getBoolean("Core.Modules.CustomRecipes") == true) {
 			console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 			console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Custom recipes [Module] -#");
-			ShapedRecipe saddle =  new ShapedRecipe(new ItemStack(Material.SADDLE, 1));
-			saddle.shape(new String[] {" C ","CFC","I I"});
-			saddle.setIngredient('C', Material.LEATHER);
-			saddle.setIngredient('I', Material.STRING);
-			saddle.setIngredient('F', Material.IRON_INGOT);
-			getServer().addRecipe(saddle);
-			
-			ShapedRecipe nametag = new ShapedRecipe(new ItemStack(Material.NAME_TAG));
-			nametag.shape(new String[] {"  I"," B ","P  "});
-			nametag.setIngredient('P', Material.PAPER);
-			nametag.setIngredient('I', Material.STRING);
-			nametag.setIngredient('B', Material.BOOK_AND_QUILL);
-			getServer().addRecipe(nametag);
-			
-			ShapedRecipe horseiron = new ShapedRecipe(new ItemStack(Material.IRON_BARDING));
-			horseiron.shape(new String[] {"   ","IBI","II "});
-			horseiron.setIngredient('I', Material.IRON_INGOT);
-			horseiron.setIngredient('B', Material.IRON_BLOCK);
-			getServer().addRecipe(horseiron);
-			
-			ShapedRecipe horsegold = new ShapedRecipe(new ItemStack(Material.GOLD_BARDING));
-			horsegold.shape(new String[] {"   ","IBI","II "});
-			horsegold.setIngredient('I', Material.GOLD_INGOT);
-			horsegold.setIngredient('B', Material.GOLD_BLOCK);
-			getServer().addRecipe(horsegold);
-			
-			ShapedRecipe horsediamond = new ShapedRecipe(new ItemStack(Material.DIAMOND_BARDING));
-			horsediamond.shape(new String[] {"   ","IBI","II "});
-			horsediamond.setIngredient('I', Material.DIAMOND);
-			horsediamond.setIngredient('B', Material.DIAMOND_BLOCK);
-			getServer().addRecipe(horsediamond);
-			
-			ShapedRecipe steak = new ShapedRecipe(new ItemStack(Material.RAW_BEEF));
-			steak.shape(new String[] {"RRR","RBR","RRR"});
-			steak.setIngredient('B', Material.BOWL);
-			steak.setIngredient('R', Material.ROTTEN_FLESH);
-			getServer().addRecipe(steak);
-			
-			ShapedRecipe gunpowder = new ShapedRecipe(new ItemStack(Material.SULPHUR));
-			gunpowder.shape(new String[] {"CRS","   ","   "});
-			gunpowder.setIngredient('C', Material.COAL);
-			gunpowder.setIngredient('R', Material.REDSTONE);
-			gunpowder.setIngredient('S', Material.SUGAR);
-			getServer().addRecipe(gunpowder);
+			pm.registerEvents(new Recipes(this), this);
 			
 			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All recipes have been added !");
 		}
