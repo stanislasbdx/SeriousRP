@@ -34,6 +34,7 @@ public class Deaths implements Listener {
 			p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1000000, 5));
 			p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 1000));
 			p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1000000, 1000));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1000000, 999));
 			  
 			p.sendMessage(plugin.getConfig().getString("Medics.Comate").replace("&", "§"));
 			p.setHealth(0.5D);
