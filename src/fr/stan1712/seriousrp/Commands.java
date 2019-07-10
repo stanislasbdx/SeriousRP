@@ -17,8 +17,7 @@ import org.bukkit.potion.PotionEffectType;
 public class Commands implements Listener{
     private Main pl;
   
-    public Commands(Main pl)
-    {
+    public Commands(Main pl) {
         this.pl = pl;
         pl.getConfig();
     }
@@ -26,7 +25,6 @@ public class Commands implements Listener{
 	@EventHandler
 	public void onCommandes(PlayerCommandPreprocessEvent e){
         Player player = e.getPlayer();
-        //String pseudo = player.getDisplayName();
         String msg = e.getMessage();
         String[] args = msg.split(" ");
         
@@ -133,8 +131,8 @@ public class Commands implements Listener{
 				player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 50, 100));
 				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
 				
-				int x = ((Player) player).getLocation().getBlockX() + r.nextInt(10000);
-				int z = ((Player) player).getLocation().getBlockX() + r.nextInt(10000);
+				int x = ((Player) player).getLocation().getBlockX() + r.nextInt(this.pl.getConfig().getInt("MicroModules.RandomBlocks"));
+				int z = ((Player) player).getLocation().getBlockX() + r.nextInt(this.pl.getConfig().getInt("MicroModules.RandomBlocks"));
 				
 				int rtpcheck = ((Player) player).getWorld().getHighestBlockYAt(x, z);
 				int rtpdone = rtpcheck + 1;
@@ -156,7 +154,7 @@ public class Commands implements Listener{
 			World world = Bukkit.getWorld(monde);
 			
 			if(player.hasPermission("seriousrp.town")) {
-				if(args.length == 1) {
+				if(args.length == 2) {
 					if(args[1].equalsIgnoreCase("set")) {
 						if(player.hasPermission("seriousrp.townset")) {
 							this.pl.getConfig().set("TownSystem.Locations.Town.x", Integer.valueOf(((Player) player).getLocation().getBlockX()));
@@ -176,6 +174,13 @@ public class Commands implements Listener{
 					else if(args[1].equalsIgnoreCase("where")) {
 						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
 						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("TownSystem.Teleports.TownWhere").replace("&", "§") + " x" + x + ", y" + y + ", z" + z);
+						player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+					}
+					else if(args[1].equalsIgnoreCase("tp")) {
+						player.teleport(new Location(world, x, y, z));
+						
+						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("TownSystem.Teleports.GoToTown").replace("&", "§"));
 						player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					}
 				}
@@ -205,6 +210,7 @@ public class Commands implements Listener{
 						cible.removePotionEffect(PotionEffectType.SLOW);
 						cible.removePotionEffect(PotionEffectType.BLINDNESS);
 						cible.removePotionEffect(PotionEffectType.HUNGER);
+						cible.removePotionEffect(PotionEffectType.JUMP);
 						cible.setFoodLevel(10);
 					}
 					else {
@@ -231,6 +237,7 @@ public class Commands implements Listener{
                      player.removePotionEffect(PotionEffectType.SLOW);
                      player.removePotionEffect(PotionEffectType.BLINDNESS);
                      player.removePotionEffect(PotionEffectType.HUNGER);
+                     player.removePotionEffect(PotionEffectType.JUMP);
 
                      player.setFoodLevel(10);
 				}
