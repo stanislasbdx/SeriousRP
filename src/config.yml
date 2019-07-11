@@ -1,47 +1,56 @@
 # SeriousRP | Owner : stan1712 
 # Traductors : ErHak_ / legaming04 -> https://github.com/stan1712/SeriousRP/wiki/Translations 
 # Our Discord : https://discord.gg/DkQSQa7
-Version: Version 3.9.9
-ConfigFix: false
+Version: VERSION NOT SET PLEASE SET ConfigFix TO true
+ConfigFix: true
 Prefix: SeriousRP
 
 #Core messages
 Core:
-  Discord: "Notre discord : https://discord.gg/DkQSQa7"
+  Discord: "Notre discord :"
   NoPerms: "Vous n'avez pas la permission !"
   HelpMsg:
     Help: "Besoin d'aide ? Tapez /seriousrp help"
     VersionHelp: "Version du plugin ? Tapez /seriousrp version"
     DiscordHelp: "Rejoignez notre discord ! /seriousrp discord"
-    Dsrtp: "Pouvoir se teleporter aleatoirement"
-    DTown: "Permet de se teleporter dans la ville"
-    DTownSet: "Permet de definir le point de spawn de la ville"
-    DTownWhere: "Permet de savoir ou se trouve la ville"
+    StatusHelp: "Quels sont les modules activés ? /seriousrp status"
+    Dsrtp: "Pouvoir se téléporter aléatoirement"
+    DTown: "Permet de se téléporter dans la ville"
+    DTownSet: "Permet de définir le point de spawn de la ville"
+    DTownWhere: "Permet de savoir où se trouve la ville"
     DPhone: "Affiche le menu du telephone"
     DHelp: "Affiche l'aide"
     DVersion: "Connaitre la version du plugin"
-    DRevive: "Reanime et soigne un joueur"
-    DMedinfo: "Permet de savoir l'etat de sante d'un joueur"
-    DHRPRevive: "Vous reanime et vous soigne"
+    DStatus: "Affiche l'état des modules"
+    DDiscord: "Affiche le lien du discord"
+    DRevive: "Réanime et soigne un joueur"
+    DMedinfo: "Permet de savoir l'état de santé d'un joueur"
+    DHRPRevive: "Vous réanime et vous soigne"
   Modules:
-    Error: "Une erreur a ete trouvee ! Regardez la console ainsi que votre fichier 'config.yml'"
+    Error: "Une erreur a ete trouvée ! Regardez la console ainsi que votre fichier config.yml"
+    InactiveDebug: true
+    InactiveMessage: "&cLe module '%module%' est inactif"
     CustomRecipes: true
     RPDeath: true
     Medics: false
     TownSystem: true
     RPMobile: true
     Chairs: true
+    Economy: true
     
 #Modules sections
 MicroModules:
-  RandomTeleport: "Teleportation a des milliers de blocs !"
+  RandomTeleport: "Téléportation a des milliers de blocs !"
+  RandomBlocks: 1000
   
 Medics:
+  Comate: "&cVous êtes dans le coma, appelez les Urgentistes ou faites /hrprevive s'il ne sont pas disponibles"
   MedRevive:
-    Revive: "&aVous avez bien reanime le joueur"
-    Error: "&cn'est pas en ligne ou vous avez mal orthographie son pseudo !"
-    NoNeed: "&cLe joueur n'a pas besoin de se faire reanimer"
-  Medinfo:
+    Revive: "&aVous avez bien réanimé le joueur"
+    Self: "&aVous vous êtes bien réanimé"
+    Error: "&cn'est pas en ligne ou vous avez mal orthographié son pseudo !"
+    NoNeed: "&cLe joueur n'a pas besoin de se faire réanimer"
+  MedInfo:
     Health: "Vie :"
     Hearts: "coeurs"
     Food: "Nourriture :"
@@ -50,8 +59,8 @@ Medics:
     
 TownSystem:
   Teleports:
-    GoToTown: "Vous avez ete teleporte dans la ville"
-    SetTown: "Vous avez defini le spawn de la ville"
+    GoToTown: "Vous avez ete téléporte dans la ville"
+    SetTown: "Vous avez défini le spawn de la ville"
     TownWhere: "Le spawn de la ville se trouve en :"
   Locations:
     Town:
@@ -71,3 +80,33 @@ RPMobiles:
   Music: "&cBientot..."
   GoToTown: "&aDirection : Ville"
   YourNumber: "&cBientot..."
+
+Economy:
+  Currency: "€"
+  NotEnough: "&cVous n'avez pas assez d'argent !"
+  Cheque:
+    Usage: "Pour créer un chèque : /cheque <montant>"
+    Created: "Un chèque de %amount%€ à été créé"
+    Already: "&cVous avez déjà un chèque de %amount%€ sur vous !"
+    Claimed: "&aVous avez encaissé le chèque de %amount%€ !"
+    Lores:
+      Title: "&8Chèque (&7%amount%€&8)"
+      Value: "&7Valeur : "
+      Author: "&7Auteur : "
+      Usage: "&6&lClic droit pour encaisser"
+        
+Chairs:
+  - WOOD_STAIRS
+  - SPRUCE_WOOD_STAIRS
+  - JUNGLE_WOOD_STAIRS
+  - BIRCH_WOOD_STAIRS
+  - SANDSTONE_STAIRS
+  - COBBLESTONE_STAIRS
+  - BRICK_STAIRS
+  - SMOOTH_STAIRS
+  - NETHER_BRICK_STAIRS
+  - QUARTZ_STAIRS
+  - ACACIA_STAIRS
+  - DARK_OAK_STAIRS
+  - WOOL
+  - STONE_SLAB

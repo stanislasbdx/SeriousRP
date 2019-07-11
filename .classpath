@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/stani/Documents/spigot-1.12.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/stani/Documents/spigot-1.11.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/stani/Desktop/Jeux/ServLocal 1.12.2/plugins/Vault.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

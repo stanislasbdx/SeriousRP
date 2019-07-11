@@ -1,232 +1,301 @@
 package fr.stan1712.seriousrp;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_12_R1.CommandExecute;
+public class Commands implements Listener{
+    private Main pl;
+  
+    public Commands(Main pl) {
+        this.pl = pl;
+        pl.getConfig();
+    }
+    
+    private static boolean isInt(String s) {
+	    try {
+			Integer.parseInt(s);
+		}
+	    catch (NumberFormatException nfe) {
+			return false;
+		}
+		return true;
+	}
 
-public class Commands extends CommandExecute implements Listener, CommandExecutor {	
-	private Plugin plugin = Main.getPlugin(Main.class);
-	
-	public String seriousrp = "seriousrp";
-	public String srtp = "srtp";
-	
-	// TownSystem
-	public String srtown = "srtown";
-	
-	// Medics
-	public String revive = "revive";
-	public String hrprevive = "hrprevive";
-	public String medinfo = "medinfo";
-	
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		
-		if(sender instanceof Player) {
-			
-			// /seriousrp <version/commands/info>
-			if(cmd.getName().equalsIgnoreCase(seriousrp)) {
-				if(sender.hasPermission("seriousrp.info")) {
-					if(args.length == 1) {
-						if(args[0].equalsIgnoreCase("version")) {
-				            sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-				            sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Version").replace("&", "§"));
-				            sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-							return true;
-						}
-						else if(args[0].equalsIgnoreCase("help")) {
-							sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-				            sender.sendMessage(ChatColor.GOLD + "» /srtp = " + plugin.getConfig().getString("Core.HelpMsg.Dsrtp").replace("&", "§"));
-				            sender.sendMessage(ChatColor.GOLD + "» /srtown = " + plugin.getConfig().getString("Core.HelpMsg.DTown").replace("&", "§"));
-				            sender.sendMessage(ChatColor.GOLD + "» /srtown set = " + plugin.getConfig().getString("Core.HelpMsg.DTownSet").replace("&", "§"));
-				            sender.sendMessage(ChatColor.GOLD + "» /srtown where = " + plugin.getConfig().getString("Core.HelpMsg.DTownWhere").replace("&", "§"));
-				            sender.sendMessage(ChatColor.GOLD + "» /mobile = " + plugin.getConfig().getString("Core.HelpMsg.DPhone").replace("&", "§"));
-				            sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-				            sender.sendMessage(ChatColor.GOLD + "» /seriousrp help = " + plugin.getConfig().getString("Core.HelpMsg.DVersion").replace("&", "§"));
-				            sender.sendMessage(ChatColor.GOLD + "» /seriousrp version = " + plugin.getConfig().getString("Core.HelpMsg.DHelp").replace("&", "§"));
-				            sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-							return true;
-						}
-						else if(args[0].equalsIgnoreCase("discord")) {
-							sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-				            sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.Discord").replace("&", "§"));
-				            sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-				            return true;
+	@EventHandler
+	public void onCommandes(PlayerCommandPreprocessEvent e){
+        Player player = e.getPlayer();
+        String msg = e.getMessage();
+        String[] args = msg.split(" ");
+        
+		// /seriousrp <version/commands/info>
+		if(args[0].equalsIgnoreCase("/seriousrp") || args[0].equalsIgnoreCase("/srp")) {
+			if(player.hasPermission("seriousrp.info")) {
+				if(args.length == 2) {
+					if(args[1].equalsIgnoreCase("version")) {
+			            player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+			            player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Version").replace("&", "§"));
+			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+					}
+					else if(args[1].equalsIgnoreCase("help")) {
+						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+			            player.sendMessage(ChatColor.GOLD + "» /srtp = " + this.pl.getConfig().getString("Core.HelpMsg.Dsrtp").replace("&", "§"));
+			            if(this.pl.getConfig().getBoolean("Core.Modules.TownSystem") == true) {
+				            player.sendMessage(ChatColor.GOLD + "» /srtown = " + this.pl.getConfig().getString("Core.HelpMsg.DTown").replace("&", "§"));
+				            player.sendMessage(ChatColor.GOLD + "» /srtown set = " + this.pl.getConfig().getString("Core.HelpMsg.DTownSet").replace("&", "§"));
+				            player.sendMessage(ChatColor.GOLD + "» /srtown where = " + this.pl.getConfig().getString("Core.HelpMsg.DTownWhere").replace("&", "§"));
+			            }
+			            if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
+				            player.sendMessage(ChatColor.GOLD + "» /medinfo = " + this.pl.getConfig().getString("Core.HelpMsg.DMedinfo").replace("&", "§"));
+				            player.sendMessage(ChatColor.GOLD + "» /revive = " + this.pl.getConfig().getString("Core.HelpMsg.DRevive").replace("&", "§"));
+				            player.sendMessage(ChatColor.GOLD + "» /hrprevive = " + this.pl.getConfig().getString("Core.HelpMsg.DHRPRevive").replace("&", "§"));
+			            }
+			            //player.sendMessage(ChatColor.GOLD + "» /mobile = " + this.pl.getConfig().getString("Core.HelpMsg.DPhone").replace("&", "§"));
+			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+			            player.sendMessage(ChatColor.GOLD + "» /seriousrp help = " + this.pl.getConfig().getString("Core.HelpMsg.DVersion").replace("&", "§"));
+			            player.sendMessage(ChatColor.GOLD + "» /seriousrp version = " + this.pl.getConfig().getString("Core.HelpMsg.DHelp").replace("&", "§"));
+			            player.sendMessage(ChatColor.GOLD + "» /seriousrp dicord = " + this.pl.getConfig().getString("Core.HelpMsg.DDiscord").replace("&", "§"));
+			            player.sendMessage(ChatColor.GOLD + "» /seriousrp status = " + this.pl.getConfig().getString("Core.HelpMsg.DStatus").replace("&", "§"));
+			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+					}
+					else if(args[1].equalsIgnoreCase("discord")) {
+						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+			            player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.Discord").replace("&", "§") + " https://discord.gg/DkQSQa7");
+			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+					}
+					else if(args[1].equalsIgnoreCase("status")) {
+						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+						if(this.pl.getConfig().getBoolean("Core.Modules.CustomRecipes") == true) {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "CustomRecipes > ON");
 						}
 						else {
-							return false;
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "CustomRecipes > OFF");
 						}
-					}
-					else {
-						sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-						sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.HelpMsg.Help").replace("&", "§"));
-						sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.HelpMsg.VersionHelp").replace("&", "§"));
-						sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("Core.HelpMsg.DiscordHelp").replace("&", "§"));
-						sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-						return true;
+						if(this.pl.getConfig().getBoolean("Core.Modules.RPDeath") == true) {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "RPDeath > ON");
+						}
+						else {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "RPDeath > OFF");
+						}
+						if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "Medics > ON");
+						}
+						else {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "Medics > OFF");
+						}
+						if(this.pl.getConfig().getBoolean("Core.Modules.TownSystem") == true) {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "TownSystem > ON");
+						}
+						else {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "TownSystem > OFF");
+						}
+						/*if(this.pl.getConfig().getBoolean("Core.Modules.RPMobiles") == true) {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "RPMobiles > ON");
+						}
+						else {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "RPMobiles > OFF");
+						}*/
+						if(this.pl.getConfig().getBoolean("Core.Modules.Chairs") == true) {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "Chairs > ON");
+						}
+						else {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "Chairs > OFF");
+						}
+						if(this.pl.getConfig().getBoolean("Core.Modules.Economy") == true) {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "Economy > ON");
+						}
+						else {
+							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "Economy > OFF");
+						}
+			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					}
 				}
 				else {
-					sender.sendMessage("[" + plugin.getConfig().getString("Prefix").replace("&", "§") + "]" + plugin.getConfig().getString("Core.NoPerms").replace("&", "§"));
-					return true;
+					player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.Help").replace("&", "§"));
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.VersionHelp").replace("&", "§"));
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.DiscordHelp").replace("&", "§"));
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.StatusHelp").replace("&", "§"));
+					player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 				}
 			}
-			
-			// /srtp
-			if(cmd.getName().equalsIgnoreCase(srtp)) {
-				if(sender.hasPermission("serious.randomtp")) {
-					Random r = new Random();
-					
-					sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-					sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("MicroModules.RandomTeleport").replace("&", "§"));
-					sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-					
-					((Player) sender).addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 50, 100));
-					((Player) sender).addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 50, 100));
-					((Player) sender).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
-					
-					int x = ((Player) sender).getLocation().getBlockX() + r.nextInt(10000);
-					int z = ((Player) sender).getLocation().getBlockX() + r.nextInt(10000);
-					
-					int rtpcheck = ((Player) sender).getWorld().getHighestBlockYAt(x, z);
-					int rtpdone = rtpcheck + 1;
-					
-					Location rtp = new Location(((Player) sender).getWorld(), x, rtpdone, z);
-					((Player) sender).teleport(rtp);
-					
-					return true;
-				}
-				else {
-					sender.sendMessage("[" + plugin.getConfig().getString("Prefix").replace("&", "§") + "]" + plugin.getConfig().getString("Core.NoPerms").replace("&", "§"));
-					return true;
-				}
+			else {
+				player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
 			}
-			
-			// /srtown <set/where>
-			if(cmd.getName().equalsIgnoreCase(srtown)) {
-				double x = plugin.getConfig().getDouble("TownSystem.Locations.Town.x");
-				double y = plugin.getConfig().getDouble("TownSystem.Locations.Town.y");
-				double z = plugin.getConfig().getDouble("TownSystem.Locations.Town.z");
-				String monde = plugin.getConfig().getString("TownSystem.Locations.Town.WorldName");
+		}
+		
+		// /srtp
+		if(args[0].equalsIgnoreCase("/srtp")) {
+			if(player.hasPermission("serious.randomtp")) {
+				Random r = new Random();
+				
+				player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+				player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("MicroModules.RandomTeleport").replace("&", "§"));
+				player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+				
+				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 50, 100));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 50, 100));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
+				
+				int x = ((Player) player).getLocation().getBlockX() + r.nextInt(this.pl.getConfig().getInt("MicroModules.RandomBlocks"));
+				int z = ((Player) player).getLocation().getBlockX() + r.nextInt(this.pl.getConfig().getInt("MicroModules.RandomBlocks"));
+				
+				int rtpcheck = ((Player) player).getWorld().getHighestBlockYAt(x, z);
+				int rtpdone = rtpcheck + 1;
+				
+				Location rtp = new Location(((Player) player).getWorld(), x, rtpdone, z);
+				((Player) player).teleport(rtp);
+			}
+			else {
+				player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
+			}
+		}
+		
+		// /srtown <set/where>
+		
+		if(args[0].equalsIgnoreCase("/srtown")) {
+			if(this.pl.getConfig().getBoolean("Core.Modules.TownSystem") == true) {
+				double x = this.pl.getConfig().getDouble("TownSystem.Locations.Town.x");
+				double y = this.pl.getConfig().getDouble("TownSystem.Locations.Town.y");
+				double z = this.pl.getConfig().getDouble("TownSystem.Locations.Town.z");
+				String monde = this.pl.getConfig().getString("TownSystem.Locations.Town.WorldName");
 				World world = Bukkit.getWorld(monde);
 				
-				if(sender.hasPermission("seriousrp.town")) {
-					if(args.length == 1) {
-						if(args[0].equalsIgnoreCase("set")) {
-							if(sender.hasPermission("seriousrp.townset")) {
-								plugin.getConfig().set("TownSystem.Locations.Town.x", Integer.valueOf(((Player) sender).getLocation().getBlockX()));
-								plugin.getConfig().set("TownSystem.Locations.Town.y", Integer.valueOf(((Player) sender).getLocation().getBlockY()));
-								plugin.getConfig().set("TownSystem.Locations.Town.z", Integer.valueOf(((Player) sender).getLocation().getBlockZ()));
-								plugin.getConfig().set("TownSystem.Locations.Town.WorldName", ((Player) sender).getWorld().getName());
-								plugin.saveConfig();
+				if(player.hasPermission("seriousrp.town")) {
+					if(args.length == 2) {
+						if(args[1].equalsIgnoreCase("set")) {
+							if(player.hasPermission("seriousrp.townset")) {
+								this.pl.getConfig().set("TownSystem.Locations.Town.x", Integer.valueOf(((Player) player).getLocation().getBlockX()));
+								this.pl.getConfig().set("TownSystem.Locations.Town.y", Integer.valueOf(((Player) player).getLocation().getBlockY()));
+								this.pl.getConfig().set("TownSystem.Locations.Town.z", Integer.valueOf(((Player) player).getLocation().getBlockZ()));
+								this.pl.getConfig().set("TownSystem.Locations.Town.WorldName", ((Player) player).getWorld().getName());
+								this.pl.saveConfig();
 								
-								sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-								sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("TownSystem.Teleports.SetTown").replace("&", "§"));
-								sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-								return true;
+								player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+								player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("TownSystem.Teleports.SetTown").replace("&", "§"));
+								player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 							}
 							else {
-								sender.sendMessage("[" + plugin.getConfig().getString("Prefix").replace("&", "§") + "]" + plugin.getConfig().getString("Core.NoPerms").replace("&", "§"));
-								return true;
+								player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
 							}
 						}
-						else if(args[0].equalsIgnoreCase("where")) {
-							sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-							sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("TownSystem.Teleports.TownWhere").replace("&", "§") + " x" + x + ", y" + y + ", z" + z);
-							sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-				            return true;
+						else if(args[1].equalsIgnoreCase("where")) {
+							player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+							player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("TownSystem.Teleports.TownWhere").replace("&", "§") + " x" + x + ", y" + y + ", z" + z);
+							player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 						}
-						else {
-							return false;
+						else if(args[1].equalsIgnoreCase("tp")) {
+							player.teleport(new Location(world, x, y, z));
+							
+							player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+							player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("TownSystem.Teleports.GoToTown").replace("&", "§"));
+							player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 						}
 					}
 					else {
-						((Player) sender).teleport(new Location(world, x, y, z));
+						player.teleport(new Location(world, x, y, z));
 						
-						sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + plugin.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-						sender.sendMessage(ChatColor.GOLD + "» " + plugin.getConfig().getString("TownSystem.Teleports.GoToTown").replace("&", "§"));
-						sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-						return true;
+						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("TownSystem.Teleports.GoToTown").replace("&", "§"));
+						player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					}
 				}
 				else {
-					sender.sendMessage("[" + plugin.getConfig().getString("Prefix").replace("&", "§") + "]" + plugin.getConfig().getString("Core.NoPerms").replace("&", "§"));
-					return true;
+					player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
 				}
 			}
-			
-			// /revive
-			if(cmd.getName().equalsIgnoreCase(revive)) {
-				if(sender.hasPermission("seriousrp.medrevive")) {
-					Player cible = Bukkit.getPlayer(args[0]);
+			else {
+				if(this.pl.getConfig().getBoolean("Core.Modules.InactiveDebug")) {
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.Modules.InactiveMessage").replace("&", "§").replace("%module%", "TownSystem"));
+				}
+			}
+		}
+		
+		// /revive
+		if(args[0].equalsIgnoreCase("/revive")) {
+			if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
+				if(player.hasPermission("seriousrp.medrevive")) {
+					Player cible = Bukkit.getPlayer(args[1]);
 					if(cible != null) {
 						if(cible.getHealth() < 10.0D) {
 							cible.setHealth(20.0D);
-							sender.sendMessage(plugin.getConfig().getString("Medics.MedRevive.Revive").replace("&", "§") + " " + args[0]);
+							player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.Revive").replace("&", "§") + " " + args[1]);
 							
 							cible.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 							cible.removePotionEffect(PotionEffectType.SLOW);
 							cible.removePotionEffect(PotionEffectType.BLINDNESS);
 							cible.removePotionEffect(PotionEffectType.HUNGER);
+							cible.removePotionEffect(PotionEffectType.JUMP);
 							cible.setFoodLevel(10);
-							return true;
 						}
 						else {
-							sender.sendMessage(plugin.getConfig().getString("Medics.MedRevive.NoNeed").replace("&", "§"));
-							return true;
+							player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.NoNeed").replace("&", "§"));
 						}
 					}
 					else {
-						sender.sendMessage(ChatColor.DARK_RED + args[0] + " " + plugin.getConfig().getString("Medics.MedRevive.Error").replace("&", "§"));
-						return true;
+						player.sendMessage(ChatColor.DARK_RED + args[1] + " " + this.pl.getConfig().getString("Medics.MedRevive.Error").replace("&", "§"));
 					}
 				}
 				else {
-					sender.sendMessage("[" + plugin.getConfig().getString("Prefix").replace("&", "§") + "]" + plugin.getConfig().getString("Core.NoPerms").replace("&", "§"));
-					return true;
+					player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
 				}
 			}
-			// /hrprevive
-			if(cmd.getName().equalsIgnoreCase(hrprevive)) {
-				if(sender.hasPermission("seriousrp.medhrprevive")) {
-					if(((Player) sender).getHealth() < 10.0D) {
-						((Player) sender).setHealth(20.0D);
-						sender.sendMessage(plugin.getConfig().getString("Medics.MedRevive.Revive").replace("&", "§") + " " + args[0]);
+			else {
+				if(this.pl.getConfig().getBoolean("Core.Modules.InactiveDebug")) {
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.Modules.InactiveMessage").replace("&", "§").replace("%module%", "Medics"));
+				}
+			}
+		}
+		// /hrprevive
+		if(args[0].equalsIgnoreCase("/hrprevive")) {
+			if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
+				if(player.hasPermission("seriousrp.medhrprevive")) {
+					if(player.getHealth() < 10.0D) {
+						player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.Self").replace("&", "§"));
 						
-						((Player) sender).removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-						((Player) sender).removePotionEffect(PotionEffectType.SLOW);
-						((Player) sender).removePotionEffect(PotionEffectType.BLINDNESS);
-						((Player) sender).removePotionEffect(PotionEffectType.HUNGER);
-						((Player) sender).setFoodLevel(10);
-						return true;
+						 player.setHealth(20);
+	
+	                     player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+	                     player.removePotionEffect(PotionEffectType.SLOW);
+	                     player.removePotionEffect(PotionEffectType.BLINDNESS);
+	                     player.removePotionEffect(PotionEffectType.HUNGER);
+	                     player.removePotionEffect(PotionEffectType.JUMP);
+	
+	                     player.setFoodLevel(10);
 					}
 					else {
-						sender.sendMessage(plugin.getConfig().getString("Medics.MedRevive.NoNeed").replace("&", "§"));
-						return true;
+						player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.NoNeed").replace("&", "§"));
 					}
 				}
 				else {
-					sender.sendMessage("[" + plugin.getConfig().getString("Prefix").replace("&", "§") + "]" + plugin.getConfig().getString("Core.NoPerms").replace("&", "§"));
-					return true;
+					player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
 				}
 			}
-			// /medinfo
-			if(cmd.getName().equalsIgnoreCase(medinfo)) {
-				if(sender.hasPermission("seriousrp.medinfo")) {
-					Player cible = Bukkit.getPlayer(args[0]);
+			else {
+				if(this.pl.getConfig().getBoolean("Core.Modules.InactiveDebug")) {
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.Modules.InactiveMessage").replace("&", "§").replace("%module%", "Medics"));
+				}
+			}
+		}
+		// /medinfo
+		if(args[0].equalsIgnoreCase("/medinfo")) {
+			if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
+				if(player.hasPermission("seriousrp.medinfo")) {
+					Player cible = Bukkit.getPlayer(args[1]);
 					if (cible != null) {
 						double vie = cible.getHealth();
 						double faim = cible.getFoodLevel();
@@ -238,38 +307,90 @@ public class Commands extends CommandExecute implements Listener, CommandExecuto
 						int z = Integer.valueOf(cible.getLocation().getBlockZ()).intValue();
 						String monde = cible.getWorld().getName();
 						    
-						sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + args[0] + " ♖ -----+");
+						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + args[1] + " ♖ -----+");
 						if (vie > 10.0D) {
-							sender.sendMessage("§a" + plugin.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " " + vie / 2.0D + " " + plugin.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
+							player.sendMessage("§a" + this.pl.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " " + vie / 2.0D + " " + this.pl.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
 						}
 						else if (vie <= 9.0D) {
-							sender.sendMessage("§c" + plugin.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " " + vie / 2.0D + " " + plugin.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
+							player.sendMessage("§c" + this.pl.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " " + vie / 2.0D + " " + this.pl.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
 						}
-						sender.sendMessage("§a" + plugin.getConfig().getString("Medics.MedInfo.Food").replace("&", "§") + " " + faim / 2.0D + " / 10");
-						sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-						sender.sendMessage("§a" + plugin.getConfig().getString("Medics.MedInfo.Effects").replace("&", "§") + " " + effects);
-						sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-						sender.sendMessage("§a" + args[0] + " " + plugin.getConfig().getString("Medics.MedInfo.Coordinates").replace("&", "§") + " " + x + ", " + y + ", " + z + " > " + monde);
-						sender.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+						if (faim > 10.0D) {
+							player.sendMessage("§a" + this.pl.getConfig().getString("Medics.MedInfo.Food").replace("&", "§") + " " + faim / 2.0D + " / 10");
+						}
+						else if (faim <= 9.0D) {
+							player.sendMessage("§c" + this.pl.getConfig().getString("Medics.MedInfo.Food").replace("&", "§") + " " + faim / 2.0D + " / 10");
+						}
+						
+						player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+						player.sendMessage("§a" + this.pl.getConfig().getString("Medics.MedInfo.Effects").replace("&", "§") + " " + effects);
+						player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+						player.sendMessage("§a" + args[1] + " " + this.pl.getConfig().getString("Medics.MedInfo.Coordinates").replace("&", "§") + " " + x + ", " + y + ", " + z + " > " + monde);
+						player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					}
 					else {
-						sender.sendMessage(ChatColor.DARK_RED + args[0] + " " + plugin.getConfig().getString("Medic.Error").replace("&", "§"));
+						player.sendMessage(ChatColor.DARK_RED + args[1] + " " + this.pl.getConfig().getString("Medic.Error").replace("&", "§"));
 					}
 					
 				}
 				else {
-					sender.sendMessage("[" + plugin.getConfig().getString("Prefix").replace("&", "§") + "]" + plugin.getConfig().getString("Core.NoPerms").replace("&", "§"));
-					return true;
+					player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
 				}
 			}
-			
-			
-		}
-		else {
-			sender.sendMessage(ChatColor.RED + "Only real players can use this command !");
-			return true;
+			else {
+				if(this.pl.getConfig().getBoolean("Core.Modules.InactiveDebug")) {
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.Modules.InactiveMessage").replace("&", "§").replace("%module%", "Medics"));
+				}
+			}
 		}
 		
-		return false;
+		// /srtp
+		if(args[0].equalsIgnoreCase("/cheque") || args[0].equalsIgnoreCase("/cq")) {
+			if(this.pl.getConfig().getBoolean("Core.Modules.Economy") == true) {
+				if(player.hasPermission("serious.economy.cheques")) {
+					if(args.length == 2 && isInt(args[1])) {
+						ItemStack inHand = new ItemStack(Material.PAPER);
+						ItemMeta inHandMeta = inHand.getItemMeta();
+						ArrayList<String> inHandLore = new ArrayList<String>();
+						inHandMeta.setDisplayName(this.pl.getConfig().getString("Economy.Cheque.Lores.Title").replace("&", "§").replace("%amount%", args[1]));
+						inHandLore.add(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§") + "§l" + args[1] + this.pl.getConfig().getString("Economy.Currency"));
+						inHandLore.add(this.pl.getConfig().getString("Economy.Cheque.Lores.Author").replace("&", "§") + "§7§o" + player.getDisplayName());
+						inHandLore.add("");
+						inHandLore.add(this.pl.getConfig().getString("Economy.Cheque.Lores.Usage").replace("&", "§"));
+						inHandMeta.setLore(inHandLore);
+						inHand.setItemMeta(inHandMeta);
+						
+						if (player.getInventory().contains(inHand)) {
+							player.sendMessage(this.pl.getConfig().getString("Economy.Cheque.Already").replace("&", "§").replace("%amount%", args[1]));
+						}
+						else {
+							String price = args[1];
+							double dprice = Double.valueOf(price).doubleValue();
+							
+							if (Main.economy.getBalance(player) < dprice) {
+								player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.NotEnough").replace("&", "§").replace("%amount%", args[1]));
+							}
+							else {
+								player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Created").replace("&", "§").replace("%amount%", args[1]));
+								Main.economy.withdrawPlayer(player, dprice);
+								player.getInventory().addItem(inHand);
+							}
+						}
+					}
+					else {
+						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Usage").replace("&", "§"));
+					}
+					
+				}
+				else {
+					player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
+				}
+			}
+			else {
+				if(this.pl.getConfig().getBoolean("Core.Modules.InactiveDebug")) {
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.Modules.InactiveMessage").replace("&", "§").replace("%module%", "Economy"));
+				}
+			}
+		}
+		
 	}
 }
