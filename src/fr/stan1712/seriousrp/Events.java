@@ -2,9 +2,9 @@ package fr.stan1712.seriousrp;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,39 +32,59 @@ public class Events implements Listener {
     public Events(Main pl) {
         this.pl = pl;
         pl.getConfig();
-    }
-	
+    }    
+    
     // Chutes
 	@EventHandler
-	public void onFall(EntityDamageEvent e) {
-		if (!(e.getEntity() instanceof Player)) {
+	public void onFall(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player)) {
 			return;
 		}
-		if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
-			if (e.getDamage() >= 2.0D) {
-				LivingEntity entity = (LivingEntity)e.getEntity();
-				entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 75, (int)Math.round(e.getDamage() / 2.0D - 1.0D)));
+		if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+			if (event.getDamage() >= 2.0D) {
+				LivingEntity entity = (LivingEntity)event.getEntity();
+				entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 75, (int)Math.round(event.getDamage() / 2.0D - 1.0D)));
 			}
 		}
 	}
 	
 	// Dégâts
 	@EventHandler
-	public void onSang(EntityDamageByEntityEvent e) {
-		Entity entity = e.getEntity();
+	public void onSang(EntityDamageByEntityEvent event) {
+		Entity entity = event.getEntity();
 		Location entityloc = entity.getLocation();
 		if (entity.getType() != EntityType.ITEM_FRAME) {
 			entity.getWorld().playEffect(entityloc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
 		}
 	}
 	
+	// Economy - Chèques
+	@EventHandler
+	public void onPlayerUse(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if(event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+        	if(event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore() != null) {
+				for (String s : event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore()) {
+					if(s.startsWith(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"))) {
+						String price = s.replace(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"), "").replace(this.pl.getConfig().getString("Economy.Currency").replace("&", "§"), "").replace("§l", "");
+						double dprice = Double.valueOf(price).doubleValue();
+						
+						Main.economy.depositPlayer(player, dprice);
+						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "§").replace("%amount%", price));
+						player.getInventory().remove(player.getInventory().getItemInMainHand());
+						
+						event.setCancelled(true);
+					}
+				}
+        	}
+        }
+	}
+	
+	// Chaises
 	public Map<Player, Location> playerLocation = new HashMap<Player, Location>();
 	public Map<Player, Entity> chairList = new HashMap<Player, Entity>();
 	public Map<Player, Location> chairLocation = new HashMap<Player, Location>();
-	Logger log = Logger.getLogger("Minecraft");
-		
-		  
-	// Chaises
+	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event){
 		if(this.pl.getConfig().getBoolean("Core.Modules.Chairs") == true){
@@ -72,7 +92,7 @@ public class Events implements Listener {
 			    
 			if (event.getClickedBlock() != null){
 				Block block = event.getClickedBlock();
-				if ((event.getAction() == Action.RIGHT_CLICK_BLOCK) && (!player.isInsideVehicle()) && (player.getItemInHand().getType() == Material.AIR)){
+				if ((event.getAction() == Action.RIGHT_CLICK_BLOCK) && (!player.isInsideVehicle()) && (player.getInventory().getItemInMainHand().getType() == Material.AIR)){;
 					String blockMaterial = block.getType().name();
 					for (String chairBlock : this.pl.getConfig().getStringList("Chairs")){
 						if (blockMaterial.equalsIgnoreCase(chairBlock)){

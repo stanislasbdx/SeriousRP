@@ -28,12 +28,15 @@ Core:
     DHRPRevive: "Vous réanime et vous soigne"
   Modules:
     Error: "Une erreur a ete trouvée ! Regardez la console ainsi que votre fichier config.yml"
+    InactiveDebug: true
+    InactiveMessage: "&cLe module '%module%' est inactif"
     CustomRecipes: true
     RPDeath: true
     Medics: false
     TownSystem: true
     RPMobile: true
     Chairs: true
+    Economy: true
     
 #Modules sections
 MicroModules:
@@ -77,7 +80,21 @@ RPMobiles:
   Music: "&cBientot..."
   GoToTown: "&aDirection : Ville"
   YourNumber: "&cBientot..."
-  
+
+Economy:
+  Currency: "€"
+  NotEnough: "&cVous n'avez pas assez d'argent !"
+  Cheque:
+    Usage: "Pour créer un chèque : /cheque <montant>"
+    Created: "Un chèque de %amount%€ à été créé"
+    Already: "&cVous avez déjà un chèque de %amount%€ sur vous !"
+    Claimed: "&aVous avez encaissé le chèque de %amount%€ !"
+    Lores:
+      Title: "&8Chèque (&7%amount%€&8)"
+      Value: "&7Valeur : "
+      Author: "&7Auteur : "
+      Usage: "&6&lClic droit pour encaisser"
+        
 Chairs:
   - WOOD_STAIRS
   - SPRUCE_WOOD_STAIRS

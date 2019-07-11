@@ -6,7 +6,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import net.milkbowl.vault.economy.Economy;
 
 public class Main extends JavaPlugin implements Listener {	
 	public void versionCheck() {
@@ -51,9 +54,9 @@ public class Main extends JavaPlugin implements Listener {
 	}
 	
 	public void depencies() {
-		File Tdirect = new File("plugins/Telecom");
+		//File Tdirect = new File("plugins/Telecom");
 		File Vdirect = new File("plugins/Vault");
-		if (!Tdirect.exists()) {
+		/*if (!Tdirect.exists()) {
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** *** *** *** *** *** WARNING *** *** *** *** *** *** *** ***");
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Telecom} Telecom was not found !	                       *");
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Telecom} Deactivation of the module RPMobile.	               *");
@@ -64,14 +67,31 @@ public class Main extends JavaPlugin implements Listener {
 		}
 		else {
 			System.out.println("[SeriousRP] {Telecom} Telecom hooked !");
-		}
+		}*/
 		if (!Vdirect.exists()) {
-			System.out.println("[SeriousRP] {Vault} Vault was not found");
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** *** *** *** *** *** WARNING *** *** *** *** *** *** *** ***");
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Vault} Vault was not found !	       			       *");
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Vault} Deactivation of the module Economy.		       *");
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "* {Vault} If you want to use SRP mobile, you will need Vault.     *");
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***");
+			  
+			getConfig().set("Core.Modules.Economy", Boolean.valueOf(false));
 		}
-		else {
+		else {			
 			System.out.println("[SeriousRP] {Vault} Vault hooked !");
 		}
 	}
+	
+	private boolean setupEconomy() {
+        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        if (economyProvider != null) {
+            economy = economyProvider.getProvider();
+        }
+
+        return (economy != null);
+    }
+	
+	public static Economy economy = null;
 	
 	PluginManager pm = getServer().getPluginManager();
 	ConsoleCommandSender console = getServer().getConsoleSender();
@@ -88,6 +108,52 @@ public class Main extends JavaPlugin implements Listener {
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Version check -#");
 		versionCheck();
+		
+		/*
+		 * Class loader (project)
+		 */
+		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
+		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Class manager, loading classes -#");
+		pm.registerEvents(new Events(this), this);
+		pm.registerEvents(new Deaths(), this);
+		console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All classes have been loaded");
+
+		/*
+		 * Depencies like Telecom and Vault
+		 */
+		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
+		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Depencies Manager -#");
+		depencies();
+		
+		//vault loader
+		if(getConfig().getBoolean("Core.Modules.Economy") == true) {
+			if(setupEconomy()) {
+				console.sendMessage("[SeriousRP] {Vault} Economy loaded !");
+			}
+			else {
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "Error while activating economy, Economy system is now inactive.");
+				getConfig().set("Core.Modules.Economy", Boolean.valueOf(false));
+			}
+		}
+		
+		/*
+		 * Commands loader
+		 */
+		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
+		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Commands manager, loading commands -#");
+		pm.registerEvents(new Commands(this), this);
+		console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All commands have been loaded");
+		
+		/*
+		 * Custom recipes
+		 */
+		if(getConfig().getBoolean("Core.Modules.CustomRecipes") == true) {
+			console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
+			console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Custom recipes [Module] -#");
+			pm.registerEvents(new Recipes(this), this);
+			
+			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All recipes have been added !");
+		}
 		
 		/* 
 		 * Modules in config.yml
@@ -118,54 +184,24 @@ public class Main extends JavaPlugin implements Listener {
 		else {
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "TownSystem > OFF");
 		}
-		if(getConfig().getBoolean("Core.Modules.RPMobiles") == true) {
+		/*if(getConfig().getBoolean("Core.Modules.RPMobiles") == true) {
 			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "RPMobiles > ON");
 		}
 		else {
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "RPMobiles > OFF");
-		}
+		}*/
 		if(getConfig().getBoolean("Core.Modules.Chairs") == true) {
 			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "Chairs > ON");
 		}
 		else {
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "Chairs > OFF");
 		}
-		
-		/*
-		 * Class loader (project)
-		 */
-		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
-		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Class manager, loading classes -#");
-		pm.registerEvents(new Events(this), this);
-		pm.registerEvents(new Deaths(), this);
-		console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All classes have been loaded");
-
-		/*
-		 * Depencies like Telecom and Vault
-		 */
-		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
-		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Depencies Manager -#");
-		depencies();
-		
-		/*
-		 * Commands loader
-		 */
-		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
-		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Commands manager, loading commands -#");
-		pm.registerEvents(new Commands(this), this);
-		console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All commands have been loaded");
-		
-		/*
-		 * Custom recipes
-		 */
-		if(getConfig().getBoolean("Core.Modules.CustomRecipes") == true) {
-			console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
-			console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Custom recipes [Module] -#");
-			pm.registerEvents(new Recipes(this), this);
-			
-			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All recipes have been added !");
+		if(getConfig().getBoolean("Core.Modules.Economy") == true) {
+			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "Economy > ON");
 		}
-	      	
+		else {
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "Economy > OFF");
+		}	      	
 		
 		/*
 		 * Config creator/modificator
