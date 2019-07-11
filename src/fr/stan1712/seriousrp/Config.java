@@ -9,7 +9,7 @@ import net.md_5.bungee.api.ChatColor;
 public class Config implements Listener {
 	private Plugin plugin = Main.getPlugin(Main.class);
 	
-	String version = "Version 3.9.9-4.2g";
+	String version = "Version 4.0.0";
 	String fileVersion = this.plugin.getConfig().getString("Version");
 
 	private void VersionUpdate() {

@@ -44,7 +44,7 @@ MicroModules:
   RandomBlocks: 1000
   
 Medics:
-  Comate: "&cVous êtes dans le coma, appelez les Urgentistes ou faites /hrprevive s'il ne sont pas disponibles"
+  Comate: "&cVous êtes dans le coma, appelez les Urgentistes ou faites &l/hrprevive&r&c s'il ne sont pas disponibles"
   MedRevive:
     Revive: "&aVous avez bien réanimé le joueur"
     Self: "&aVous vous êtes bien réanimé"
@@ -68,18 +68,6 @@ TownSystem:
       y: 0
       z: 0
       WorldName: world
-    
-RPMobiles:
-  LorePhone1: "&9Voici votre telephone"
-  LorePhone2: "&9Clic droit pour l'ouvrir"
-  LorePhone3: "&6Proprietaire :"
-  Answer: "&aDecrocher"
-  HangUp: "&cRaccrocher"
-  Shutdown: "&cEteindre"
-  You: "&aOui, c'est vous, vous etes beau non ?"
-  Music: "&cBientot..."
-  GoToTown: "&aDirection : Ville"
-  YourNumber: "&cBientot..."
 
 Economy:
   Currency: "€"
