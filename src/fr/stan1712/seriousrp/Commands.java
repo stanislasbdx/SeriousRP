@@ -72,6 +72,7 @@ public class Commands implements Listener{
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp version = " + this.pl.getConfig().getString("Core.HelpMsg.DHelp").replace("&", "§"));
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp dicord = " + this.pl.getConfig().getString("Core.HelpMsg.DDiscord").replace("&", "§"));
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp status = " + this.pl.getConfig().getString("Core.HelpMsg.DStatus").replace("&", "§"));
+			            player.sendMessage(ChatColor.GOLD + "» /seriousrp reload = " + this.pl.getConfig().getString("Core.HelpMsg.DReload").replace("&", "§"));
 			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					}
 					else if(args[1].equalsIgnoreCase("discord")) {
@@ -125,6 +126,19 @@ public class Commands implements Listener{
 						}
 			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					}
+					else if(args[1].equalsIgnoreCase("reload")) {
+						if(player.hasPermission("seriousrp.admin.reload")) {							
+							new Config();
+				            this.pl.saveConfig();
+				               
+							player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+				            player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.Reload").replace("&", "§"));
+				            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+						}
+						else {
+							player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
+						}
+					}
 				}
 				else {
 					player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
@@ -132,6 +146,7 @@ public class Commands implements Listener{
 					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.VersionHelp").replace("&", "§"));
 					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.DiscordHelp").replace("&", "§"));
 					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.StatusHelp").replace("&", "§"));
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.ReloadHelp").replace("&", "§"));
 					player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 				}
 			}
