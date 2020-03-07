@@ -25,9 +25,12 @@ public class Config implements Listener {
 	    
 	    VersionUpdate();
 	    
-	    config.options().header("SeriousRP | Owner : stan1712 \nTraductors : ErHak_ / legaming04 -> https://github.com/stan1712/SeriousRP/wiki/Translations \nOur Discord : https://discord.gg/DkQSQa7");
+	    config.options().header("SeriousRP | Owner : stan1712\n"
+	    		+ "Traductors : ErHak_ / legaming04 -> https://github.com/stan1712/SeriousRP/wiki/Translations\n"
+	    		+ "Our Discord : https://discord.gg/DkQSQa7\n"
+	    		+ "Material list : https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html (for the Chairs module)");
 	    
-	    if(this.plugin.getConfig().getBoolean("ConfigFix")) {
+	    if(config.getBoolean("ConfigFix")) {
 	      config.options().copyDefaults(true);
 	      config.options().copyHeader(true);
 	      
