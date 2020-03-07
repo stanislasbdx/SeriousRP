@@ -13,8 +13,7 @@
     <target name="compile">
         <mkdir dir="${dir.classes}"/>
 		<javac srcdir="${dir.src}" target="1.5" source="1.5" destdir="${dir.classes}" encoding="iso-8859-1">
-			<src path="${redirectorSrc}"/>
-			<src path="${srcMasatosan}"/>
+			<src path="${dir.jar}"/>
 		</javac>
     </target>
 
