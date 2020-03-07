@@ -1,7 +1,6 @@
 language: java
-os: linux
-sudo: false
+install: ant deps
 script:
-  - jdk_switcher use oraclejdk8
+  - ant test
 jdk:
   - oraclejdk8
