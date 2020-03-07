@@ -34,7 +34,7 @@ public class Events implements Listener {
         pl.getConfig();
     }    
     
-    // Chutes
+    // Falls
 	@EventHandler
 	public void onFall(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player)) {
@@ -48,7 +48,7 @@ public class Events implements Listener {
 		}
 	}
 	
-	// Dégâts
+	// Dommages
 	@EventHandler
 	public void onSang(EntityDamageByEntityEvent event) {
 		Entity entity = event.getEntity();
@@ -58,7 +58,7 @@ public class Events implements Listener {
 		}
 	}
 	
-	// Economy - Chèques
+	// Economy - Cheques
 	@EventHandler
 	public void onPlayerUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -67,10 +67,11 @@ public class Events implements Listener {
 				for (String s : event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore()) {
 					if(s.startsWith(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"))) {
 						String price = s.replace(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"), "").replace(this.pl.getConfig().getString("Economy.Currency").replace("&", "§"), "").replace("§l", "");
-						double dprice = Double.valueOf(price).doubleValue();
+						double dprice = Double.valueOf(price).doubleValue() * event.getPlayer().getInventory().getItemInMainHand().getAmount();
+						String price1 = String.valueOf(dprice);
 						
 						Main.economy.depositPlayer(player, dprice);
-						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "§").replace("%amount%", price));
+						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "§").replace("%amount%", price1));
 						player.getInventory().remove(player.getInventory().getItemInMainHand());
 						
 						event.setCancelled(true);
@@ -80,7 +81,7 @@ public class Events implements Listener {
         }
 	}
 	
-	// Chaises
+	// Chairs
 	public Map<Player, Location> playerLocation = new HashMap<Player, Location>();
 	public Map<Player, Entity> chairList = new HashMap<Player, Entity>();
 	public Map<Player, Location> chairLocation = new HashMap<Player, Location>();
@@ -102,7 +103,7 @@ public class Events implements Listener {
 							this.chairList.put(player, chair);
 							chair.teleport(block.getLocation().add(0.5D, 0.2D, 0.5D));
 							this.chairLocation.put(player, chair.getLocation());
-							chair.setPassenger(player);
+							chair.addPassenger(player);
 							event.setCancelled(true);
 						}
 					}
@@ -136,6 +137,7 @@ public class Events implements Listener {
 			}
 		}
 	}
+	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event){
 		if(this.pl.getConfig().getBoolean("Core.Modules.Chairs") == true){
@@ -145,7 +147,7 @@ public class Events implements Listener {
 					World world = player.getWorld();
 					if (this.chairLocation.containsKey(player)){
 						Entity chair = world.spawnEntity((Location)this.chairLocation.get(player), EntityType.ARROW);
-						chair.setPassenger(player);
+						chair.addPassenger(player);
 					}
 				}
 			}

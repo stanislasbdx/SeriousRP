@@ -1,99 +1,85 @@
-# SeriousRP | Owner : stan1712 
-# Traductors : ErHak_ / legaming04 -> https://github.com/stan1712/SeriousRP/wiki/Translations 
-# Our Discord : https://discord.gg/DkQSQa7
-Version: VERSION NOT SET PLEASE SET ConfigFix TO true
+Version: 0
 ConfigFix: true
 Prefix: SeriousRP
 
-#Core messages
 Core:
-  Discord: "Notre discord :"
-  NoPerms: "Vous n'avez pas la permission !"
+  Discord: "Our discord :"
+  NoPerms: "You don't have the permission !"
+  Reload: "Config file reloaded !"
   HelpMsg:
-    Help: "Besoin d'aide ? Tapez /seriousrp help"
-    VersionHelp: "Version du plugin ? Tapez /seriousrp version"
-    DiscordHelp: "Rejoignez notre discord ! /seriousrp discord"
-    StatusHelp: "Quels sont les modules activés ? /seriousrp status"
-    Dsrtp: "Pouvoir se téléporter aléatoirement"
-    DTown: "Permet de se téléporter dans la ville"
-    DTownSet: "Permet de définir le point de spawn de la ville"
-    DTownWhere: "Permet de savoir où se trouve la ville"
-    DPhone: "Affiche le menu du telephone"
-    DHelp: "Affiche l'aide"
-    DVersion: "Connaitre la version du plugin"
-    DStatus: "Affiche l'état des modules"
-    DDiscord: "Affiche le lien du discord"
-    DRevive: "Réanime et soigne un joueur"
-    DMedinfo: "Permet de savoir l'état de santé d'un joueur"
-    DHRPRevive: "Vous réanime et vous soigne"
+    Help: "Need help ? Type /seriousrp help"
+    VersionHelp: "Plugin version ? Type /seriousrp version"
+    DiscordHelp: "Come with us on Discord ! /seriousrp discord"
+    StatusHelp: "What modules is activated ? /seriousrp status"
+    ReloadHelp: "You need to reload the config without reloading your server ? /seriousrp reload"
+    Dsrtp: "Be able to teleport you randomly"
+    DTown: "Be able to teleport you in the town"
+    DTownSet: "Be able to set the spawn point of the town"
+    DTownWhere: "Be able to know where is the town"
+    DPhone: "Shows the phone menu"
+    DHelp: "Shows the help"
+    DVersion: "Be able to know plugin version"
+    DStatus: "Show the state of the modules"
+    DDiscord: "Show the discord link"
+    DReload: "Reload the config file"
+    DRevive: "Revive and heal a player"
+    DMedinfo: "Be able to know the health status of a player"
+    DHRPRevive: "Revive and heal you"
+    DCheque: "Be able to create a cheque"
   Modules:
-    Error: "Une erreur a ete trouvée ! Regardez la console ainsi que votre fichier config.yml"
+    Error: "An error has occured ! Look the config and then, check your config.yml"
     InactiveDebug: true
-    InactiveMessage: "&cLe module '%module%' est inactif"
+    InactiveMessage: "&c'%module%' module is inactive"
     CustomRecipes: true
     RPDeath: true
     Medics: false
     TownSystem: true
-    RPMobile: true
     Chairs: true
     Economy: true
-    
-#Modules sections
+
 MicroModules:
-  RandomTeleport: "Téléportation a des milliers de blocs !"
+  RandomTeleport: "Teleportation to a random location !"
   RandomBlocks: 1000
   
 Medics:
-  Comate: "&cVous êtes dans le coma, appelez les Urgentistes ou faites /hrprevive s'il ne sont pas disponibles"
+  Comate: "&cYou are in comate, call emergency or type &l/hrprevive&r&c if they are not available"
   MedRevive:
-    Revive: "&aVous avez bien réanimé le joueur"
-    Self: "&aVous vous êtes bien réanimé"
-    Error: "&cn'est pas en ligne ou vous avez mal orthographié son pseudo !"
-    NoNeed: "&cLe joueur n'a pas besoin de se faire réanimer"
+    Revive: "&aYou successfully revive the player"
+    Self: "&aYou successfully revive yourself"
+    Error: "&cis not online, or you misstaken his username"
+    NoNeed: "&cThis player don't need to be revive"
   MedInfo:
-    Health: "Vie :"
-    Hearts: "coeurs"
-    Food: "Nourriture :"
-    Coordinates: "est en :"
-    Effects: "Effets"
+    Health: "Life :"
+    Hearts: "hearts"
+    Food: "Food :"
+    Coordinates: "is at :"
+    Effects: "Effects"
     
 TownSystem:
   Teleports:
-    GoToTown: "Vous avez ete téléporte dans la ville"
-    SetTown: "Vous avez défini le spawn de la ville"
-    TownWhere: "Le spawn de la ville se trouve en :"
+    GoToTown: "You have been teleported in the town"
+    SetTown: "You set the town spawn location"
+    TownWhere: "The spawn location of the town is at :"
   Locations:
     Town:
       x: 0
       y: 0
       z: 0
       WorldName: world
-    
-RPMobiles:
-  LorePhone1: "&9Voici votre telephone"
-  LorePhone2: "&9Clic droit pour l'ouvrir"
-  LorePhone3: "&6Proprietaire :"
-  Answer: "&aDecrocher"
-  HangUp: "&cRaccrocher"
-  Shutdown: "&cEteindre"
-  You: "&aOui, c'est vous, vous etes beau non ?"
-  Music: "&cBientot..."
-  GoToTown: "&aDirection : Ville"
-  YourNumber: "&cBientot..."
 
 Economy:
   Currency: "€"
-  NotEnough: "&cVous n'avez pas assez d'argent !"
+  NotEnough: "&cYou don't have enough money !"
   Cheque:
-    Usage: "Pour créer un chèque : /cheque <montant>"
-    Created: "Un chèque de %amount%€ à été créé"
-    Already: "&cVous avez déjà un chèque de %amount%€ sur vous !"
-    Claimed: "&aVous avez encaissé le chèque de %amount%€ !"
+    Usage: "To create a cheque : /cheque <value>"
+    Created: "A %amount%€ cheque has been created"
+    Already: "&cYou already have a %amount%€ cheque on you !"
+    Claimed: "&aYou claimed the %amount%€ cheque !"
     Lores:
-      Title: "&8Chèque (&7%amount%€&8)"
-      Value: "&7Valeur : "
-      Author: "&7Auteur : "
-      Usage: "&6&lClic droit pour encaisser"
+      Title: "&8Cheque (&7%amount%€&8)"
+      Value: "&7Value : "
+      Author: "&7Author : "
+      Usage: "&6&lRight Click to claim"
         
 Chairs:
   - WOOD_STAIRS
@@ -108,5 +94,3 @@ Chairs:
   - QUARTZ_STAIRS
   - ACACIA_STAIRS
   - DARK_OAK_STAIRS
-  - WOOL
-  - STONE_SLAB

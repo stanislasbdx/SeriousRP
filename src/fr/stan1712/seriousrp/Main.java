@@ -93,13 +93,13 @@ public class Main extends JavaPlugin implements Listener {
 	
 	public static Economy economy = null;
 	
-	PluginManager pm = getServer().getPluginManager();
-	ConsoleCommandSender console = getServer().getConsoleSender();
+	public PluginManager pm = getServer().getPluginManager();
+	public ConsoleCommandSender console = getServer().getConsoleSender();
 	
 	public void onEnable() {
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "# ------ SeriousRP ------ #");
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
-		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "SeriousRP " + getConfig().getString("Version"));
+		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "SeriousRP v" + getConfig().getString("Version"));
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "Boot sequence launched !");
 		
 		/*
@@ -108,6 +108,12 @@ public class Main extends JavaPlugin implements Listener {
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Version check -#");
 		versionCheck();
+		new UpdateChecker(this, 31443).getVersion(version -> {
+            if(!this.getDescription().getVersion().equalsIgnoreCase(version)) {            	
+            	console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "An update is available on Spigot !");
+            }
+        });
+		
 		
 		/*
 		 * Class loader (project)

@@ -42,7 +42,7 @@ public class Commands implements Listener{
         String msg = e.getMessage();
         String[] args = msg.split(" ");
         
-		// /seriousrp <version/commands/info>
+		// /seriousrp <version/help/discord/status/reload>
 		if(args[0].equalsIgnoreCase("/seriousrp") || args[0].equalsIgnoreCase("/srp")) {
 			if(player.hasPermission("seriousrp.info")) {
 				if(args.length == 2) {
@@ -64,12 +64,15 @@ public class Commands implements Listener{
 				            player.sendMessage(ChatColor.GOLD + "» /revive = " + this.pl.getConfig().getString("Core.HelpMsg.DRevive").replace("&", "§"));
 				            player.sendMessage(ChatColor.GOLD + "» /hrprevive = " + this.pl.getConfig().getString("Core.HelpMsg.DHRPRevive").replace("&", "§"));
 			            }
-			            //player.sendMessage(ChatColor.GOLD + "» /mobile = " + this.pl.getConfig().getString("Core.HelpMsg.DPhone").replace("&", "§"));
+			            if(this.pl.getConfig().getBoolean("Core.Modules.Economy") == true) {
+				            player.sendMessage(ChatColor.GOLD + "» /cheque = " + this.pl.getConfig().getString("Core.HelpMsg.DCheque").replace("&", "§"));
+			            }
 			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp help = " + this.pl.getConfig().getString("Core.HelpMsg.DVersion").replace("&", "§"));
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp version = " + this.pl.getConfig().getString("Core.HelpMsg.DHelp").replace("&", "§"));
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp dicord = " + this.pl.getConfig().getString("Core.HelpMsg.DDiscord").replace("&", "§"));
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp status = " + this.pl.getConfig().getString("Core.HelpMsg.DStatus").replace("&", "§"));
+			            player.sendMessage(ChatColor.GOLD + "» /seriousrp reload = " + this.pl.getConfig().getString("Core.HelpMsg.DReload").replace("&", "§"));
 			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					}
 					else if(args[1].equalsIgnoreCase("discord")) {
@@ -123,6 +126,19 @@ public class Commands implements Listener{
 						}
 			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					}
+					else if(args[1].equalsIgnoreCase("reload")) {
+						if(player.hasPermission("seriousrp.admin.reload")) {							
+							new Config();
+				            this.pl.saveConfig();
+				               
+							player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+				            player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.Reload").replace("&", "§"));
+				            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+						}
+						else {
+							player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
+						}
+					}
 				}
 				else {
 					player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
@@ -130,6 +146,7 @@ public class Commands implements Listener{
 					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.VersionHelp").replace("&", "§"));
 					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.DiscordHelp").replace("&", "§"));
 					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.StatusHelp").replace("&", "§"));
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.ReloadHelp").replace("&", "§"));
 					player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 				}
 			}
@@ -346,7 +363,7 @@ public class Commands implements Listener{
 		// /srtp
 		if(args[0].equalsIgnoreCase("/cheque") || args[0].equalsIgnoreCase("/cq")) {
 			if(this.pl.getConfig().getBoolean("Core.Modules.Economy") == true) {
-				if(player.hasPermission("serious.economy.cheques")) {
+				if(player.hasPermission("seriousrp.economy.cheques")) {
 					if(args.length == 2 && isInt(args[1])) {
 						ItemStack inHand = new ItemStack(Material.PAPER);
 						ItemMeta inHandMeta = inHand.getItemMeta();
