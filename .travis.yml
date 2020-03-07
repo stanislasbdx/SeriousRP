@@ -1,4 +1,5 @@
 language: java
+sudo: true
 install: ant deps
 script:
   - ant test
