@@ -23,7 +23,8 @@ public class Deaths implements Listener {
 		if(plugin.getConfig().getBoolean("Core.Modules.Medics") == true && (p instanceof Player)) {
 			double x = Integer.valueOf(p.getLocation().getBlockX()).intValue();
 			double y = Integer.valueOf(p.getLocation().getBlockY()).intValue();
-			double z = Integer.valueOf(p.getLocation().getBlockZ()).intValue();
+			double z = Integer.valueOf(p.getLocation().getBlockZ()).intValue();			
+			
 			String monde = p.getWorld().getName();
 			World world = Bukkit.getWorld(monde);
 			  
@@ -36,7 +37,7 @@ public class Deaths implements Listener {
 			p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1000000, 1000));
             p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1000000, 999));
 			  
-			p.sendMessage(plugin.getConfig().getString("Medics.Comate").replace("&", "ง"));
+			p.sendMessage(plugin.getConfig().getString("Medics.Comate").replace("&", "ยง"));
 			p.setHealth(0.5D);
 			p.setFoodLevel(1);
 		}

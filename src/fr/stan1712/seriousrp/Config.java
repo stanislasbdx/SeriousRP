@@ -109,6 +109,6 @@ public class Config implements Listener {
 	      plugin.getServer().getConsoleSender().sendMessage("[SeriousRP] " + ChatColor.GREEN + "config.yml updated !");
 	    }
 	    
-		plugin.getServer().getConsoleSender().sendMessage("[SeriousRP] " + ChatColor.GREEN + "Config file up and running !");
+		plugin.getServer().getConsoleSender().sendMessage("[SeriousRP] " + ChatColor.GREEN + "The config file has been reloaded !");
 	}
 }
