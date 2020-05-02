@@ -42,13 +42,13 @@ public class Commands implements Listener{
         String msg = e.getMessage();
         String[] args = msg.split(" ");
         
-		// /seriousrp <version/help/discord/status/reload>
+		// /seriousrp <version/help/status/reload>
 		if(args[0].equalsIgnoreCase("/seriousrp") || args[0].equalsIgnoreCase("/srp")) {
 			if(player.hasPermission("seriousrp.info")) {
 				if(args.length == 2) {
 					if(args[1].equalsIgnoreCase("version")) {
 			            player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-			            player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Version").replace("&", "§"));
+			            player.sendMessage(ChatColor.GOLD + "» Version " + this.pl.getConfig().getString("Version").replace("&", "§"));
 			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					}
 					else if(args[1].equalsIgnoreCase("help")) {
@@ -70,14 +70,8 @@ public class Commands implements Listener{
 			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp help = " + this.pl.getConfig().getString("Core.HelpMsg.DVersion").replace("&", "§"));
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp version = " + this.pl.getConfig().getString("Core.HelpMsg.DHelp").replace("&", "§"));
-			            player.sendMessage(ChatColor.GOLD + "» /seriousrp dicord = " + this.pl.getConfig().getString("Core.HelpMsg.DDiscord").replace("&", "§"));
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp status = " + this.pl.getConfig().getString("Core.HelpMsg.DStatus").replace("&", "§"));
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp reload = " + this.pl.getConfig().getString("Core.HelpMsg.DReload").replace("&", "§"));
-			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-					}
-					else if(args[1].equalsIgnoreCase("discord")) {
-						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-			            player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.Discord").replace("&", "§") + " https://discord.gg/DkQSQa7");
 			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 					}
 					else if(args[1].equalsIgnoreCase("status")) {
@@ -144,7 +138,6 @@ public class Commands implements Listener{
 					player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
 					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.Help").replace("&", "§"));
 					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.VersionHelp").replace("&", "§"));
-					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.DiscordHelp").replace("&", "§"));
 					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.StatusHelp").replace("&", "§"));
 					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.HelpMsg.ReloadHelp").replace("&", "§"));
 					player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
