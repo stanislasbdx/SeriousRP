@@ -107,6 +107,10 @@ public class Main extends JavaPlugin implements Listener {
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "SeriousRP v" + getConfig().getString("Version"));
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "Boot sequence launched !");
+		int pluginId = 7297;
+		@SuppressWarnings("unused")
+		Metrics metrics = new Metrics(this, pluginId);
+		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "Metrics enabled !");
 		
 		/*
 		 * Version checker
@@ -119,7 +123,6 @@ public class Main extends JavaPlugin implements Listener {
             	console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "An update is available on Spigot ! (" + version + ")");
             }
         });
-		Metrics metrics = new Metrics(this, 7297);
 		
 		
 		/*

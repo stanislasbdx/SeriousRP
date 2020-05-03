@@ -60,12 +60,12 @@ public class Commands implements Listener{
 				            player.sendMessage(ChatColor.GOLD + "» /srtown where = " + this.pl.getConfig().getString("Core.HelpMsg.DTownWhere").replace("&", "§"));
 			            }
 			            if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
-				            player.sendMessage(ChatColor.GOLD + "» /medinfo = " + this.pl.getConfig().getString("Core.HelpMsg.DMedinfo").replace("&", "§"));
-				            player.sendMessage(ChatColor.GOLD + "» /revive = " + this.pl.getConfig().getString("Core.HelpMsg.DRevive").replace("&", "§"));
+				            player.sendMessage(ChatColor.GOLD + "» /medinfo <player> = " + this.pl.getConfig().getString("Core.HelpMsg.DMedinfo").replace("&", "§"));
+				            player.sendMessage(ChatColor.GOLD + "» /revive <player> = " + this.pl.getConfig().getString("Core.HelpMsg.DRevive").replace("&", "§"));
 				            player.sendMessage(ChatColor.GOLD + "» /hrprevive = " + this.pl.getConfig().getString("Core.HelpMsg.DHRPRevive").replace("&", "§"));
 			            }
 			            if(this.pl.getConfig().getBoolean("Core.Modules.Economy") == true) {
-				            player.sendMessage(ChatColor.GOLD + "» /cheque = " + this.pl.getConfig().getString("Core.HelpMsg.DCheque").replace("&", "§"));
+				            player.sendMessage(ChatColor.GOLD + "» /cheque <amount> = " + this.pl.getConfig().getString("Core.HelpMsg.DCheque").replace("&", "§"));
 			            }
 			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 			            player.sendMessage(ChatColor.GOLD + "» /seriousrp help = " + this.pl.getConfig().getString("Core.HelpMsg.DVersion").replace("&", "§"));

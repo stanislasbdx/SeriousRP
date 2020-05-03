@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+@SuppressWarnings("unused")
 public class Events implements Listener {
     private Main pl;
     
@@ -37,7 +38,7 @@ public class Events implements Listener {
     
 	String[] locations = null;
     
-    //Mouvement
+    // Mouvement
     /*@EventHandler
     public void onDisplacement(PlayerMoveEvent event) throws InterruptedException {
     	Player player = event.getPlayer();
@@ -88,7 +89,7 @@ public class Events implements Listener {
 		}
 	}
 	
-	// Dommages
+	// Damages
 	@EventHandler
 	public void onSang(EntityDamageByEntityEvent event) {
 		Entity entity = event.getEntity();
