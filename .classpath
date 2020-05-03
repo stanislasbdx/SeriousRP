@@ -6,5 +6,6 @@
 	<classpathentry exported="true" kind="lib" path="D:/DEV/Minecraft/spigot-1.11.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/JEUX/Minecraft/SERVEUR LOCAL PUBLIC/plugins/Vault.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/DEV/Minecraft/spigot-1.14.4.jar"/>
+	<classpathentry kind="lib" path="D:/DEV/Minecraft/spigot-1.15.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

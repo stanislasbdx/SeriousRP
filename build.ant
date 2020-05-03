@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="SimpleProject" default="CreateJar" basedir = ".">
+<project name="SeriousRP" default="CreateJar" basedir = ".">
  
     <basename file="${basedir}" property="project.projectname"/>
     <property name="project.pluginsLocation" location="D:\JEUX\Minecraft\SERVEUR LOCAL PUBLIC\plugins"/>

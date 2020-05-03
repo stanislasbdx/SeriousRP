@@ -3,13 +3,11 @@ ConfigFix: true
 Prefix: SeriousRP
 
 Core:
-  Discord: "Our discord :"
   NoPerms: "You don't have the permission !"
   Reload: "Config file reloaded !"
   HelpMsg:
     Help: "Need help ? Type /seriousrp help"
     VersionHelp: "Plugin version ? Type /seriousrp version"
-    DiscordHelp: "Come with us on Discord ! /seriousrp discord"
     StatusHelp: "What modules is activated ? /seriousrp status"
     ReloadHelp: "You need to reload the config without reloading your server ? /seriousrp reload"
     Dsrtp: "Be able to teleport you randomly"
@@ -20,7 +18,6 @@ Core:
     DHelp: "Shows the help"
     DVersion: "Be able to know plugin version"
     DStatus: "Show the state of the modules"
-    DDiscord: "Show the discord link"
     DReload: "Reload the config file"
     DRevive: "Revive and heal a player"
     DMedinfo: "Be able to know the health status of a player"
