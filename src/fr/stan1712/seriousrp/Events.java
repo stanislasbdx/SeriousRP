@@ -105,13 +105,14 @@ public class Events implements Listener {
         if(event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
         	if(event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore() != null) {
 				for (String s : event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore()) {
-					if(s.startsWith(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "�"))) {
-						String price = s.replace(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "�"), "").replace(this.pl.getConfig().getString("Economy.Currency").replace("&", "�"), "").replace("�l", "");
+					if(s.startsWith(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"))) {						
+						String price = s.replace(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"), "").replaceAll("[^\\d.]", "");
+					
 						double dprice = Double.valueOf(price).doubleValue() * event.getPlayer().getInventory().getItemInMainHand().getAmount();
 						String price1 = String.valueOf(dprice);
 						
 						Main.economy.depositPlayer(player, dprice);
-						player.sendMessage(ChatColor.GOLD + "� " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "�").replace("%amount%", price1));
+						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "§").replace("%amount%", price1));
 						player.getInventory().remove(player.getInventory().getItemInMainHand());
 						
 						event.setCancelled(true);
