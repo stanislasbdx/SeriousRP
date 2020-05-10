@@ -99,28 +99,51 @@ public class Events implements Listener {
 		}
 	}
 	
+	private Inventory getPlayerInventory(Player player) {
+		if (player == null) return null;
+		return player.getInventory()
+	}
+	
+	private Item getItemInMainHand(Player player) {
+		Inventory inv = getPlayerInventory(player);
+		if (inv == null) return null;
+		return inv.getItemInMainHand();
+	}
+	
+	private ItemMetadata getMetadataFromItemInMainHand(Player player) {
+		Item item = getItemInMainHand(player);
+		if (item == null) return null;
+		return item.getItemMeta();
+	}
+	
+	private string[] GetLoreFromItemInHand(Player player) {
+		ItemMetadata imd = getMetadataFromItemInMainHand(player);
+		if (imd == null) return null;
+		return imd.getLore()		
+	}
+	
 	// Economy - Cheques
 	@EventHandler
 	public void onPlayerUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if(event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-        	if(event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore() != null) {
-				for (String s : event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore()) {
-					if(s.startsWith(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"))) {						
-						String price = s.replace(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"), "").replaceAll("[^\\d.]", "");
-					
-						double dprice = Double.valueOf(price).doubleValue() * event.getPlayer().getInventory().getItemInMainHand().getAmount();
-						String price1 = String.valueOf(dprice);
-						
-						Main.economy.depositPlayer(player, dprice);
-						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "§").replace("%amount%", price1));
-						player.getInventory().remove(player.getInventory().getItemInMainHand());
-						
-						event.setCancelled(true);
-					}
+		String[] lore = GetLoreFromItemInHand(player);
+		if (lore != null) {
+			for (String s : lore) {
+				if(s.startsWith(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"))) {						
+					String price = s.replace(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"), "").replaceAll("[^\\d.]", "");
+
+					double dprice = Double.valueOf(price).doubleValue() * event.getPlayer().getInventory().getItemInMainHand().getAmount();
+					String price1 = String.valueOf(dprice);
+
+					Main.economy.depositPlayer(player, dprice);
+					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "§").replace("%amount%", price1));
+					player.getInventory().remove(player.getInventory().getItemInMainHand());
+
+					event.setCancelled(true);
 				}
-        	}
-        }
+			}
+		}
 	}
 	
 	// Chairs
