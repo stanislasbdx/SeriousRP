@@ -1,6 +1,7 @@
 package fr.stan1712.seriousrp;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -13,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,6 +26,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -104,19 +109,29 @@ public class Events implements Listener {
 	public void onPlayerUse(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if(event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-        	if(event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore() != null) {
-				for (String s : event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore()) {
-					if(s.startsWith(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"))) {						
-						String price = s.replace(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"), "").replaceAll("[^\\d.]", "");
-					
-						double dprice = Double.valueOf(price).doubleValue() * event.getPlayer().getInventory().getItemInMainHand().getAmount();
-						String price1 = String.valueOf(dprice);
-						
-						Main.economy.depositPlayer(player, dprice);
-						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "§").replace("%amount%", price1));
-						player.getInventory().remove(player.getInventory().getItemInMainHand());
-						
-						event.setCancelled(true);
+        	//String[] lore = GetLoreFromItemInHand(player);
+        	
+        	ItemStack item = player.getInventory().getItemInMainHand() != null ? player.getInventory().getItemInMainHand() : null;
+        	
+        	ItemMeta imd = item.getItemMeta();
+        	if(imd == null) return;
+        	List<String> lore = imd.getLore();
+        	if(lore == null) return;
+        	
+        	
+    		if (lore != null) {
+    			for (String s : lore) {
+    				if(s.startsWith(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"))) {						
+    					String price = s.replace(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"), "").replaceAll("[^\\d.]", "");
+
+    					double dprice = Double.valueOf(price).doubleValue() * event.getPlayer().getInventory().getItemInMainHand().getAmount();
+    					String price1 = String.valueOf(dprice);
+
+    					Main.economy.depositPlayer(player, dprice);
+    					player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "§").replace("%amount%", price1));
+    					player.getInventory().remove(player.getInventory().getItemInMainHand());
+
+    					event.setCancelled(true);
 					}
 				}
         	}
