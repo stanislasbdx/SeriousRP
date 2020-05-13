@@ -357,10 +357,15 @@ public class Commands implements Listener{
 		if(args[0].equalsIgnoreCase("/cheque") || args[0].equalsIgnoreCase("/cq")) {
 			if(this.pl.getConfig().getBoolean("Core.Modules.Economy") == true) {
 				if(player.hasPermission("seriousrp.economy.cheques")) {
-					if(args.length == 2 && isInt(args[1])) {
+					
+					if(args.length == 2 && isInt(args[1]) && Integer.parseInt(args[1]) > 1) {
 						ItemStack inHand = new ItemStack(Material.PAPER);
 						ItemMeta inHandMeta = inHand.getItemMeta();
 						ArrayList<String> inHandLore = new ArrayList<String>();
+						
+						/*inHandMeta.addItemFlags(args[1]);
+						inHandMeta.getItemFlags();*/
+						
 						inHandMeta.setDisplayName(this.pl.getConfig().getString("Economy.Cheque.Lores.Title").replace("&", "§").replace("%amount%", args[1]));
 						inHandLore.add(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§") + "§l" + args[1] + this.pl.getConfig().getString("Economy.Currency"));
 						inHandLore.add(this.pl.getConfig().getString("Economy.Cheque.Lores.Author").replace("&", "§") + "§7§o" + player.getDisplayName());
@@ -381,6 +386,8 @@ public class Commands implements Listener{
 							}
 							else {
 								player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Created").replace("&", "§").replace("%amount%", args[1]));
+								
+								
 								Main.economy.withdrawPlayer(player, dprice);
 								player.getInventory().addItem(inHand);
 							}

@@ -68,7 +68,7 @@ Economy:
   Currency: "€"
   NotEnough: "&cYou don't have enough money !"
   Cheque:
-    Usage: "To create a cheque : /cheque <value>"
+    Usage: "To create a cheque : /cheque <value : only positive integers>"
     Created: "A %amount%€ cheque has been created"
     Already: "&cYou already have a %amount%€ cheque on you !"
     Claimed: "&aYou claimed the %amount%€ cheque !"
