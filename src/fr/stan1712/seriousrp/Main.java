@@ -102,6 +102,7 @@ public class Main extends JavaPlugin implements Listener {
 	public PluginManager pm = getServer().getPluginManager();
 	public ConsoleCommandSender console = getServer().getConsoleSender();
 	
+	@Override
 	public void onEnable() {
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "# ------ SeriousRP ------ #");
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
@@ -190,6 +191,8 @@ public class Main extends JavaPlugin implements Listener {
 		}
 		if(getConfig().getBoolean("Core.Modules.Medics") == true) {
 			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "Medics > ON");
+			
+			console.sendMessage("[SeriousRP] " + ChatColor.GOLD + "If you use the 'Medics' module, please set the difficulty to (at least) EASY");
 		}
 		else {
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "Medics > OFF");

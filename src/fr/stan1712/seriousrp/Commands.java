@@ -353,7 +353,7 @@ public class Commands implements Listener{
 			}
 		}
 		
-		// /srtp
+		// /cheque
 		if(args[0].equalsIgnoreCase("/cheque") || args[0].equalsIgnoreCase("/cq")) {
 			if(this.pl.getConfig().getBoolean("Core.Modules.Economy") == true) {
 				if(player.hasPermission("seriousrp.economy.cheques")) {

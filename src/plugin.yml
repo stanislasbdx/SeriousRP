@@ -1,8 +1,10 @@
 name: SeriousRP
 description: Free Roleplay Plugin
-author: stan1712
-version: 4.0.5b
 main: fr.stan1712.seriousrp.Main
+
+author: stan1712
+
+version: 4.0.5c
 prefix: SeriousRP
 
 depend: [Vault]
@@ -11,6 +13,7 @@ softdepend: [Telecom]
 commands:
   seriousrp:
     permission: seriousrp.info
+    default: true
     aliases: [srp]
   srtp:
     permission: seriousrp.randomtp
