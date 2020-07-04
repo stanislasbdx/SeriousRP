@@ -131,7 +131,7 @@ public class Main extends JavaPlugin implements Listener {
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Class manager, loading classes -#");
 		pm.registerEvents(new Events(this), this);
-		pm.registerEvents(new Deaths(), this);
+		pm.registerEvents(new Deaths(this), this);
 		console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All classes have been loaded");
 
 		/*
