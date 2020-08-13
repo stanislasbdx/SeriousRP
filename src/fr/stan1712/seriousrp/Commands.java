@@ -242,7 +242,7 @@ public class Commands implements Listener{
 					Player cible = Bukkit.getPlayer(args[1]);
 					if(cible != null) {
 						if(cible.getHealth() < 10.0D) {
-							cible.setHealth(20.0D);
+							cible.setHealth(8.0D);
 							player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.Revive").replace("&", "§") + " " + args[1]);
 							
 							cible.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
@@ -250,7 +250,8 @@ public class Commands implements Listener{
 							cible.removePotionEffect(PotionEffectType.BLINDNESS);
 							cible.removePotionEffect(PotionEffectType.HUNGER);
 							cible.removePotionEffect(PotionEffectType.JUMP);
-							cible.setFoodLevel(10);
+							
+							cible.setFoodLevel(20);
 						}
 						else {
 							player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.NoNeed").replace("&", "§"));
@@ -277,15 +278,15 @@ public class Commands implements Listener{
 					if(player.getHealth() < 10.0D) {
 						player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.Self").replace("&", "§"));
 						
-						 player.setHealth(20);
+						 player.setHealth(8.0D);
 	
 	                     player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 	                     player.removePotionEffect(PotionEffectType.SLOW);
 	                     player.removePotionEffect(PotionEffectType.BLINDNESS);
 	                     player.removePotionEffect(PotionEffectType.HUNGER);
 	                     player.removePotionEffect(PotionEffectType.JUMP);
-	
-	                     player.setFoodLevel(10);
+	                     
+	                     player.setFoodLevel(20);
 					}
 					else {
 						player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.NoNeed").replace("&", "§"));

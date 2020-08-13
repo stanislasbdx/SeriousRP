@@ -20,6 +20,12 @@ public class Main extends JavaPlugin implements Listener {
 				console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "Version check !");
 				console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "If you got issues, you can report them on Github");
 			}
+			else if(version.contains("1.16")){
+				console.sendMessage("[SeriousRP] " + ChatColor.GOLD + "*** WARNING ***");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* 1.16 is not supported by SeriousRP *");
+				console.sendMessage("[SeriousRP] " + ChatColor.RED + "* If you got errors, don't report it on Github *");
+				console.sendMessage("[SeriousRP] " + ChatColor.GOLD + "*** *** ***");
+			}
 			else if(version.contains("1.12")){
 				console.sendMessage("[SeriousRP] " + ChatColor.GOLD + "*** WARNING ***");
 				console.sendMessage("[SeriousRP] " + ChatColor.GOLD + "* 1.12 may have errors while running *");
@@ -106,7 +112,7 @@ public class Main extends JavaPlugin implements Listener {
 	public void onEnable() {
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "# ------ SeriousRP ------ #");
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
-		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "SeriousRP v" + getConfig().getString("Version"));
+		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "SeriousRP v" + getDescription().getVersion());
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + "Boot sequence launched !");
 		int pluginId = 7297;
 		@SuppressWarnings("unused")
