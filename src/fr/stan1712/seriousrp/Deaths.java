@@ -30,13 +30,12 @@ public class Deaths implements Listener {
 
 			@Override
 			public void run() {
-				 
 				Player p = e.getEntity();
 				
 				if(plugin.getConfig().getBoolean("Core.Modules.Medics") == true && (p instanceof Player)) {
 					double x = Integer.valueOf(p.getLocation().getBlockX()).intValue();
 					double y = Integer.valueOf(p.getLocation().getBlockY()).intValue();
-					double z = Integer.valueOf(p.getLocation().getBlockZ()).intValue();			
+					double z = Integer.valueOf(p.getLocation().getBlockZ()).intValue();
 					
 					String monde = p.getWorld().getName();
 					World world = Bukkit.getWorld(monde);
@@ -51,8 +50,9 @@ public class Deaths implements Listener {
 		            p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1000000, 999));
 					  
 					p.sendMessage(plugin.getConfig().getString("Medics.Comate").replace("&", "§"));
-					p.setHealth(0.5D);
-					p.setFoodLevel(0);
+					
+					p.setHealth(2.0D);
+					p.setFoodLevel(1);
 				}
 				
 				if(plugin.getConfig().getBoolean("Core.Modules.RPDeath") == true && (p instanceof Player)) {
@@ -60,12 +60,10 @@ public class Deaths implements Listener {
 					ItemStack bones = new ItemStack(Material.BONE, 5);
 					p.getWorld().dropItem(p.getLocation(), beef);
 					p.getWorld().dropItem(p.getLocation(), bones);
-					
 				}
 			}
 			
 		}.runTaskLater(plugin, 10);
-		
 	}
 	
 }
