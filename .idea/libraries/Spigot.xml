@@ -1,0 +1,19 @@
+<component name="libraryTable">
+  <library name="Spigot">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../Minecraft/spigot-1.15.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Minecraft/spigot-1.14.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Minecraft/spigot-1.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Minecraft/spigot-1.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Minecraft/spigot-1.12.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../Minecraft/spigot-1.15.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Minecraft/spigot-1.14.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Minecraft/spigot-1.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Minecraft/spigot-1.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Minecraft/spigot-1.12.2.jar!/" />
+    </SOURCES>
+  </library>
+</component>

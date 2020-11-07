@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component inheritJdk="true">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="spigot-1.12.2.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../Minecraft/spigot-1.12.2.jar!/"/>
+	</lib>
+	<lib name="spigot-1.11.2.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../Minecraft/spigot-1.11.2.jar!/"/>
+	</lib>
+	<lib name="spigot-1.14.4.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../Minecraft/spigot-1.14.4.jar!/"/>
+	</lib>
+	<lib name="spigot-1.15.2.jar" scope="COMPILE">
+		<srcroot url="jar://$MODULE_DIR$/../../Minecraft/spigot-1.15.2.jar!/"/>
+	</lib>
+	<levels>
+		<level name="Spigot" value="project"/>
+		<level name="Vault" value="project"/>
+	</levels>
+</component>

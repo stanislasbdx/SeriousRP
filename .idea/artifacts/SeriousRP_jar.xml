@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="SeriousRP:jar">
+    <output-path>$PROJECT_DIR$/../../../JEUX/Minecraft/SERVEUR LOCAL PUBLIC/plugins</output-path>
+    <root id="archive" name="SeriousRP.jar">
+      <element id="module-output" name="SeriousRP" />
+    </root>
+  </artifact>
+</component>

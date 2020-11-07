@@ -2,10 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="D:/DEV/Minecraft/spigot-1.12.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="D:/DEV/Minecraft/spigot-1.11.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="D:/JEUX/Minecraft/SERVEUR LOCAL PUBLIC/plugins/Vault.jar"/>
-	<classpathentry exported="true" kind="lib" path="D:/DEV/Minecraft/spigot-1.14.4.jar"/>
-	<classpathentry kind="lib" path="D:/DEV/Minecraft/spigot-1.15.2.jar"/>
+	<classpathentry kind="lib" path="E:/DEV/Minecraft/spigot-1.12.2.jar" sourcepath="E:/DEV/Minecraft/spigot-1.12.2.jar"/>
+	<classpathentry kind="lib" path="E:/DEV/Minecraft/spigot-1.11.2.jar" sourcepath="E:/DEV/Minecraft/spigot-1.11.2.jar"/>
+	<classpathentry kind="lib" path="E:/JEUX/Minecraft/SERVEUR LOCAL PUBLIC/plugins/Vault.jar"/>
+	<classpathentry kind="lib" path="E:/DEV/Minecraft/spigot-1.14.4.jar" sourcepath="E:/DEV/Minecraft/spigot-1.14.4.jar"/>
+	<classpathentry kind="lib" path="E:/DEV/Minecraft/spigot-1.15.2.jar" sourcepath="E:/DEV/Minecraft/spigot-1.15.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Spigot"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Vault"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
