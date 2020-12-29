@@ -19,7 +19,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Commands implements Listener{
-    private Main pl;
+    private final Main pl;
   
     public Commands(Main pl) {
         this.pl = pl;
@@ -37,7 +37,7 @@ public class Commands implements Listener{
 	}
 
 	@EventHandler
-	public void onCommandes(PlayerCommandPreprocessEvent e){
+	public void onCommands(PlayerCommandPreprocessEvent e){
         Player player = e.getPlayer();
         String msg = e.getMessage();
         String[] args = msg.split(" ");
@@ -54,17 +54,17 @@ public class Commands implements Listener{
 					else if(args[1].equalsIgnoreCase("help")) {
 						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
 			            player.sendMessage(ChatColor.GOLD + "» /srtp = " + this.pl.getConfig().getString("Core.HelpMsg.Dsrtp").replace("&", "§"));
-			            if(this.pl.getConfig().getBoolean("Core.Modules.TownSystem") == true) {
+			            if(this.pl.getConfig().getBoolean("Core.Modules.TownSystem")) {
 				            player.sendMessage(ChatColor.GOLD + "» /srtown = " + this.pl.getConfig().getString("Core.HelpMsg.DTown").replace("&", "§"));
 				            player.sendMessage(ChatColor.GOLD + "» /srtown set = " + this.pl.getConfig().getString("Core.HelpMsg.DTownSet").replace("&", "§"));
 				            player.sendMessage(ChatColor.GOLD + "» /srtown where = " + this.pl.getConfig().getString("Core.HelpMsg.DTownWhere").replace("&", "§"));
 			            }
-			            if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
+			            if(this.pl.getConfig().getBoolean("Core.Modules.Medics")) {
 				            player.sendMessage(ChatColor.GOLD + "» /medinfo <player> = " + this.pl.getConfig().getString("Core.HelpMsg.DMedinfo").replace("&", "§"));
 				            player.sendMessage(ChatColor.GOLD + "» /revive <player> = " + this.pl.getConfig().getString("Core.HelpMsg.DRevive").replace("&", "§"));
 				            player.sendMessage(ChatColor.GOLD + "» /hrprevive = " + this.pl.getConfig().getString("Core.HelpMsg.DHRPRevive").replace("&", "§"));
 			            }
-			            if(this.pl.getConfig().getBoolean("Core.Modules.Economy") == true) {
+			            if(this.pl.getConfig().getBoolean("Core.Modules.Economy")) {
 				            player.sendMessage(ChatColor.GOLD + "» /cheque <amount> = " + this.pl.getConfig().getString("Core.HelpMsg.DCheque").replace("&", "§"));
 			            }
 			            player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
@@ -76,25 +76,25 @@ public class Commands implements Listener{
 					}
 					else if(args[1].equalsIgnoreCase("status")) {
 						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-						if(this.pl.getConfig().getBoolean("Core.Modules.CustomRecipes") == true) {
+						if(this.pl.getConfig().getBoolean("Core.Modules.CustomRecipes")) {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "CustomRecipes > ON");
 						}
 						else {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "CustomRecipes > OFF");
 						}
-						if(this.pl.getConfig().getBoolean("Core.Modules.RPDeath") == true) {
+						if(this.pl.getConfig().getBoolean("Core.Modules.RPDeath")) {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "RPDeath > ON");
 						}
 						else {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "RPDeath > OFF");
 						}
-						if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
+						if(this.pl.getConfig().getBoolean("Core.Modules.Medics")) {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "Medics > ON");
 						}
 						else {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "Medics > OFF");
 						}
-						if(this.pl.getConfig().getBoolean("Core.Modules.TownSystem") == true) {
+						if(this.pl.getConfig().getBoolean("Core.Modules.TownSystem")) {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "TownSystem > ON");
 						}
 						else {
@@ -106,13 +106,13 @@ public class Commands implements Listener{
 						else {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "RPMobiles > OFF");
 						}*/
-						if(this.pl.getConfig().getBoolean("Core.Modules.Chairs") == true) {
+						if(this.pl.getConfig().getBoolean("Core.Modules.Chairs")) {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "Chairs > ON");
 						}
 						else {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "Chairs > OFF");
 						}
-						if(this.pl.getConfig().getBoolean("Core.Modules.Economy") == true) {
+						if(this.pl.getConfig().getBoolean("Core.Modules.Economy")) {
 							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "Economy > ON");
 						}
 						else {
@@ -161,14 +161,14 @@ public class Commands implements Listener{
 				player.addPotionEffect(new PotionEffect(PotionEffectType.HEAL, 50, 100));
 				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
 				
-				int x = ((Player) player).getLocation().getBlockX() + r.nextInt(this.pl.getConfig().getInt("MicroModules.RandomBlocks"));
-				int z = ((Player) player).getLocation().getBlockX() + r.nextInt(this.pl.getConfig().getInt("MicroModules.RandomBlocks"));
+				int x = player.getLocation().getBlockX() + r.nextInt(this.pl.getConfig().getInt("MicroModules.RandomBlocks"));
+				int z = player.getLocation().getBlockX() + r.nextInt(this.pl.getConfig().getInt("MicroModules.RandomBlocks"));
 				
-				int rtpcheck = ((Player) player).getWorld().getHighestBlockYAt(x, z);
+				int rtpcheck = player.getWorld().getHighestBlockYAt(x, z);
 				int rtpdone = rtpcheck + 1;
 				
-				Location rtp = new Location(((Player) player).getWorld(), x, rtpdone, z);
-				((Player) player).teleport(rtp);
+				Location rtp = new Location(player.getWorld(), x, rtpdone, z);
+				player.teleport(rtp);
 			}
 			else {
 				player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
@@ -178,7 +178,7 @@ public class Commands implements Listener{
 		// /srtown <set/where>
 		
 		if(args[0].equalsIgnoreCase("/srtown")) {
-			if(this.pl.getConfig().getBoolean("Core.Modules.TownSystem") == true) {
+			if(this.pl.getConfig().getBoolean("Core.Modules.TownSystem")) {
 				double x = this.pl.getConfig().getDouble("TownSystem.Locations.Town.x");
 				double y = this.pl.getConfig().getDouble("TownSystem.Locations.Town.y");
 				double z = this.pl.getConfig().getDouble("TownSystem.Locations.Town.z");
@@ -189,10 +189,10 @@ public class Commands implements Listener{
 					if(args.length == 2) {
 						if(args[1].equalsIgnoreCase("set")) {
 							if(player.hasPermission("seriousrp.townset")) {
-								this.pl.getConfig().set("TownSystem.Locations.Town.x", Integer.valueOf(((Player) player).getLocation().getBlockX()));
-								this.pl.getConfig().set("TownSystem.Locations.Town.y", Integer.valueOf(((Player) player).getLocation().getBlockY()));
-								this.pl.getConfig().set("TownSystem.Locations.Town.z", Integer.valueOf(((Player) player).getLocation().getBlockZ()));
-								this.pl.getConfig().set("TownSystem.Locations.Town.WorldName", ((Player) player).getWorld().getName());
+								this.pl.getConfig().set("TownSystem.Locations.Town.x", player.getLocation().getBlockX());
+								this.pl.getConfig().set("TownSystem.Locations.Town.y", player.getLocation().getBlockY());
+								this.pl.getConfig().set("TownSystem.Locations.Town.z", player.getLocation().getBlockZ());
+								this.pl.getConfig().set("TownSystem.Locations.Town.WorldName", player.getWorld().getName());
 								this.pl.saveConfig();
 								
 								player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
@@ -209,19 +209,11 @@ public class Commands implements Listener{
 							player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 						}
 						else if(args[1].equalsIgnoreCase("tp")) {
-							player.teleport(new Location(world, x, y, z));
-							
-							player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-							player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("TownSystem.Teleports.GoToTown").replace("&", "§"));
-							player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+							tpPlayerToLoc(player, x, y, z, world);
 						}
 					}
 					else {
-						player.teleport(new Location(world, x, y, z));
-						
-						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-						player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("TownSystem.Teleports.GoToTown").replace("&", "§"));
-						player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+						tpPlayerToLoc(player, x, y, z, world);
 					}
 				}
 				else {
@@ -237,7 +229,7 @@ public class Commands implements Listener{
 		
 		// /revive
 		if(args[0].equalsIgnoreCase("/revive")) {
-			if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
+			if(this.pl.getConfig().getBoolean("Core.Modules.Medics")) {
 				if(player.hasPermission("seriousrp.medrevive")) {
 					Player cible = Bukkit.getPlayer(args[1]);
 					if(cible != null) {
@@ -273,7 +265,7 @@ public class Commands implements Listener{
 		}
 		// /hrprevive
 		if(args[0].equalsIgnoreCase("/hrprevive")) {
-			if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
+			if(this.pl.getConfig().getBoolean("Core.Modules.Medics")) {
 				if(player.hasPermission("seriousrp.medhrprevive")) {
 					if(player.getHealth() < 10.0D) {
 						player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.Self").replace("&", "§"));
@@ -304,7 +296,7 @@ public class Commands implements Listener{
 		}
 		// /medinfo
 		if(args[0].equalsIgnoreCase("/medinfo")) {
-			if(this.pl.getConfig().getBoolean("Core.Modules.Medics") == true) {
+			if(this.pl.getConfig().getBoolean("Core.Modules.Medics")) {
 				if(player.hasPermission("seriousrp.medinfo")) {
 					Player cible = Bukkit.getPlayer(args[1]);
 					if (cible != null) {
@@ -313,9 +305,9 @@ public class Commands implements Listener{
 						    
 						Collection<PotionEffect> effects = cible.getActivePotionEffects();
 						    
-						int x = Integer.valueOf(cible.getLocation().getBlockX()).intValue();
-						int y = Integer.valueOf(cible.getLocation().getBlockY()).intValue();
-						int z = Integer.valueOf(cible.getLocation().getBlockZ()).intValue();
+						int x = cible.getLocation().getBlockX();
+						int y = cible.getLocation().getBlockY();
+						int z = cible.getLocation().getBlockZ();
 						String monde = cible.getWorld().getName();
 						    
 						player.sendMessage(ChatColor.AQUA + "+----- ♖ " + args[1] + " ♖ -----+");
@@ -356,16 +348,13 @@ public class Commands implements Listener{
 		
 		// /cheque
 		if(args[0].equalsIgnoreCase("/cheque") || args[0].equalsIgnoreCase("/cq")) {
-			if(this.pl.getConfig().getBoolean("Core.Modules.Economy") == true) {
+			if(this.pl.getConfig().getBoolean("Core.Modules.Economy")) {
 				if(player.hasPermission("seriousrp.economy.cheques")) {
 					
 					if(args.length == 2 && isInt(args[1]) && Integer.parseInt(args[1]) > 1) {
-						ItemStack inHand = new ItemStack(Material.PAPER);
-						ItemMeta inHandMeta = inHand.getItemMeta();
-						ArrayList<String> inHandLore = new ArrayList<String>();
-						
-						/*inHandMeta.addItemFlags(args[1]);
-						inHandMeta.getItemFlags();*/
+						ItemStack chequeItem = new ItemStack(Material.PAPER);
+						ItemMeta inHandMeta = chequeItem.getItemMeta();
+						ArrayList<String> inHandLore = new ArrayList<>();
 						
 						inHandMeta.setDisplayName(this.pl.getConfig().getString("Economy.Cheque.Lores.Title").replace("&", "§").replace("%amount%", args[1]));
 						inHandLore.add(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§") + "§l" + args[1] + this.pl.getConfig().getString("Economy.Currency"));
@@ -373,14 +362,14 @@ public class Commands implements Listener{
 						inHandLore.add("");
 						inHandLore.add(this.pl.getConfig().getString("Economy.Cheque.Lores.Usage").replace("&", "§"));
 						inHandMeta.setLore(inHandLore);
-						inHand.setItemMeta(inHandMeta);
+						chequeItem.setItemMeta(inHandMeta);
 						
-						if (player.getInventory().contains(inHand)) {
+						if (player.getInventory().contains(chequeItem)) {
 							player.sendMessage(this.pl.getConfig().getString("Economy.Cheque.Already").replace("&", "§").replace("%amount%", args[1]));
 						}
 						else {
 							String price = args[1];
-							double dprice = Double.valueOf(price).doubleValue();
+							double dprice = Double.parseDouble(price);
 							
 							if (Main.economy.getBalance(player) < dprice) {
 								player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.NotEnough").replace("&", "§").replace("%amount%", args[1]));
@@ -390,7 +379,7 @@ public class Commands implements Listener{
 								
 								
 								Main.economy.withdrawPlayer(player, dprice);
-								player.getInventory().addItem(inHand);
+								player.getInventory().addItem(chequeItem);
 							}
 						}
 					}
@@ -410,5 +399,13 @@ public class Commands implements Listener{
 			}
 		}
 		
+	}
+
+	public void tpPlayerToLoc(Player player, double x, double y, double z, World world) {
+		player.teleport(new Location(world, x, y, z));
+
+		player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
+		player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("TownSystem.Teleports.GoToTown").replace("&", "§"));
+		player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 	}
 }

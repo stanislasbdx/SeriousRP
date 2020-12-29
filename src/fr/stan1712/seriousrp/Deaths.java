@@ -32,10 +32,10 @@ public class Deaths implements Listener {
 			public void run() {
 				Player p = e.getEntity();
 				
-				if(plugin.getConfig().getBoolean("Core.Modules.Medics") == true && (p instanceof Player)) {
-					double x = Integer.valueOf(p.getLocation().getBlockX()).intValue();
-					double y = Integer.valueOf(p.getLocation().getBlockY()).intValue();
-					double z = Integer.valueOf(p.getLocation().getBlockZ()).intValue();
+				if(plugin.getConfig().getBoolean("Core.Modules.Medics") && (p instanceof Player)) {
+					double x = p.getLocation().getBlockX();
+					double y = p.getLocation().getBlockY();
+					double z = p.getLocation().getBlockZ();
 					
 					String monde = p.getWorld().getName();
 					World world = Bukkit.getWorld(monde);
@@ -55,7 +55,7 @@ public class Deaths implements Listener {
 					p.setFoodLevel(1);
 				}
 				
-				if(plugin.getConfig().getBoolean("Core.Modules.RPDeath") == true && (p instanceof Player)) {
+				if(plugin.getConfig().getBoolean("Core.Modules.RPDeath") && (p instanceof Player)) {
 					ItemStack beef = new ItemStack(Material.RAW_BEEF, 4);
 					ItemStack bones = new ItemStack(Material.BONE, 5);
 					p.getWorld().dropItem(p.getLocation(), beef);

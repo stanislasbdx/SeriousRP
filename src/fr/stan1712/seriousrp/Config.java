@@ -11,12 +11,10 @@ import org.bukkit.plugin.Plugin;
 import net.md_5.bungee.api.ChatColor;
 
 public class Config implements Listener {
-	private Plugin plugin = Main.getPlugin(Main.class);
+	private final Plugin plugin = Main.getPlugin(Main.class);
 	
 	String version = this.plugin.getDescription().getVersion();
 	String fileVersion = this.plugin.getConfig().getString("Version");
-	
-	Boolean updatable;
 
 	private void VersionUpdate() {
 		plugin.getConfig();
@@ -83,7 +81,7 @@ public class Config implements Listener {
 				plugin.getServer().getConsoleSender().sendMessage("[SeriousRP] " + ChatColor.RED + "Unable to create the upgrade log !");
 			}
 			
-			plugin.getConfig().set("ConfigFix", Boolean.valueOf(true));
+			plugin.getConfig().set("ConfigFix", Boolean.TRUE);
 			new Config();
             plugin.saveConfig();
 		}
@@ -104,7 +102,7 @@ public class Config implements Listener {
 	      config.options().copyDefaults(true);
 	      config.options().copyHeader(true);
 	      
-	      config.set("ConfigFix", Boolean.valueOf(false));
+	      config.set("ConfigFix", Boolean.FALSE);
 	      
 	      plugin.getServer().getConsoleSender().sendMessage("[SeriousRP] " + ChatColor.GREEN + "config.yml updated !");
 	    }
