@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/../../../JEUX/Minecraft/SERVEUR LOCAL PUBLIC/plugins</output-path>
     <root id="archive" name="SeriousRP.jar">
       <element id="module-output" name="SeriousRP" />
+      <element id="library" level="module" name="spigot-1.15.2.jar" module-name="SeriousRP" />
     </root>
   </artifact>
 </component>
