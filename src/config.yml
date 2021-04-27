@@ -72,6 +72,7 @@ Economy:
     Created: "A %amount%€ cheque has been created"
     Already: "&cYou already have a %amount%€ cheque on you !"
     Claimed: "&aYou claimed the %amount%€ cheque !"
+    InventoryFull: "&cYour inventory is full !"
     Lores:
       Title: "&8Cheque (&7%amount%€&8)"
       Value: "&7Value : "

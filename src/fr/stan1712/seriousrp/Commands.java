@@ -368,19 +368,26 @@ public class Commands implements Listener{
 							player.sendMessage(this.pl.getConfig().getString("Economy.Cheque.Already").replace("&", "§").replace("%amount%", args[1]));
 						}
 						else {
-							String price = args[1];
-							double dprice = Double.parseDouble(price);
-							
-							if (Main.economy.getBalance(player) < dprice) {
-								player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.NotEnough").replace("&", "§").replace("%amount%", args[1]));
+							if(player.getInventory().firstEmpty() >= 0){
+								String price = args[1];
+								double dprice = Double.parseDouble(price);
+
+								if (Main.economy.getBalance(player) < dprice) {
+									player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.NotEnough").replace("&", "§").replace("%amount%", args[1]));
+								}
+								else {
+									player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Created").replace("&", "§").replace("%amount%", args[1]));
+
+
+									Main.economy.withdrawPlayer(player, dprice);
+									player.getInventory().addItem(chequeItem);
+								}
 							}
 							else {
-								player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Created").replace("&", "§").replace("%amount%", args[1]));
-								
-								
-								Main.economy.withdrawPlayer(player, dprice);
-								player.getInventory().addItem(chequeItem);
+								player.sendMessage(this.pl.getConfig().getString("Economy.Cheque.InventoryFull").replace("&", "§"));
 							}
+
+
 						}
 					}
 					else {

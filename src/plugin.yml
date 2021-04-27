@@ -4,7 +4,7 @@ main: fr.stan1712.seriousrp.Main
 
 author: stan1712
 
-version: 4.0.5e
+version: 4.0.5f
 prefix: SeriousRP
 
 softdepend: [Telecom, Vault]
