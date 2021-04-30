@@ -56,7 +56,7 @@ public class Deaths implements Listener {
 				}
 				
 				if(plugin.getConfig().getBoolean("Core.Modules.RPDeath") && (p instanceof Player)) {
-					ItemStack beef = new ItemStack(Material.RAW_BEEF, 4);
+					ItemStack beef = new ItemStack(Material.BEEF, 4);
 					ItemStack bones = new ItemStack(Material.BONE, 5);
 					p.getWorld().dropItem(p.getLocation(), beef);
 					p.getWorld().dropItem(p.getLocation(), bones);
