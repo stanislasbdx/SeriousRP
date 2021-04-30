@@ -23,6 +23,7 @@ Core:
     DMedinfo: "Be able to know the health status of a player"
     DHRPRevive: "Revive and heal you"
     DCheque: "Be able to create a cheque"
+    DLift: "Carry a player"
   Modules:
     Error: "An error has occured ! Look the config and then, check your config.yml"
     InactiveDebug: true
@@ -37,6 +38,10 @@ Core:
 MicroModules:
   RandomTeleport: "Teleportation to a random location !"
   RandomBlocks: 1000
+  LiftPlayer: "&aYou are carrying %player%"
+  LiftedPlayer: "&aYou are carried by %player%"
+  NoMoreLifting: "&aYou dropped %player%"
+  NobodyToLift: "&cThere is no one around you to carry"
   
 Medics:
   Comate: "&cYou are in comate, call emergency or type &l/hrprevive&r&c if they are not available"
