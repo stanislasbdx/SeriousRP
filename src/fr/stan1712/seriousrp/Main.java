@@ -2,10 +2,8 @@ package fr.stan1712.seriousrp;
 
 import java.io.File;
 
-import fr.stan1712.seriousrp.Events.ChequesEvent;
-import fr.stan1712.seriousrp.Events.Damages;
-import fr.stan1712.seriousrp.Events.Displacement;
-import fr.stan1712.seriousrp.Events.Fall;
+import fr.stan1712.seriousrp.Commands.*;
+import fr.stan1712.seriousrp.Events.*;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -173,7 +171,12 @@ public class Main extends JavaPlugin implements Listener {
 		 */
 		console.sendMessage("[SeriousRP] " + ChatColor.BLUE + " ");
 		console.sendMessage("[SeriousRP] " + ChatColor.DARK_BLUE + "#- Commands manager, loading commands -#");
-		pm.registerEvents(new Commands(this), this);
+		getCommand("seriousRP").setExecutor(new SeriousRP(this));
+		getCommand("srtp").setExecutor(new Srtp(this));
+
+		getCommand("lift").setExecutor(new Lift(this));
+
+		getCommand("cheque").setExecutor(new Cheque(this));
 		console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "All commands have been loaded");
 		
 		/*
@@ -205,6 +208,10 @@ public class Main extends JavaPlugin implements Listener {
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "RPDeath > OFF");
 		}
 		if(getConfig().getBoolean("Core.Modules.Medics")) {
+			getCommand("revive").setExecutor(new Revive(this));
+			getCommand("hrprevive").setExecutor(new Hrprevive(this));
+			getCommand("medinfo").setExecutor(new Medinfo(this));
+
 			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "Medics > ON");
 			
 			console.sendMessage("[SeriousRP] " + ChatColor.GOLD + "If you use the 'Medics' module, please set the difficulty to (at least) EASY");
