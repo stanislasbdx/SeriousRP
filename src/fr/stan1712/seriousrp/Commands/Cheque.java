@@ -2,7 +2,6 @@ package fr.stan1712.seriousrp.Commands;
 
 import fr.stan1712.seriousrp.Main;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,11 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Cheque implements CommandExecutor {
 	private final Plugin pl;
