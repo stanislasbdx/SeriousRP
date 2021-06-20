@@ -37,13 +37,20 @@ public class ChequesEvent implements Listener {
             if (lore != null) {
                 for (String s : lore) {
                     if(s.startsWith(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"))) {
-                        String price = s.replace(this.pl.getConfig().getString("Economy.Cheque.Lores.Value").replace("&", "§"), "").replaceAll("[^\\d.]", "");
+                        String price = s
+                                .replace("§", "&")
+                                .replaceAll("&[0-9a-zA-Z]", "")
+                                .replaceAll("[a-zA-Z]", "")
+                                .replace(":", "")
+                                .replace(this.pl.getConfig().getString("Economy.Currency"), "")
+                                .trim();
 
-                        double dprice = Double.valueOf(price).doubleValue() * event.getPlayer().getInventory().getItemInMainHand().getAmount();
-                        String price1 = String.valueOf(dprice);
+                        double dprice = Double.parseDouble(price) * event.getPlayer().getInventory().getItemInMainHand().getAmount();
 
                         Main.economy.depositPlayer(player, dprice);
-                        player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "§").replace("%amount%", price1));
+
+                        player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Economy.Cheque.Claimed").replace("&", "§").replace("%amount%", price));
+
                         player.getInventory().remove(player.getInventory().getItemInMainHand());
 
                         event.setCancelled(true);
