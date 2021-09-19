@@ -51,6 +51,8 @@ Medics:
     Error: "&cis not online, or you misstaken his username"
     NoNeed: "&cThis player don't need to be revive"
   MedInfo:
+    Vitals: "Vitals :"
+    Location: "Location :"
     Health: "Life :"
     Hearts: "hearts"
     Food: "Food :"
