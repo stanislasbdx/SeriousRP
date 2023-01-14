@@ -1,0 +1,12 @@
+name: SeriousRP
+version: '${version}'
+main: fr.stan1712.wetston.seriousrp.Main
+api-version: 1.19
+
+authors: [ stan1712 ]
+website: https://stan1712.com
+description: Add some roleplay mechanics to your server !
+prefix: SeriousRP
+
+depend: [ Vault ]
+softdepend: [ Telecom ]
