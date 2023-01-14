@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 
 public final class Main extends JavaPlugin {
 	final private static Logger _log = LoggerFactory.getLogger(Main.class);
-	private final int _pluginId = 7297;
 	final public PluginManager pluginManager = getServer().getPluginManager();
 	public static Economy economy = null;
 
@@ -96,7 +95,8 @@ public final class Main extends JavaPlugin {
 
 	private void loadMetrics() {
 		final String logStep = getName() + " @ loadMetrics";
-		new Metrics(this, _pluginId);
+		int _bStatsId = 7297;
+		new Metrics(this, _bStatsId);
 		_log.info("[" + logStep + "] bStats metrics loaded");
 	}
 
