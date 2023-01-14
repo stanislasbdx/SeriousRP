@@ -85,9 +85,16 @@ public final class Main extends JavaPlugin {
 		return economy != null;
 	}
 
+	private void loadMetrics() {
+		final String logStep = getName() + " @ loadMetrics";
+		new Metrics(this, _pluginId);
+		_log.info("[" + logStep + "] bStats metrics loaded");
+	}
+
 	@Override
 	public void onEnable() {
 		versionCheck();
 		dependenciesCheck();
+		loadMetrics();
 	}
 }
