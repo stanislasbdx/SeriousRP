@@ -72,6 +72,15 @@ public final class Main extends JavaPlugin {
 			_log.info("[" + logStep + "] {Vault} Vault hooked !");
 		}
 	}
+	private void updateCheck() {
+		final String logStep = getName() + " @ updateCheck";
+		int _spigotPluginId = 31443;
+		new UpdateChecker(this, _spigotPluginId).getVersion(version -> {
+			if(!this.getDescription().getVersion().equalsIgnoreCase(version)) {
+				_log.info("[" + logStep + "] An update is available on Spigot ! (" + version + ")");
+			}
+		});
+	}
 
 	private boolean setupEconomy() {
 		if (pluginManager.getPlugin("Vault") == null) {
@@ -93,6 +102,7 @@ public final class Main extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		updateCheck();
 		versionCheck();
 		dependenciesCheck();
 		loadMetrics();
