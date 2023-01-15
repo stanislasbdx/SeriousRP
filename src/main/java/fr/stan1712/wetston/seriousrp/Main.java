@@ -15,6 +15,7 @@ public final class Main extends JavaPlugin {
 	final private static Logger _log = LoggerFactory.getLogger(Main.class);
 	final public PluginManager pluginManager = getServer().getPluginManager();
 	public static Economy economy = null;
+	public static int spigotPluginId = 31443;
 
 	public void versionCheck() {
 		final String logStep = getName() + " @ versionCheck";
@@ -73,8 +74,7 @@ public final class Main extends JavaPlugin {
 	}
 	private void updateCheck() {
 		final String logStep = getName() + " @ updateCheck";
-		int _spigotPluginId = 31443;
-		new UpdateChecker(this, _spigotPluginId).getVersion(version -> {
+		new UpdateChecker(this, spigotPluginId).getVersion(version -> {
 			if(!this.getDescription().getVersion().equalsIgnoreCase(version)) {
 				_log.info("[" + logStep + "] An update is available on Spigot ! (" + version + ")");
 			}
@@ -100,11 +100,18 @@ public final class Main extends JavaPlugin {
 		_log.info("[" + logStep + "] bStats metrics loaded");
 	}
 
+	private void loadConfig() {
+		pluginManager.registerEvents(new Config(), this);
+		saveConfig();
+	}
+
 	@Override
 	public void onEnable() {
 		updateCheck();
 		versionCheck();
 		dependenciesCheck();
 		loadMetrics();
+
+		loadConfig();
 	}
 }

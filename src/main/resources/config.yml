@@ -1,0 +1,101 @@
+Version: 0
+ConfigFix: true
+Prefix: SeriousRP
+
+Core:
+  NoPerms: "You don't have the permission !"
+  Reload: "Config file reloaded !"
+  HelpMsg:
+    Help: "Need help ? Type /seriousrp help"
+    VersionHelp: "Plugin version ? Type /seriousrp version"
+    StatusHelp: "What modules is activated ? /seriousrp status"
+    ReloadHelp: "You need to reload the config without reloading your server ? /seriousrp reload"
+    Dsrtp: "Be able to teleport you randomly"
+    DTown: "Be able to teleport you in the town"
+    DTownSet: "Be able to set the spawn point of the town"
+    DTownWhere: "Be able to know where is the town"
+    DPhone: "Shows the phone menu"
+    DHelp: "Shows the help"
+    DVersion: "Be able to know plugin version"
+    DStatus: "Show the state of the modules"
+    DReload: "Reload the config file"
+    DRevive: "Revive and heal a player"
+    DMedinfo: "Be able to know the health status of a player"
+    DHRPRevive: "Revive and heal you"
+    DCheque: "Be able to create a cheque"
+    DLift: "Carry a player"
+  Modules:
+    Error: "An error has occured ! Look the config and then, check your config.yml"
+    InactiveDebug: true
+    InactiveMessage: "&c'%module%' module is inactive"
+    CustomRecipes: true
+    RPDeath: true
+    Medics: false
+    TownSystem: true
+    Chairs: true
+    Economy: true
+
+MicroModules:
+  RandomTeleport: "Teleportation to a random location !"
+  RandomBlocks: 1000
+  LiftPlayer: "&aYou are carrying %player%"
+  LiftedPlayer: "&aYou are carried by %player%"
+  NoMoreLifting: "&aYou dropped %player%"
+  NobodyToLift: "&cThere is no one around you to carry"
+
+Medics:
+  Comate: "&cYou are in comate, call emergency or type &l/hrprevive&r&c if they are not available"
+  MedRevive:
+    Revive: "&aYou successfully revive the player"
+    Self: "&aYou successfully revive yourself"
+    Error: "&cis not online, or you misstaken his username"
+    NoNeed: "&cThis player don't need to be revive"
+  MedInfo:
+    Vitals: "Vitals :"
+    Location: "Location :"
+    Health: "Life :"
+    Hearts: "hearts"
+    Food: "Food :"
+    Coordinates: "is at :"
+    Effects: "Effects"
+
+TownSystem:
+  Teleports:
+    GoToTown: "You have been teleported in the town"
+    SetTown: "You set the town spawn location"
+    TownWhere: "The spawn location of the town is at :"
+  Locations:
+    Town:
+      x: 0
+      y: 0
+      z: 0
+      WorldName: world
+
+Economy:
+  Currency: "€"
+  NotEnough: "&cYou don't have enough money !"
+  Cheque:
+    Usage: "To create a cheque : /cheque <value : only positive integers>"
+    Created: "A %amount%€ cheque has been created"
+    Already: "&cYou already have a %amount%€ cheque on you !"
+    Claimed: "&aYou claimed the %amount%€ cheque !"
+    InventoryFull: "&cYour inventory is full !"
+    Lores:
+      Title: "&8Cheque (&7%amount%€&8)"
+      Value: "&7Value : "
+      Author: "&7Author : "
+      Usage: "&6&lRight Click to claim"
+
+Chairs:
+  - WOOD_STAIRS
+  - SPRUCE_WOOD_STAIRS
+  - JUNGLE_WOOD_STAIRS
+  - BIRCH_WOOD_STAIRS
+  - SANDSTONE_STAIRS
+  - COBBLESTONE_STAIRS
+  - BRICK_STAIRS
+  - SMOOTH_STAIRS
+  - NETHER_BRICK_STAIRS
+  - QUARTZ_STAIRS
+  - ACACIA_STAIRS
+  - DARK_OAK_STAIRS
