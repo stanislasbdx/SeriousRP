@@ -110,15 +110,72 @@ public final class Main extends JavaPlugin {
 		pluginManager.registerEvents(new Recipes(this), this);
 		_log.info(logStep + "All recipes have been added !");
 	}
+	private void loadModules() {
+		final String logStep = "[" + getName() + " @ loadModules] ";
+
+		if(getConfig().getBoolean("Core.Modules.CustomRecipes")) {
+			_log.info(logStep + "CustomRecipes > ON");
+			loadRecipes();
+		}
+		else _log.info(logStep + "CustomRecipes > OFF");
+
+		pluginManager.registerEvents(new Death(this), this);
+		if(getConfig().getBoolean("Core.Modules.RPDeath")) _log.info(logStep + "RPDeath > ON");
+		else _log.info(logStep + "RPDeath > OFF");
+
+		/*if(getConfig().getBoolean("Core.Modules.Medics")) {
+			getCommand("revive").setExecutor(new Revive(this));
+			getCommand("hrprevive").setExecutor(new Hrprevive(this));
+			getCommand("medinfo").setExecutor(new Medinfo(this));
+
+			_log.info(logStep + "Medics > ON");
+
+			_log.warn(logStep + "If you use the 'Medics' module, please set the difficulty to (at least) EASY");
+		}
+		else {
+			_log.info(logStep + "Medics > OFF");
+		}*/
+
+		if(getConfig().getBoolean("Core.Modules.TownSystem")) _log.info(logStep + "TownSystem > ON");
+		else _log.info(logStep + "TownSystem > OFF");
+
+		/*if(getConfig().getBoolean("Core.Modules.RPMobiles") == true) {
+			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "RPMobiles > ON");
+		}
+		else {
+			console.sendMessage("[SeriousRP] " + ChatColor.RED + "RPMobiles > OFF");
+		}*/
+		if(getConfig().getBoolean("Core.Modules.Chairs")) _log.info(logStep + "Chairs > ON");
+		else _log.info(logStep + "Chairs > OFF");
+
+		if(getConfig().getBoolean("Core.Modules.Economy")) _log.info(logStep + "Economy > ON");
+		else _log.info(logStep + "Economy > OFF");
+	}
+
+	private void logNewStep(String step) {
+		_log.info("[" + getName() + " @-> " + step + "] ---");
+	}
 
 	@Override
 	public void onEnable() {
+		//(new Thread(this::loadMetrics, getName() + " - Startup")).start();
+
+		logNewStep("updateCheck");
 		updateCheck();
+
+		logNewStep("versionCheck");
 		versionCheck();
+
+		logNewStep("dependenciesCheck");
 		dependenciesCheck();
+
+		logNewStep("loadMetrics");
 		loadMetrics();
 
+		logNewStep("loadConfig");
 		loadConfig();
-		if(getConfig().getBoolean("Core.Modules.CustomRecipes")) loadRecipes();
+
+		logNewStep("loadModules");
+		loadModules();
 	}
 }
