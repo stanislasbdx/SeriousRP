@@ -104,6 +104,11 @@ public final class Main extends JavaPlugin {
 		pluginManager.registerEvents(new Config(), this);
 		saveConfig();
 	}
+	private void loadRecipes() {
+		final String logStep = "[" + getName() + " @ loadRecipes] ";
+		pluginManager.registerEvents(new Recipes(this), this);
+		_log.info(logStep + "All recipes have been added !");
+	}
 
 	@Override
 	public void onEnable() {
@@ -113,5 +118,6 @@ public final class Main extends JavaPlugin {
 		loadMetrics();
 
 		loadConfig();
+		if(getConfig().getBoolean("Core.Modules.CustomRecipes")) loadRecipes();
 	}
 }
