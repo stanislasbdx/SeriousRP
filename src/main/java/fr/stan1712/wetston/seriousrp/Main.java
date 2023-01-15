@@ -90,7 +90,7 @@ public final class Main extends JavaPlugin {
 			return false;
 		}
 		economy = rsp.getProvider();
-		return economy != null;
+		return true;
 	}
 
 	private void loadMetrics() {
