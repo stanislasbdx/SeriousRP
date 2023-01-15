@@ -1,5 +1,6 @@
 package fr.stan1712.wetston.seriousrp;
 
+import fr.stan1712.wetston.seriousrp.events.Death;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
