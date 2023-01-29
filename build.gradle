@@ -24,6 +24,11 @@ dependencies {
     compileOnly "org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.6'
+
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
+
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 }
 
 def targetJavaVersion = 17
