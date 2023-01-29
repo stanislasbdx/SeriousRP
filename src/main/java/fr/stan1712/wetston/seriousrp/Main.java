@@ -1,5 +1,6 @@
 package fr.stan1712.wetston.seriousrp;
 
+import fr.stan1712.wetston.seriousrp.commands.Cheque;
 import fr.stan1712.wetston.seriousrp.events.Death;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.PluginManager;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -154,7 +156,8 @@ public final class Main extends JavaPlugin {
 	private void loadCommands() {
 		final String logStep = "[" + getName() + " @ loadCommands] ";
 
-
+		Objects.requireNonNull(getCommand("cheque")).setExecutor(new Cheque(this));
+		_log.info(logStep + "/cheque commands loaded");
 
 		_log.info(logStep + "All commands have been added !");
 	}

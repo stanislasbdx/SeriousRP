@@ -10,3 +10,8 @@ prefix: SeriousRP
 
 depend: [ Vault ]
 softdepend: [ Telecom ]
+
+commands:
+  cheque:
+    permission: seriousrp.economy.cheques
+    aliases: [cq]
