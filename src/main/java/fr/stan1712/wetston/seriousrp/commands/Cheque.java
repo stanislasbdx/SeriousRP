@@ -1,6 +1,8 @@
 package fr.stan1712.wetston.seriousrp.commands;
 
+import com.google.gson.Gson;
 import fr.stan1712.wetston.seriousrp.Main;
+import fr.stan1712.wetston.seriousrp.pojo.PCheque;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -64,7 +66,8 @@ public class Cheque implements CommandExecutor {
 					PersistentDataContainer chequeData = chequeMeta.getPersistentDataContainer();
 					NamespacedKey namespacedKey = new NamespacedKey(this.pl, "srp-cheque");
 
-					chequeData.set(namespacedKey, PersistentDataType.STRING, "test");
+					PCheque pCheque = new PCheque(player.getDisplayName(), Double.parseDouble(strValue));
+					chequeData.set(namespacedKey, PersistentDataType.STRING, new Gson().toJson(pCheque));
 
 					chequeMeta.setDisplayName(getConfigString("Economy.Cheque.Lores.Title").replace("%amount%", strValue));
 					chequeLore.add(getConfigString("Economy.Cheque.Lores.Value") + "§l" + strValue + getConfigString("Economy.Currency"));
