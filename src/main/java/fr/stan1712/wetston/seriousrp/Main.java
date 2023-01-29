@@ -151,6 +151,13 @@ public final class Main extends JavaPlugin {
 		if(getConfig().getBoolean("Core.Modules.Economy")) _log.info(logStep + "Economy > ON");
 		else _log.info(logStep + "Economy > OFF");
 	}
+	private void loadCommands() {
+		final String logStep = "[" + getName() + " @ loadCommands] ";
+
+
+
+		_log.info(logStep + "All commands have been added !");
+	}
 
 	private void logNewStep(String step) {
 		_log.info("[" + getName() + " @-> " + step + "] ---");
@@ -177,5 +184,8 @@ public final class Main extends JavaPlugin {
 
 		logNewStep("loadModules");
 		loadModules();
+
+		logNewStep("loadCommands");
+		loadCommands();
 	}
 }
