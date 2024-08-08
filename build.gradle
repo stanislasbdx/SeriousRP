@@ -20,6 +20,13 @@ repositories {
     }
 }
 
+sonar {
+    properties {
+        property "sonar.projectKey", "stanislasbdx_SeriousRP_28a0ef7b-fa03-4300-ab66-7308561e1bc2"
+        property "sonar.projectName", "SeriousRP"
+    }
+}
+
 dependencies {
     compileOnly "org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
