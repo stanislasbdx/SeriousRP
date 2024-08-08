@@ -1,9 +1,9 @@
 name: SeriousRP
 version: '${version}'
 main: fr.stan1712.wetston.seriousrp.Main
-api-version: 1.19
+api-version: '1.21'
 
-authors: [ stan1712 ]
+author: stan1712
 website: https://stan1712.com
 description: Add some roleplay mechanics to your server !
 prefix: SeriousRP
