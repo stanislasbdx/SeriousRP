@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigBoolean;
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
 
-public class Cheque implements CommandExecutor {
+public class Cheques implements CommandExecutor {
 	private final Plugin pl;
 
-	public Cheque(Main pl) {
+	public Cheques(Main pl) {
 		this.pl = pl;
 	}
 
@@ -55,6 +55,11 @@ public class Cheque implements CommandExecutor {
 		if(getConfigBoolean("Core.Modules.Economy")) {
 			if(player.hasPermission("seriousrp.economy.cheques")) {
 
+				if (args.length == 0) {
+					player.sendMessage(getConfigString("Economy.Cheque.Usage"));
+					return false;
+				}
+
 				final String strValue = args[0];
 
 				if(args.length == 1 && ((isInt(strValue) && Integer.parseInt(strValue) > 0) || (isFloat(strValue) && Float.parseFloat(strValue) > 0))) {
@@ -66,12 +71,13 @@ public class Cheque implements CommandExecutor {
 					PersistentDataContainer chequeData = chequeMeta.getPersistentDataContainer();
 					NamespacedKey namespacedKey = new NamespacedKey(this.pl, "srp-cheque");
 
-					PCheque pCheque = new PCheque(player.getDisplayName(), Double.parseDouble(strValue));
+					PCheque pCheque = new PCheque(player, Double.parseDouble(strValue));
 					chequeData.set(namespacedKey, PersistentDataType.STRING, new Gson().toJson(pCheque));
 
 					chequeMeta.setDisplayName(getConfigString("Economy.Cheque.Lores.Title").replace("%amount%", strValue));
 					chequeLore.add(getConfigString("Economy.Cheque.Lores.Value") + "§l" + strValue + getConfigString("Economy.Currency"));
 					chequeLore.add(getConfigString("Economy.Cheque.Lores.Author") + "§7§o" + player.getDisplayName());
+					chequeLore.add(getConfigString("Economy.Cheque.Lores.CreationDate") + "§7§o" + pCheque.getParsedCreationDate());
 					chequeLore.add("");
 					chequeLore.add(getConfigString("Economy.Cheque.Lores.Usage"));
 					chequeMeta.setLore(chequeLore);
@@ -91,7 +97,7 @@ public class Cheque implements CommandExecutor {
 							else {
 								player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Economy.Cheque.Created").replace("%amount%", strValue));
 
-								Main.economy.withdrawPlayer(player, value);
+								//Main.economy.withdrawPlayer(player, value);
 								player.getInventory().addItem(chequeItem);
 							}
 						}
@@ -112,7 +118,7 @@ public class Cheque implements CommandExecutor {
 			}
 		}
 		else {
-			if(getConfigBoolean("Core.Modules.InactiveDebug")) {
+			if(Boolean.TRUE.equals(getConfigBoolean("Core.Modules.InactiveDebug"))) {
 				player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Core.Modules.InactiveMessage").replace("%module%", "Economy"));
 			}
 		}

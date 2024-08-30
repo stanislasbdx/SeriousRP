@@ -78,12 +78,13 @@ Economy:
     Usage: "To create a cheque : /cheque <value : only positive integers>"
     Created: "A %amount%€ cheque has been created"
     Already: "&cYou already have a %amount%€ cheque on you !"
-    Claimed: "&aYou claimed the %amount%€ cheque !"
+    Claimed: "&aYou claimed the %amount%€ cheque from %issuer% !"
     InventoryFull: "&cYour inventory is full !"
     Lores:
       Title: "&8Cheque (&7%amount%€&8)"
       Value: "&7Value : "
       Author: "&7Author : "
+      CreationDate: "&7Issued on : "
       Usage: "&6&lRight Click to claim"
 
 Chairs:
