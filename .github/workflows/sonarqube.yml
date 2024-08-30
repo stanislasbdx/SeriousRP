@@ -13,13 +13,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up JDK 21
+      - name: Set up JDK 21 and analyze with SonarQube
         uses: actions/setup-java@v3
         with:
           java-version: 21
           distribution: 'corretto'
           cache: 'gradle'
-      - name: Analyze with SonarQube
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
