@@ -46,11 +46,11 @@ public class Death implements Listener {
 					player.spigot().respawn();
 					player.teleport(new Location(playerWorld, x, y, z));
 
-					player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, 1000));
-					player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1000000, 5));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE , 1000000, 1000));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 1000000, 5));
 					player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 1000));
 					player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1000000, 1000));
-					player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1000000, 999));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 1000000, 999));
 
 					player.sendMessage(Objects.requireNonNull(plugin.getConfig().getString("Medics.Comate")).replace("&", "§"));
 
