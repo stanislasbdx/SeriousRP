@@ -1,12 +1,12 @@
-name: Build
+name: SonarQube Analysis
 
 on:
   push:
   pull_request:
 
 jobs:
-  build:
-    name: Build and analyze
+  sonarqube:
+    name: SonarQube Analysis
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 21
-          distribution: ''
+          distribution: 'corretto'
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
