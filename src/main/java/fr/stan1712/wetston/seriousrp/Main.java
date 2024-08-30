@@ -16,10 +16,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class Main extends JavaPlugin {
-	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - Main");
+	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - Core");
 	public final PluginManager pluginManager = getServer().getPluginManager();
 	public static Economy economy = null;
-	public static final int spigotPluginId = 31443;
+
+	public static final int SPIGOT_PLUGIN_ID = 31443;
 
 	public boolean versionCheck() {
 		final String logStep = "versionCheck";
@@ -81,7 +82,7 @@ public final class Main extends JavaPlugin {
 	}
 	private void updateCheck() {
 		final String logStep = "updateCheck";
-		new UpdateChecker(this, spigotPluginId).getVersion(version -> {
+		new UpdateChecker(this, SPIGOT_PLUGIN_ID).getVersion(version -> {
 			if(!this.getDescription().getVersion().equalsIgnoreCase(version)) {
 				_log.info("[{}] An update is available on Spigot ! ({})", logStep, version);
 			}

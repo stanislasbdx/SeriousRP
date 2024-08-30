@@ -13,18 +13,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import static fr.stan1712.wetston.seriousrp.Main.spigotPluginId;
+import static fr.stan1712.wetston.seriousrp.Main.SPIGOT_PLUGIN_ID;
 
 public class Config implements Listener {
 	private final Plugin plugin = Main.getPlugin(Main.class);
-	final private static Logger _log = LoggerFactory.getLogger(Config.class);
+	final private static Logger _log = LoggerFactory.getLogger("SeriousRP - Config");
 
 	String version = this.plugin.getDescription().getVersion();
 	String fileVersion = this.plugin.getConfig().getString("Version");
 
 	private void checkConfigVersion() {
 		plugin.getConfig();
-		final String logStep = "[" + plugin.getName() + " @ versionUpdate] ";
+		final String logStep = "[@ checkConfigVersion] ";
 
 		if(!version.equals(fileVersion)) {
 			final String upgradeFilesDir = plugin.getDataFolder() + "/upgrades/";
@@ -49,7 +49,7 @@ public class Config implements Listener {
 
 					configReport.set("report.serverVersion", plugin.getServer().getVersion());
 
-					new UpdateChecker(this.plugin, spigotPluginId).getVersion(version -> {
+					new UpdateChecker(this.plugin, SPIGOT_PLUGIN_ID).getVersion(version -> {
 						if(!plugin.getDescription().getVersion().equalsIgnoreCase(version)) configReport.set("report.versionDiffers", version);
 					});
 
@@ -90,8 +90,6 @@ public class Config implements Listener {
 	}
 
 	public Config() {
-		final String logStep = "[" + plugin.getName() + " @ config] ";
-
 		FileConfiguration config = plugin.getConfig();
 		plugin.getConfig();
 
@@ -110,9 +108,9 @@ public class Config implements Listener {
 
 			config.set("ConfigFix", Boolean.FALSE);
 
-			_log.debug(logStep + "config.yml updated !");
+			_log.debug("Config file 'config.yml' updated !");
 		}
 
-		_log.info(logStep + "Config file reloaded !");
+		_log.info("Config file reloaded !");
 	}
 }
