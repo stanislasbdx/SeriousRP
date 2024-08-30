@@ -40,11 +40,11 @@ public final class Main extends JavaPlugin {
 		final String version = versionMatcher.group();
 
 		switch (version) {
-			case "1.21", "1.20", "1.19", "1.18", "1.17", "1.16", "1.15", "1.14", "1.13" -> {
+			case "1.21", "1.20" -> {
 				_log.info("[{}] Version check !", logStep);
 				_log.info("[{}] If you got issues, report them on Github", logStep);
 			}
-			case "1.12" -> {
+			case "1.19", "1.18" -> {
 				_log.info("[{}] {} may have issues while running !", logStep, version);
 				_log.info("[{}] If you got any, report them on Github", logStep);
 			}
