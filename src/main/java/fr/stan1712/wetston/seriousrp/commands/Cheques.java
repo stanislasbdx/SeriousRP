@@ -97,7 +97,6 @@ public class Cheques implements CommandExecutor {
 							else {
 								player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Economy.Cheque.Created").replace("%amount%", strValue));
 
-								//Main.economy.withdrawPlayer(player, value);
 								player.getInventory().addItem(chequeItem);
 							}
 						}

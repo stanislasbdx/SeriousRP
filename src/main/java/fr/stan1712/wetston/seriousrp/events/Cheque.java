@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import fr.stan1712.wetston.seriousrp.Main;
 import fr.stan1712.wetston.seriousrp.pojo.PCheque;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,23 +26,24 @@ public class Cheque implements Listener {
 	public Cheque(Main plugin) {
 		this.plugin = plugin;
 	}
-	final private static Logger _log = LoggerFactory.getLogger("SeriousRP - ChequeEvent");
+
+	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - ChequeEvent");
 
 	@EventHandler
 	public void onPlayerUse(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		if(event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-			player.getInventory().getItemInMainHand();
 			ItemStack usedItem = player.getInventory().getItemInMainHand();
 
-			ItemMeta itemChequeMeta = usedItem.getItemMeta();
-			if(itemChequeMeta == null) {
-				_log.warn("The player {} tried to cash a invalid cheque.", player.getName());
-				return;
-			}
+			if (usedItem.getType() != Material.PAPER) return;
 
+			ItemMeta itemChequeMeta = usedItem.getItemMeta();
+
+			assert itemChequeMeta != null;
 			PersistentDataContainer chequeData = itemChequeMeta.getPersistentDataContainer();
 			NamespacedKey namespacedKey = new NamespacedKey(plugin, "srp-cheque");
+
+			if (chequeData.get(namespacedKey, PersistentDataType.STRING) == null) return;
 
 			try {
 				String chequeDataStr = chequeData.get(namespacedKey, PersistentDataType.STRING);
