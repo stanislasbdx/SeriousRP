@@ -22,3 +22,10 @@ commands:
   cheque:
     permission: seriousrp.economy.cheques
     aliases: [cq]
+
+  # Medic System
+  vitals:
+    description: Gives you the vitals of a player.
+    permission: seriousrp.medinfo
+    usage: /vitals <player>
+    aliases: [medinfo]

@@ -1,6 +1,10 @@
 package fr.stan1712.wetston.seriousrp;
 
 import fr.stan1712.wetston.seriousrp.commands.Cheques;
+import fr.stan1712.wetston.seriousrp.commands.InactiveCommand;
+import fr.stan1712.wetston.seriousrp.commands.Seriousrp;
+import fr.stan1712.wetston.seriousrp.commands.medics.Medinfo;
+import fr.stan1712.wetston.seriousrp.defaults.EnumModules;
 import fr.stan1712.wetston.seriousrp.events.Cheque;
 import fr.stan1712.wetston.seriousrp.events.Death;
 import net.milkbowl.vault.economy.Economy;
@@ -115,35 +119,36 @@ public final class Main extends JavaPlugin {
 		saveConfig();
 	}
 	private void loadRecipes() {
-		final String logStep = "[loadRecipes] ";
+		final String logStep = "loadRecipes";
 		pluginManager.registerEvents(new Recipes(this), this);
-		_log.info("{} All recipes have been added !", logStep);
+		_log.info("[{}] All recipes have been added !", logStep);
 	}
 	private void loadModules() {
-		final String logStep = "[loadModules] ";
+		final String logStep = "loadModules";
 
 		if(getConfig().getBoolean("Core.Modules.CustomRecipes")) {
-			_log.info("{} CustomRecipes > ON", logStep);
+			_log.info("[{}] CustomRecipes > ON", logStep);
 			loadRecipes();
 		}
-		else _log.info("{} CustomRecipes > OFF", logStep);
+		else _log.info("[{}] CustomRecipes > OFF", logStep);
 
 		pluginManager.registerEvents(new Death(this), this);
-		if(getConfig().getBoolean("Core.Modules.RPDeath")) _log.info("{} RPDeath > ON", logStep);
-		else _log.info("{} RPDeath > OFF", logStep);
+		if(getConfig().getBoolean("Core.Modules.RPDeath")) _log.info("[{}] RPDeath > ON", logStep);
+		else _log.info("[{}] RPDeath > OFF", logStep);
 
-		/*if(getConfig().getBoolean("Core.Modules.Medics")) {
-			getCommand("revive").setExecutor(new Revive(this));
-			getCommand("hrprevive").setExecutor(new Hrprevive(this));
-			getCommand("medinfo").setExecutor(new Medinfo(this));
+		if(getConfig().getBoolean("Core.Modules.Medics")) {
+			Objects.requireNonNull(getCommand("vitals")).setExecutor(new Medinfo(this));
+			_log.info("[{}] /vitals commands loaded", logStep);
 
-			_log.info(logStep + "Medics > ON");
+			_log.info("[{}] Medics > ON", logStep);
 
-			_log.warn(logStep + "If you use the 'Medics' module, please set the difficulty to (at least) EASY");
+			_log.warn("[{}] If you use the 'Medics' module, please set the difficulty to (at least) EASY", logStep);
 		}
 		else {
-			_log.info(logStep + "Medics > OFF");
-		}*/
+			Objects.requireNonNull(getCommand("vitals")).setExecutor(new InactiveCommand(this, EnumModules.MEDICS));
+
+			_log.info("[{}] Medics > OFF", logStep);
+		}
 
 		/*if(getConfig().getBoolean("Core.Modules.TownSystem")) _log.info("{} TownSystem > ON", logStep);
 		else _log.info("{} TownSystem > OFF", logStep);*/
@@ -154,8 +159,8 @@ public final class Main extends JavaPlugin {
 		else {
 			console.sendMessage("[SeriousRP] " + ChatColor.RED + "RPMobiles > OFF");
 		}*/
-		if(getConfig().getBoolean("Core.Modules.Chairs")) _log.info("{} Chairs > ON", logStep);
-		else _log.info("{} Chairs > OFF", logStep);
+		if(getConfig().getBoolean("Core.Modules.Chairs")) _log.info("[{}] Chairs > ON", logStep);
+		else _log.info("[{}] Chairs > OFF", logStep);
 
 		if(getConfig().getBoolean("Core.Modules.Economy")) {
 			_log.info("[{}] Economy > ON", logStep);
@@ -165,10 +170,10 @@ public final class Main extends JavaPlugin {
 
 			pluginManager.registerEvents(new Cheque(this), this);
 		}
-		else _log.info("{} Economy > OFF", logStep);
+		else _log.info("[{}] Economy > OFF", logStep);
 	}
 	private void loadCommands() {
-		final String logStep = "[loadCommands] ";
+		final String logStep = "loadCommands";
 
 		Objects.requireNonNull(getCommand("seriousrp")).setExecutor(new Seriousrp(this));
 		_log.info("[{}] /seriousrp commands loaded", logStep);
