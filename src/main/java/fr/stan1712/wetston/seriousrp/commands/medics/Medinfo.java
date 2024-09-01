@@ -12,6 +12,8 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.Collection;
 
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
+
 public class Medinfo implements CommandExecutor {
 	private final Plugin pl;
 
@@ -26,50 +28,53 @@ public class Medinfo implements CommandExecutor {
 
 		if(this.pl.getConfig().getBoolean("Core.Modules.Medics")) {
 			if(player.hasPermission("seriousrp.medinfo")) {
+				if (args.length == 0) {
+					player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Medics.MedInfo.Usage"));
+					return true;
+				}
+
 				Player target = Bukkit.getPlayer(args[0]);
-
-				if (target != null) {
-					double targetHealth = target.getHealth();
-					double targetFoodLevel = target.getFoodLevel();
-
-					Collection<PotionEffect> effects = target.getActivePotionEffects();
-
-					Object[] objects = effects.toArray();
-
-					int x = target.getLocation().getBlockX();
-					int y = target.getLocation().getBlockY();
-					int z = target.getLocation().getBlockZ();
-					String monde = target.getWorld().getName();
-
-					player.sendMessage(ChatColor.AQUA + "+----- ♖ " + args[0] + " ♖ -----+");
-					player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Vitals").replace("&", "§"));
-					if (targetHealth > 10.0D) {
-						player.sendMessage("§a" + this.pl.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " " + targetHealth / 2.0D + " " + this.pl.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
-					}
-					else if (targetHealth <= 9.0D) {
-						player.sendMessage("§c" + this.pl.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " " + targetHealth / 2.0D + " " + this.pl.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
-					}
-					if (targetFoodLevel > 10.0D) {
-						player.sendMessage("§a" + this.pl.getConfig().getString("Medics.MedInfo.Food").replace("&", "§") + " " + targetFoodLevel / 2.0D + " / 10");
-					}
-					else if (targetFoodLevel <= 9.0D) {
-						player.sendMessage("§c" + this.pl.getConfig().getString("Medics.MedInfo.Food").replace("&", "§") + " " + targetFoodLevel / 2.0D + " / 10");
-					}
-
-					player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-					player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Effects").replace("&", "§"));
-					for (Object object : objects) {
-						player.sendMessage("§a- " + String.valueOf(object).split(":")[0]);
-					}
-					player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-					player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Location").replace("&", "§"));
-					player.sendMessage("§a" + args[0] + " " + this.pl.getConfig().getString("Medics.MedInfo.Coordinates").replace("&", "§") + " " + x + ", " + y + ", " + z + " @ " + monde);
-					player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
-				}
-				else {
-					player.sendMessage(ChatColor.DARK_RED + args[0] + " " + this.pl.getConfig().getString("Medic.Error").replace("&", "§"));
+				if (target == null) {
+					player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Medics.TargetError").replace("%target%", args[0]));
+					return true;
 				}
 
+				double targetHealth = target.getHealth();
+				double targetFoodLevel = target.getFoodLevel();
+
+				Collection<PotionEffect> effects = target.getActivePotionEffects();
+
+				Object[] objects = effects.toArray();
+
+				int targetBlockX = target.getLocation().getBlockX();
+				int targetBlockY = target.getLocation().getBlockY();
+				int targetBlockZ = target.getLocation().getBlockZ();
+				String targetWorld = target.getWorld().getName();
+
+				player.sendMessage(ChatColor.AQUA + "+----- ♖ " + args[0] + " ♖ -----+");
+				player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Vitals").replace("&", "§"));
+				if (targetHealth > 10.0D) {
+					player.sendMessage("§a" + this.pl.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " " + targetHealth / 2.0D + " " + this.pl.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
+				}
+				else if (targetHealth <= 9.0D) {
+					player.sendMessage("§c" + this.pl.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " " + targetHealth / 2.0D + " " + this.pl.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
+				}
+				if (targetFoodLevel > 10.0D) {
+					player.sendMessage("§a" + this.pl.getConfig().getString("Medics.MedInfo.Food").replace("&", "§") + " " + targetFoodLevel / 2.0D + " / 10");
+				}
+				else if (targetFoodLevel <= 9.0D) {
+					player.sendMessage("§c" + this.pl.getConfig().getString("Medics.MedInfo.Food").replace("&", "§") + " " + targetFoodLevel / 2.0D + " / 10");
+				}
+
+				player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+				player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Effects").replace("&", "§"));
+				for (Object object : objects) {
+					player.sendMessage("§a- " + String.valueOf(object).split(":")[0]);
+				}
+				player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+				player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Location").replace("&", "§"));
+				player.sendMessage("§a" + args[0] + " " + this.pl.getConfig().getString("Medics.MedInfo.Coordinates").replace("&", "§") + " " + targetBlockX + ", " + targetBlockY + ", " + targetBlockZ + " @ " + targetWorld);
+				player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
 			}
 			else {
 				player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));

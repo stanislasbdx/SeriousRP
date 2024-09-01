@@ -44,13 +44,14 @@ MicroModules:
   NobodyToLift: "&cThere is no one around you to carry"
 
 Medics:
-  Comate: "&cYou are in comate, call emergency or type &l/hrprevive&r&c if they are not available"
+  Comate: "&cYou are in the coma, call emergency or type &l/hrprevive&r&c if they are not available"
+  TargetError: "&c%target% is not online, or you misstaken his username"
   MedRevive:
     Revive: "&aYou successfully revive the player"
     Self: "&aYou successfully revive yourself"
-    Error: "&cis not online, or you misstaken his username"
     NoNeed: "&cThis player don't need to be revive"
   MedInfo:
+    Usage: "To get the vitals of someone : /vitals <target>"
     Vitals: "Vitals :"
     Location: "Location :"
     Health: "Life :"
