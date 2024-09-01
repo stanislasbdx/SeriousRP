@@ -20,7 +20,9 @@ commands:
 
   # Economy System
   cheque:
+    description: Create a cheque that can be cash by another.
     permission: seriousrp.economy.cheques
+    usage: /cheque <amount>
     aliases: [cq]
 
   # Medic System

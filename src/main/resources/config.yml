@@ -7,8 +7,8 @@ Core:
   Reload: "Config file reloaded !"
   HelpMsg:
     Help: "Need help ? Type /seriousrp help"
-    VersionHelp: "Plugin version ? Type /seriousrp version"
-    StatusHelp: "What modules is activated ? /seriousrp status"
+    VersionHelp: "Plugin version ? /seriousrp version"
+    StatusHelp: "What modules are activated ? /seriousrp modules"
     ReloadHelp: "You need to reload the config without reloading your server ? /seriousrp reload"
     Dsrtp: "Be able to teleport you randomly"
     DTown: "Be able to teleport you in the town"
