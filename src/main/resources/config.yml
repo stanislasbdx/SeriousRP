@@ -60,20 +60,8 @@ Medics:
     Coordinates: "is at :"
     Effects: "Effects"
 
-TownSystem:
-  Teleports:
-    GoToTown: "You have been teleported in the town"
-    SetTown: "You set the town spawn location"
-    TownWhere: "The spawn location of the town is at :"
-  Locations:
-    Town:
-      x: 0
-      y: 0
-      z: 0
-      WorldName: world
-
 Economy:
-  Currency: "€"
+  Currency: "$"
   NotEnough: "&cYou don't have enough money !"
   Cheque:
     Usage: "To create a cheque : /cheque <value : only positive integers>"

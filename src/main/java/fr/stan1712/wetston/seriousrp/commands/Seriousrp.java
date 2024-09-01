@@ -31,11 +31,6 @@ public class Seriousrp implements CommandExecutor {
 					sender.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
 					sender.sendMessage(ChatColor.GOLD + "» /srtp = " + this.pl.getConfig().getString("Core.HelpMsg.Dsrtp").replace("&", "§"));
 					sender.sendMessage(ChatColor.GOLD + "» /lift = " + this.pl.getConfig().getString("Core.HelpMsg.DLift").replace("&", "§"));
-					if (this.pl.getConfig().getBoolean("Core.Modules.TownSystem")) {
-						sender.sendMessage(ChatColor.GOLD + "» /srtown = " + this.pl.getConfig().getString("Core.HelpMsg.DTown").replace("&", "§"));
-						sender.sendMessage(ChatColor.GOLD + "» /srtown set = " + this.pl.getConfig().getString("Core.HelpMsg.DTownSet").replace("&", "§"));
-						sender.sendMessage(ChatColor.GOLD + "» /srtown where = " + this.pl.getConfig().getString("Core.HelpMsg.DTownWhere").replace("&", "§"));
-					}
 					if (this.pl.getConfig().getBoolean("Core.Modules.Medics")) {
 						sender.sendMessage(ChatColor.GOLD + "» /medinfo <player> = " + this.pl.getConfig().getString("Core.HelpMsg.DMedinfo").replace("&", "§"));
 						sender.sendMessage(ChatColor.GOLD + "» /revive <player> = " + this.pl.getConfig().getString("Core.HelpMsg.DRevive").replace("&", "§"));
@@ -47,7 +42,7 @@ public class Seriousrp implements CommandExecutor {
 					sender.sendMessage(ChatColor.AQUA + "+----- -----  ----- -----+");
 					sender.sendMessage(ChatColor.GOLD + "» /seriousrp help = " + this.pl.getConfig().getString("Core.HelpMsg.DVersion").replace("&", "§"));
 					sender.sendMessage(ChatColor.GOLD + "» /seriousrp version = " + this.pl.getConfig().getString("Core.HelpMsg.DHelp").replace("&", "§"));
-					sender.sendMessage(ChatColor.GOLD + "» /seriousrp status = " + this.pl.getConfig().getString("Core.HelpMsg.DStatus").replace("&", "§"));
+					sender.sendMessage(ChatColor.GOLD + "» /seriousrp modules = " + this.pl.getConfig().getString("Core.HelpMsg.DStatus").replace("&", "§"));
 					sender.sendMessage(ChatColor.GOLD + "» /seriousrp reload = " + this.pl.getConfig().getString("Core.HelpMsg.DReload").replace("&", "§"));
 					sender.sendMessage(ChatColor.AQUA + "+----- -----  ----- -----+");
 				} else if (args[0].equalsIgnoreCase("status") || args[0].equalsIgnoreCase("modules")) {
@@ -67,17 +62,6 @@ public class Seriousrp implements CommandExecutor {
 					} else {
 						sender.sendMessage(ChatColor.GOLD + "» Medics > " + ChatColor.RED + "OFF");
 					}
-					if (this.pl.getConfig().getBoolean("Core.Modules.TownSystem")) {
-						sender.sendMessage(ChatColor.GOLD + "» TownSystem > " + ChatColor.GREEN + "ON");
-					} else {
-						sender.sendMessage(ChatColor.GOLD + "» TownSystem > " + ChatColor.RED + "OFF");
-					}
-						/*if(this.pl.getConfig().getBoolean("Core.Modules.RPMobiles") == true) {
-							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.GREEN + "RPMobiles > ON");
-						}
-						else {
-							player.sendMessage(ChatColor.GOLD + "» " + ChatColor.RED + "RPMobiles > OFF");
-						}*/
 					if (this.pl.getConfig().getBoolean("Core.Modules.Chairs")) {
 						sender.sendMessage(ChatColor.GOLD + "» Chairs > " + ChatColor.GREEN + "ON");
 					} else {
