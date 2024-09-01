@@ -17,6 +17,11 @@ commands:
     permission: seriousrp.info
     usage: /seriousrp <help/version/modules/reload>
     aliases: [srp]
+  srtp:
+    description: Teleports you in a random location around you.
+    permission: seriousrp.randomtp
+    usage: /srtp
+    aliases: [srtp, rtp]
 
   # Economy System
   cheque:
