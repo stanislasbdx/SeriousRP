@@ -158,7 +158,11 @@ public final class Main extends JavaPlugin {
 		else _log.info("{} Chairs > OFF", logStep);
 
 		if(getConfig().getBoolean("Core.Modules.Economy")) {
-			_log.info("{} Economy > ON", logStep);
+			_log.info("[{}] Economy > ON", logStep);
+
+			Objects.requireNonNull(getCommand("cheque")).setExecutor(new Cheques(this));
+			_log.info("[{}] /cheque commands loaded", logStep);
+
 			pluginManager.registerEvents(new Cheque(this), this);
 		}
 		else _log.info("{} Economy > OFF", logStep);
@@ -166,10 +170,10 @@ public final class Main extends JavaPlugin {
 	private void loadCommands() {
 		final String logStep = "[loadCommands] ";
 
-		Objects.requireNonNull(getCommand("cheque")).setExecutor(new Cheques(this));
-		_log.info("{} /cheque commands loaded", logStep);
+		Objects.requireNonNull(getCommand("seriousrp")).setExecutor(new Seriousrp(this));
+		_log.info("[{}] /seriousrp commands loaded", logStep);
 
-		_log.info("{} All commands have been added !", logStep);
+		_log.info("[{}] All commands have been added !", logStep);
 	}
 
 	private void logNewStep(String step) {

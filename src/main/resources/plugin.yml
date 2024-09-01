@@ -12,6 +12,13 @@ depend: [ Vault ]
 softdepend: [ Telecom ]
 
 commands:
+  seriousrp:
+    description: Manage and get an overview of the plugin.
+    permission: seriousrp.info
+    usage: /seriousrp <help/version/modules/reload>
+    aliases: [srp]
+
+  # Economy System
   cheque:
     permission: seriousrp.economy.cheques
     aliases: [cq]
