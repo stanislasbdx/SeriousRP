@@ -1,10 +1,7 @@
 package fr.stan1712.wetston.seriousrp.events;
 
 import fr.stan1712.wetston.seriousrp.Main;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,8 +15,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Objects;
 
 public class Death implements Listener {
-	//private Plugin plugin = Main.getPlugin(Main.class);
-
 	Plugin plugin;
 
 	public Death(Main plugin) {
@@ -36,24 +31,22 @@ public class Death implements Listener {
 				Player player = e.getEntity();
 
 				if(plugin.getConfig().getBoolean("Core.Modules.Medics")) {
-					double x = player.getLocation().getBlockX();
-					double y = player.getLocation().getBlockY();
-					double z = player.getLocation().getBlockZ();
+					if(player.getGameMode().equals(GameMode.SURVIVAL) || player.getGameMode().equals(GameMode.ADVENTURE)) {
+						Location playerLocation = player.getLocation();
 
-					World playerWorld = Bukkit.getWorld(player.getWorld().getName());
+						player.spigot().respawn();
+						player.teleport(playerLocation);
 
-					player.spigot().respawn();
-					player.teleport(new Location(playerWorld, x, y, z));
+						player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE , 1000000, 1000));
+						player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 1000000, 5));
+						player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 1000));
+						player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1000000, 1000));
 
-					player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE , 1000000, 1000));
-					player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 1000000, 5));
-					player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 1000));
-					player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1000000, 1000));
+						player.sendMessage(Objects.requireNonNull(plugin.getConfig().getString("Medics.Comate")).replace("&", "§"));
 
-					player.sendMessage(Objects.requireNonNull(plugin.getConfig().getString("Medics.Comate")).replace("&", "§"));
-
-					player.setHealth(2.0D);
-					player.setFoodLevel(1);
+						player.setHealth(2.0D);
+						player.setFoodLevel(1);
+					}
 				}
 				else if(plugin.getConfig().getBoolean("Core.Modules.RPDeath")) {
 					ItemStack beef = new ItemStack(Material.BEEF, 4);
