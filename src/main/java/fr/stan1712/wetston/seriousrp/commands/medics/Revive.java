@@ -27,7 +27,7 @@ public class Revive implements CommandExecutor {
 				Player target = Bukkit.getPlayer(args[0]);
 
 				if(target != null) {
-					if(target.getHealth() < 2.0D) {
+					if(target.getHealth() < 4.0D) {
 						target.setHealth(8.0D);
 						player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.MedicRevive").replace("&", "§").replace("%target%", target.getDisplayName()));
 						target.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.TargetRevived").replace("&", "§").replace("%medic%", player.getDisplayName()));
