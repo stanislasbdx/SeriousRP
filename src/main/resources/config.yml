@@ -45,9 +45,10 @@ Medics:
   TargetError: "&c%target% is not online, or you misstaken his username"
   MedRevive:
     MedicRevive: "&aYou successfully revived &2%target%"
+    SelfRevive: "&aYou successfully revived yourself !"
     TargetRevived: "&aYou got revived by &2%medic%"
     Self: "&aYou successfully revived yourself"
-    NoNeed: "&cThis player don't need to be revived"
+    NoNeed: "&cThis player doesn't need to be revived"
   MedInfo:
     Usage: "To get the vitals of someone : /vitals <target>"
     Vitals: "Vitals"

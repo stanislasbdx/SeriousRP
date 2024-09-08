@@ -40,3 +40,8 @@ commands:
     permission: seriousrp.medics.revive
     usage: /revive <player>
     aliases: [revive]
+  hrprevive:
+    description: Revives a player in the coma.
+    permission: seriousrp.medics.hrprevive
+    usage: /hrprevive
+    aliases: [hrprevive]

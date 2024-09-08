@@ -4,6 +4,7 @@ import fr.stan1712.wetston.seriousrp.commands.Cheques;
 import fr.stan1712.wetston.seriousrp.commands.InactiveCommand;
 import fr.stan1712.wetston.seriousrp.commands.RandomTeleportation;
 import fr.stan1712.wetston.seriousrp.commands.Seriousrp;
+import fr.stan1712.wetston.seriousrp.commands.medics.HRPRevive;
 import fr.stan1712.wetston.seriousrp.commands.medics.Medinfo;
 import fr.stan1712.wetston.seriousrp.commands.medics.Revive;
 import fr.stan1712.wetston.seriousrp.defaults.EnumModules;
@@ -134,6 +135,9 @@ public final class Main extends JavaPlugin {
 
 			Objects.requireNonNull(getCommand("revive")).setExecutor(new Revive(this));
 			_log.info("[{}] /revive commands loaded", logStep);
+
+			Objects.requireNonNull(getCommand("hrprevive")).setExecutor(new HRPRevive(this));
+			_log.info("[{}] /hrprevive commands loaded", logStep);
 
 			_log.info("[{}] Medics > ON", logStep);
 
