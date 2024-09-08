@@ -15,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,15 +66,6 @@ public final class Main extends JavaPlugin {
 	public void dependenciesCheck() {
 		final String logStep = "dependenciesCheck";
 		_log.info("[{}] Dependencies checking...", logStep);
-
-		File telecomFolder = new File("plugins/Telecom");
-		if (!telecomFolder.exists()) {
-			_log.warn("[{}] {Telecom} Telecom dependency was not found ! Disabling RPMobile module.", logStep);
-			getConfig().set("Core.Modules.RPMobile", Boolean.FALSE);
-		}
-		else {
-			_log.info("[{}] {Telecom} Vault hooked !", logStep);
-		}
 
 		if (!setupEconomy() ) {
 			_log.warn("[{}] {Vault} Vault dependency was not found ! Disabling Economy modules.", logStep);
@@ -151,15 +141,6 @@ public final class Main extends JavaPlugin {
 			_log.info("[{}] Medics > OFF", logStep);
 		}
 
-		/*if(getConfig().getBoolean("Core.Modules.TownSystem")) _log.info("{} TownSystem > ON", logStep);
-		else _log.info("{} TownSystem > OFF", logStep);*/
-
-		/*if(getConfig().getBoolean("Core.Modules.RPMobiles") == true) {
-			console.sendMessage("[SeriousRP] " + ChatColor.GREEN + "RPMobiles > ON");
-		}
-		else {
-			console.sendMessage("[SeriousRP] " + ChatColor.RED + "RPMobiles > OFF");
-		}*/
 		if(getConfig().getBoolean("Core.Modules.Chairs")) _log.info("[{}] Chairs > ON", logStep);
 		else _log.info("[{}] Chairs > OFF", logStep);
 

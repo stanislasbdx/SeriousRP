@@ -11,9 +11,6 @@ Core:
     StatusHelp: "What modules are activated ? /seriousrp modules"
     ReloadHelp: "You need to reload the config without reloading your server ? /seriousrp reload"
     Dsrtp: "Be able to teleport you randomly"
-    DTown: "Be able to teleport you in the town"
-    DTownSet: "Be able to set the spawn point of the town"
-    DTownWhere: "Be able to know where is the town"
     DPhone: "Shows the phone menu"
     DHelp: "Shows the help"
     DVersion: "Be able to know plugin version"
@@ -31,7 +28,6 @@ Core:
     CustomRecipes: true
     RPDeath: true
     Medics: false
-    TownSystem: true
     Chairs: true
     Economy: true
 

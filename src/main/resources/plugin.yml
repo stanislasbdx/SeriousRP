@@ -9,7 +9,6 @@ description: Add some roleplay mechanics to your server !
 prefix: SeriousRP
 
 depend: [ Vault ]
-softdepend: [ Telecom ]
 
 commands:
   seriousrp:

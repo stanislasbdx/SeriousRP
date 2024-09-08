@@ -58,12 +58,10 @@ public class Config implements Listener {
 					configReport.set("plugin.firstRun", plugin.getConfig().getInt("Version") == 0);
 
 					configReport.set("plugin.dependencies.vault", new File("plugins/Vault").exists());
-					configReport.set("plugin.dependencies.telecom", new File("plugins/Telecom").exists());
 
 					configReport.set("plugin.modules.CustomRecipes", plugin.getConfig().getBoolean("Core.Modules.CustomRecipes"));
 					configReport.set("plugin.modules.RPDeath", plugin.getConfig().getBoolean("Core.Modules.RPDeath"));
 					configReport.set("plugin.modules.Medics", plugin.getConfig().getBoolean("Core.Modules.Medics"));
-					configReport.set("plugin.modules.TownSystem", plugin.getConfig().getBoolean("Core.Modules.TownSystem"));
 					configReport.set("plugin.modules.Chairs", plugin.getConfig().getBoolean("Core.Modules.Chairs"));
 					configReport.set("plugin.modules.Economy", plugin.getConfig().getBoolean("Core.Modules.Economy"));
 
