@@ -48,7 +48,6 @@ public class RandomTeleportation implements CommandExecutor {
 				RandomLocation randomLoc = getRandomLocation(player);
 
 				rtpLocation = new Location(player.getWorld(), randomLoc.randLocX(), randomLoc.randLocY(), randomLoc.randLocZ());
-				_log.info("distance: " + rtpLocation.distance(player.getLocation()) + " min distance : " + maxBlockRange / 3);
 
 				distanceBetweenRandLocAndLoc = rtpLocation.distance(player.getLocation());
 			}

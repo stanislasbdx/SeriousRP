@@ -55,8 +55,7 @@ public class Death implements Listener {
 					player.setHealth(2.0D);
 					player.setFoodLevel(1);
 				}
-
-				if(plugin.getConfig().getBoolean("Core.Modules.RPDeath")) {
+				else if(plugin.getConfig().getBoolean("Core.Modules.RPDeath")) {
 					ItemStack beef = new ItemStack(Material.BEEF, 4);
 					ItemStack bones = new ItemStack(Material.BONE, 5);
 					player.getWorld().dropItem(player.getLocation(), beef);
