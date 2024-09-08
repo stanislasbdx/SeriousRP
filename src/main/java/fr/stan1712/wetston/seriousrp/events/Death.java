@@ -33,37 +33,35 @@ public class Death implements Listener {
 
 			@Override
 			public void run() {
-			Player player = e.getEntity();
+				Player player = e.getEntity();
 
-			if(plugin.getConfig().getBoolean("Core.Modules.Medics")) {
-				double x = player.getLocation().getBlockX();
-				double y = player.getLocation().getBlockY();
-				double z = player.getLocation().getBlockZ();
+				if(plugin.getConfig().getBoolean("Core.Modules.Medics")) {
+					double x = player.getLocation().getBlockX();
+					double y = player.getLocation().getBlockY();
+					double z = player.getLocation().getBlockZ();
 
-				World playerWorld = Bukkit.getWorld(player.getWorld().getName());
-				playerWorld.getDifficulty();
+					World playerWorld = Bukkit.getWorld(player.getWorld().getName());
 
-				player.spigot().respawn();
-				player.teleport(new Location(playerWorld, x, y, z));
+					player.spigot().respawn();
+					player.teleport(new Location(playerWorld, x, y, z));
 
-				player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE , 1000000, 1000));
-				player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 1000000, 5));
-				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 1000));
-				player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1000000, 1000));
-				player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 1000000, 999));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE , 1000000, 1000));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 1000000, 5));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 1000));
+					player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1000000, 1000));
 
-				player.sendMessage(Objects.requireNonNull(plugin.getConfig().getString("Medics.Comate")).replace("&", "§"));
+					player.sendMessage(Objects.requireNonNull(plugin.getConfig().getString("Medics.Comate")).replace("&", "§"));
 
-				player.setHealth(2.0D);
-				player.setFoodLevel(1);
-			}
+					player.setHealth(2.0D);
+					player.setFoodLevel(1);
+				}
 
-			if(plugin.getConfig().getBoolean("Core.Modules.RPDeath")) {
-				ItemStack beef = new ItemStack(Material.BEEF, 4);
-				ItemStack bones = new ItemStack(Material.BONE, 5);
-				player.getWorld().dropItem(player.getLocation(), beef);
-				player.getWorld().dropItem(player.getLocation(), bones);
-			}
+				if(plugin.getConfig().getBoolean("Core.Modules.RPDeath")) {
+					ItemStack beef = new ItemStack(Material.BEEF, 4);
+					ItemStack bones = new ItemStack(Material.BONE, 5);
+					player.getWorld().dropItem(player.getLocation(), beef);
+					player.getWorld().dropItem(player.getLocation(), bones);
+				}
 			}
 
 		}.runTaskLater(plugin, 10);
