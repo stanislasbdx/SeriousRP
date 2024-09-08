@@ -1,6 +1,7 @@
 Version: 0
 ConfigFix: true
 Prefix: SeriousRP
+ShortPrefix: "&6[&eSRP&6]"
 
 Core:
   NoPerms: "You don't have the permission !"
@@ -43,18 +44,22 @@ Medics:
   Comate: "&cYou are in the coma, call emergency or type &l/hrprevive&r&c if they are not available"
   TargetError: "&c%target% is not online, or you misstaken his username"
   MedRevive:
-    Revive: "&aYou successfully revive the player"
-    Self: "&aYou successfully revive yourself"
-    NoNeed: "&cThis player don't need to be revive"
+    MedicRevive: "&aYou successfully revived &2%target%"
+    TargetRevived: "&aYou got revived by &2%medic%"
+    Self: "&aYou successfully revived yourself"
+    NoNeed: "&cThis player don't need to be revived"
   MedInfo:
     Usage: "To get the vitals of someone : /vitals <target>"
-    Vitals: "Vitals :"
-    Location: "Location :"
+    Vitals: "Vitals"
+    Location: "Location"
+    Effects: "Effects"
     Health: "Life :"
     Hearts: "hearts"
     Food: "Food :"
-    Coordinates: "is at :"
-    Effects: "Effects"
+    Coordinates:
+      IsAt: "is at :"
+      InWorld: "in"
+      Distance: "you are %blocks% blocks away"
 
 Economy:
   Currency: "$"

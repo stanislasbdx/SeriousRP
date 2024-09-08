@@ -32,6 +32,11 @@ commands:
   # Medic System
   vitals:
     description: Gives you the vitals of a player.
-    permission: seriousrp.medinfo
+    permission: seriousrp.medics.info
     usage: /vitals <player>
     aliases: [medinfo]
+  revive:
+    description: Revives a player in the coma.
+    permission: seriousrp.medics.revive
+    usage: /revive <player>
+    aliases: [revive]

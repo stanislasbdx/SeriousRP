@@ -5,6 +5,7 @@ import fr.stan1712.wetston.seriousrp.commands.InactiveCommand;
 import fr.stan1712.wetston.seriousrp.commands.RandomTeleportation;
 import fr.stan1712.wetston.seriousrp.commands.Seriousrp;
 import fr.stan1712.wetston.seriousrp.commands.medics.Medinfo;
+import fr.stan1712.wetston.seriousrp.commands.medics.Revive;
 import fr.stan1712.wetston.seriousrp.defaults.EnumModules;
 import fr.stan1712.wetston.seriousrp.events.Cheque;
 import fr.stan1712.wetston.seriousrp.events.Death;
@@ -131,12 +132,16 @@ public final class Main extends JavaPlugin {
 			Objects.requireNonNull(getCommand("vitals")).setExecutor(new Medinfo(this));
 			_log.info("[{}] /vitals commands loaded", logStep);
 
+			Objects.requireNonNull(getCommand("revive")).setExecutor(new Revive(this));
+			_log.info("[{}] /revive commands loaded", logStep);
+
 			_log.info("[{}] Medics > ON", logStep);
 
 			_log.warn("[{}] If you use the 'Medics' module, please set the difficulty to (at least) EASY", logStep);
 		}
 		else {
 			Objects.requireNonNull(getCommand("vitals")).setExecutor(new InactiveCommand(this, EnumModules.MEDICS));
+			Objects.requireNonNull(getCommand("revive")).setExecutor(new InactiveCommand(this, EnumModules.MEDICS));
 
 			_log.info("[{}] Medics > OFF", logStep);
 		}
