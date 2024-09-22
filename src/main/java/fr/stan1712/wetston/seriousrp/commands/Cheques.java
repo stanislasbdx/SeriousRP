@@ -52,7 +52,7 @@ public class Cheques implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player player)) return true;
 
-		if(getConfigBoolean("Core.Modules.Economy")) {
+		if(Boolean.TRUE.equals(getConfigBoolean("Core.Modules.Economy"))) {
 			if(player.hasPermission("seriousrp.economy.cheques")) {
 
 				if (args.length == 0) {

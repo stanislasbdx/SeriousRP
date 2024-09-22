@@ -14,7 +14,7 @@ public class InactiveCommand implements CommandExecutor {
 
 	public InactiveCommand(Main pl, String module) {
 		this.pl = pl;
-		this.inactiveModule = module.toString();
+		this.inactiveModule = module;
 
 		pl.getConfig();
 	}

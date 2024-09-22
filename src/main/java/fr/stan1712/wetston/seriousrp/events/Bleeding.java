@@ -24,8 +24,10 @@ public class Bleeding implements Listener {
 		Entity eventEntity = event.getEntity();
 		Location entityLocation = eventEntity.getLocation();
 
-		if(eventEntity.getSpawnCategory() != SpawnCategory.MISC) playBleedingEffect(eventEntity, entityLocation);
-		else if(eventEntity.getType() == EntityType.PLAYER || eventEntity.getType() == EntityType.VILLAGER) playBleedingEffect(eventEntity, entityLocation);
+		if (
+			eventEntity.getSpawnCategory() != SpawnCategory.MISC ||
+			(eventEntity.getType() == EntityType.PLAYER || eventEntity.getType() == EntityType.VILLAGER)
+		) playBleedingEffect(eventEntity, entityLocation);
 	}
 
 	private static void playBleedingEffect(Entity entity, Location entityLocation) {

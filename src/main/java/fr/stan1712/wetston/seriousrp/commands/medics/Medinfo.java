@@ -1,6 +1,7 @@
 package fr.stan1712.wetston.seriousrp.commands.medics;
 
 import fr.stan1712.wetston.seriousrp.Main;
+import fr.stan1712.wetston.seriousrp.defaults.StrStructure;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,8 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectTypeCategory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -26,7 +25,6 @@ public class Medinfo implements CommandExecutor {
 		this.pl = pl;
 		pl.getConfig();
 	}
-	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - Medinfo");
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -57,7 +55,7 @@ public class Medinfo implements CommandExecutor {
 			Location playerLoc = player.getLocation();
 			int blocksDistance = (int) Math.round(playerLoc.distance(target.getLocation()));
 
-			player.sendMessage(ChatColor.AQUA + "+----- ♖ " + args[0] + " ♖ -----+");
+			player.sendMessage(StrStructure.START_TITLE_BOX + args[0] + StrStructure.END_TITLE_BOX);
 			player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Vitals").replace("&", "§"));
 			if (targetHealth <= 9.0D) {
 				player.sendMessage("§c" + this.pl.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " §4" + Math.round(targetHealth / 2.0D) + "§c " + this.pl.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
@@ -73,7 +71,7 @@ public class Medinfo implements CommandExecutor {
 			}
 
 			if(!effects.isEmpty()) {
-				player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+				player.sendMessage(StrStructure.BOTTOM_BOX);
 				player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Effects").replace("&", "§"));
 				effects.forEach(effect -> {
 					String effectCategoryLitteral = Objects.equals(effect.getType().getCategory(), PotionEffectTypeCategory.HARMFUL) ? "§4- §c" : "§2+ §a";
@@ -92,7 +90,7 @@ public class Medinfo implements CommandExecutor {
 				});
 			}
 
-			player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+			player.sendMessage(StrStructure.BOTTOM_BOX);
 			player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Location").replace("&", "§"));
 			player.sendMessage(String.format("§2%s §a%s §2%s§a, §2%s§a, §2%s§a %s §2%s§a (%s)",
 				target.getDisplayName(),
@@ -104,7 +102,7 @@ public class Medinfo implements CommandExecutor {
 				targetWorld,
 				this.pl.getConfig().getString("Medics.MedInfo.Coordinates.Distance").replace("%blocks%", String.format("§2%s§a", blocksDistance)).replace("&", "§")
 			));
-			player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+			player.sendMessage(StrStructure.BOTTOM_BOX);
 		}
 		else {
 			player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));

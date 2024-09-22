@@ -10,8 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
@@ -19,14 +17,13 @@ public class RandomTeleportation implements CommandExecutor {
 	private final Plugin pl;
 
 	private final int maxBlockRange;
+	private Random randomNum = new Random();
 
 	public RandomTeleportation(Main pl) {
 		this.pl = pl;
 
 		this.maxBlockRange = pl.getConfig().getInt("MicroModules.RandomBlocks");
 	}
-
-	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - SRP");
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -62,10 +59,10 @@ public class RandomTeleportation implements CommandExecutor {
 	}
 
 	private RandomLocation getRandomLocation(Player player) {
-		int randLocX = player.getLocation().getBlockX() + new Random().nextInt(maxBlockRange);
-		int randLocZ = player.getLocation().getBlockZ() + new Random().nextInt(maxBlockRange);
+		int randLocX = player.getLocation().getBlockX() + randomNum.nextInt(maxBlockRange);
+		int randLocZ = player.getLocation().getBlockZ() + randomNum.nextInt(maxBlockRange);
 
-		if (new Random().nextInt(maxBlockRange) % 2 == 0) {
+		if (randomNum.nextInt(maxBlockRange) % 2 == 0) {
 			randLocX = -randLocX;
 			randLocZ = -randLocZ;
 		}

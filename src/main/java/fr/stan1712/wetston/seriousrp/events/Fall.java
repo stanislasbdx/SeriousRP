@@ -24,13 +24,11 @@ public class Fall implements Listener {
 
 		if(eventEntity.getType() != EntityType.PLAYER) return;
 
-		if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
-			if (event.getDamage() >= 2.0D) {
-				LivingEntity playerEntity = (LivingEntity)event.getEntity();
+		if (event.getCause() == EntityDamageEvent.DamageCause.FALL && event.getDamage() >= 2.0D) {
+			LivingEntity playerEntity = (LivingEntity)event.getEntity();
 
-				playerEntity.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 80, (int)Math.round(event.getDamage() / 2.0D - 1.0D)));
-				playerEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 15, 1000));
-			}
+			playerEntity.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 80, (int)Math.round(event.getDamage() / 2.0D - 1.0D)));
+			playerEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 15, 1000));
 		}
 	}
 }
