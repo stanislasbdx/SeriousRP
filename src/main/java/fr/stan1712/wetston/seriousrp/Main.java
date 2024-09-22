@@ -8,8 +8,10 @@ import fr.stan1712.wetston.seriousrp.commands.medics.HRPRevive;
 import fr.stan1712.wetston.seriousrp.commands.medics.Medinfo;
 import fr.stan1712.wetston.seriousrp.commands.medics.Revive;
 import fr.stan1712.wetston.seriousrp.defaults.EnumModules;
+import fr.stan1712.wetston.seriousrp.events.Bleeding;
 import fr.stan1712.wetston.seriousrp.events.Cheque;
 import fr.stan1712.wetston.seriousrp.events.Death;
+import fr.stan1712.wetston.seriousrp.events.Fall;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -125,7 +127,6 @@ public final class Main extends JavaPlugin {
 		}
 		else _log.info("[{}] CustomRecipes > OFF", logStep);
 
-		pluginManager.registerEvents(new Death(this), this);
 		if(getConfig().getBoolean("Core.Modules.RPDeath")) _log.info("[{}] RPDeath > ON", logStep);
 		else _log.info("[{}] RPDeath > OFF", logStep);
 
@@ -174,6 +175,21 @@ public final class Main extends JavaPlugin {
 		_log.info("[{}] All commands have been added !", logStep);
 	}
 
+	private void loadEvents() {
+		final String logStep = "loadEvents";
+
+		pluginManager.registerEvents(new Death(this), this);
+		_log.info("[{}] Death event loaded", logStep);
+
+		pluginManager.registerEvents(new Bleeding(this), this);
+		_log.info("[{}] Bleeding event loaded", logStep);
+
+		pluginManager.registerEvents(new Fall(this), this);
+		_log.info("[{}] Fall event loaded", logStep);
+
+		_log.info("[{}] All events have been added !", logStep);
+	}
+
 	private void logNewStep(String step) {
 		_log.info("{@ {}} ---", step);
 	}
@@ -195,6 +211,9 @@ public final class Main extends JavaPlugin {
 
 			logNewStep("loadConfig");
 			loadConfig();
+
+			logNewStep("loadEvents");
+			loadEvents();
 
 			logNewStep("loadModules");
 			loadModules();

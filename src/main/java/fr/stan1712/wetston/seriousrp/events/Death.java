@@ -21,7 +21,6 @@ public class Death implements Listener {
 		this.plugin = plugin;
 	}
 
-
 	@EventHandler
 	public void onDeathPlayer(PlayerDeathEvent e) {
 		new BukkitRunnable() {
