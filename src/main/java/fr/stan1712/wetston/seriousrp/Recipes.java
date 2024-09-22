@@ -30,21 +30,21 @@ public class Recipes implements Listener {
 		nametag.setIngredient('B', Material.WRITABLE_BOOK);
 		pl.getServer().addRecipe(nametag);
 
-		NamespacedKey horseiron_key = new NamespacedKey(pl, "srp_horseiron");
+		NamespacedKey horseiron_key = new NamespacedKey(pl, "srp_iron_horse_armor");
 		ShapedRecipe horseiron = new ShapedRecipe(horseiron_key, new ItemStack(Material.IRON_HORSE_ARMOR));
 		horseiron.shape("   ","IBI","II ");
 		horseiron.setIngredient('I', Material.IRON_INGOT);
 		horseiron.setIngredient('B', Material.IRON_BLOCK);
 		pl.getServer().addRecipe(horseiron);
 
-		NamespacedKey horsegold_key = new NamespacedKey(pl, "srp_horsegold");
+		NamespacedKey horsegold_key = new NamespacedKey(pl, "srp_gold_horse_armor");
 		ShapedRecipe horsegold = new ShapedRecipe(horsegold_key, new ItemStack(Material.GOLDEN_HORSE_ARMOR));
 		horsegold.shape("   ","IBI","II ");
 		horsegold.setIngredient('I', Material.GOLD_INGOT);
 		horsegold.setIngredient('B', Material.GOLD_BLOCK);
 		pl.getServer().addRecipe(horsegold);
 
-		NamespacedKey horsediamond_key = new NamespacedKey(pl, "srp_horsediamond");
+		NamespacedKey horsediamond_key = new NamespacedKey(pl, "srp_diamond_horse_armor");
 		ShapedRecipe horsediamond = new ShapedRecipe(horsediamond_key, new ItemStack(Material.DIAMOND_HORSE_ARMOR));
 		horsediamond.shape("   ","IBI","II ");
 		horsediamond.setIngredient('I', Material.DIAMOND);
