@@ -35,6 +35,7 @@ Core:
 
 MicroModules:
   RandomTeleport: "Teleportation to a random location !"
+  RTPDisabledWorld: "&cThis world is disabled for random teleportation"
   RandomBlocks: 1000
   LiftPlayer: "&aYou are carrying %player%"
   LiftedPlayer: "&aYou are carried by %player%"

@@ -33,9 +33,8 @@ public class RandomTeleportation implements CommandExecutor {
 		if (!(sender instanceof Player player)) return false;
 
 		if(player.hasPermission("serious.randomtp")) {
-			player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-			player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("MicroModules.RandomTeleport").replace("&", "§"));
-			player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+			if (player.getWorld().getEnvironment() == World.Environment.NORMAL) {
+				player.sendMessage(getConfigString("ShortPrefix") + getConfigString("MicroModules.RandomTeleport"));
 
 				player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 50, 100));
 				player.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 50, 100));
@@ -53,10 +52,14 @@ public class RandomTeleportation implements CommandExecutor {
 					distanceBetweenRandLocAndLoc = rtpLocation.distance(player.getLocation());
 				}
 
-			player.teleport(rtpLocation);
+				player.teleport(rtpLocation);
+			}
+			else {
+				player.sendMessage(getShortPrefixString() + getConfigString("MicroModules.RTPDisabledWorld"));
+			}
 		}
 		else {
-			player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
+			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
 		}
 
 		return true;
