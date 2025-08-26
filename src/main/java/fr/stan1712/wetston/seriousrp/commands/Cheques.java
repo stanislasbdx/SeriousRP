@@ -3,7 +3,6 @@ package fr.stan1712.wetston.seriousrp.commands;
 import com.google.gson.Gson;
 import fr.stan1712.wetston.seriousrp.Main;
 import fr.stan1712.wetston.seriousrp.pojo.PCheque;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -18,8 +17,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 
-import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigBoolean;
-import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.*;
 
 public class Cheques implements CommandExecutor {
 	private final Plugin pl;
@@ -56,7 +54,7 @@ public class Cheques implements CommandExecutor {
 			if(player.hasPermission("seriousrp.economy.cheques")) {
 
 				if (args.length == 0) {
-					player.sendMessage(getConfigString("Economy.Cheque.Usage"));
+					player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
 					return false;
 				}
 
@@ -85,40 +83,38 @@ public class Cheques implements CommandExecutor {
 					chequeItem.setItemMeta(chequeMeta);
 
 					if (player.getInventory().contains(chequeItem)) {
-						player.sendMessage(getConfigString("Economy.Cheque.Already").replace("%amount%", strValue));
+						player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Already").replace("%amount%", strValue));
 					}
 					else {
 						if(player.getInventory().firstEmpty() >= 0){
 							double value = Double.parseDouble(strValue);
 
 							if (Main.economy.getBalance(player) < value) {
-								player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Economy.NotEnough").replace("%amount%", strValue));
+								player.sendMessage(getShortPrefixString() + getConfigString("Economy.NotEnough").replace("%amount%", strValue));
 							}
 							else {
-								player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Economy.Cheque.Created").replace("%amount%", strValue));
+								player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Created").replace("%amount%", strValue));
 
 								player.getInventory().addItem(chequeItem);
 							}
 						}
 						else {
-							player.sendMessage(getConfigString("Economy.Cheque.InventoryFull"));
+							player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.InventoryFull"));
 						}
-
-
 					}
 				}
 				else {
-					player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Economy.Cheque.Usage"));
+					player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
 				}
 
 			}
 			else {
-				player.sendMessage("[" + getConfigString("Prefix") + "]" + getConfigString("Core.NoPerms"));
+				player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
 			}
 		}
 		else {
 			if(Boolean.TRUE.equals(getConfigBoolean("Core.Modules.InactiveDebug"))) {
-				player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Core.Modules.InactiveMessage").replace("%module%", "Economy"));
+				player.sendMessage(getShortPrefixString() + getConfigString("Core.Modules.InactiveMessage").replace("%module%", "Economy"));
 			}
 		}
 

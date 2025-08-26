@@ -1,12 +1,14 @@
 package fr.stan1712.wetston.seriousrp.commands;
 
 import fr.stan1712.wetston.seriousrp.Main;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
 
 public class InactiveCommand implements CommandExecutor {
 	private final Plugin pl;
@@ -24,7 +26,7 @@ public class InactiveCommand implements CommandExecutor {
 		if (!(sender instanceof Player player)) return true;
 
 		if(this.pl.getConfig().getBoolean("Core.Modules.InactiveDebug")) {
-			player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("Core.Modules.InactiveMessage").replace("&", "§").replace("%module%", inactiveModule));
+			player.sendMessage(getShortPrefixString() + getConfigString("Core.Modules.InactiveMessage").replace("%module%", inactiveModule));
 		}
 
 		return true;

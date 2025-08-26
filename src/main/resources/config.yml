@@ -1,16 +1,17 @@
 Version: 0
 ConfigFix: true
-Prefix: SeriousRP
-ShortPrefix: "&6[&eSRP&6]"
+
+Prefix: "&f« &7[&bSeriousRP&7] &f» "
+ShortPrefix: "&7[&bsRP&7] » "
 
 Core:
   NoPerms: "You don't have the permission !"
   Reload: "Config file reloaded !"
   HelpMsg:
-    Help: "Need help ? Type /seriousrp help"
-    VersionHelp: "Plugin version ? /seriousrp version"
-    StatusHelp: "What modules are activated ? /seriousrp modules"
-    ReloadHelp: "You need to reload the config without reloading your server ? /seriousrp reload"
+    Help: "Need help ? Type &b/seriousrp help"
+    VersionHelp: "Plugin version ? &b/seriousrp version"
+    StatusHelp: "What modules are activated ? &b/seriousrp modules"
+    ReloadHelp: "You need to reload the config without reloading your server ? &b/seriousrp reload"
     Dsrtp: "Be able to teleport you randomly"
     DPhone: "Shows the phone menu"
     DHelp: "Shows the help"

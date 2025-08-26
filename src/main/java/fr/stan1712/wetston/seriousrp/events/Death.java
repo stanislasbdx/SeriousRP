@@ -12,7 +12,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Objects;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
 
 public class Death implements Listener {
 	Plugin plugin;
@@ -41,7 +42,7 @@ public class Death implements Listener {
 						player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 1000));
 						player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 1000000, 1000));
 
-						player.sendMessage(Objects.requireNonNull(plugin.getConfig().getString("Medics.Comate")).replace("&", "§"));
+						player.sendMessage(getShortPrefixString() + getConfigString("Medics.Comate"));
 
 						player.setHealth(2.0D);
 						player.setFoodLevel(1);

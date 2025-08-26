@@ -2,8 +2,8 @@ package fr.stan1712.wetston.seriousrp.commands.medics;
 
 import fr.stan1712.wetston.seriousrp.Main;
 import fr.stan1712.wetston.seriousrp.defaults.StrStructure;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,7 +16,7 @@ import org.bukkit.potion.PotionEffectTypeCategory;
 import java.util.Collection;
 import java.util.Objects;
 
-import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.*;
 
 public class Medinfo implements CommandExecutor {
 	private final Plugin pl;
@@ -32,13 +32,13 @@ public class Medinfo implements CommandExecutor {
 
 		if(player.hasPermission("seriousrp.medics.info")) {
 			if (args.length == 0) {
-				player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Medics.MedInfo.Usage"));
+				player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedInfo.Usage"));
 				return true;
 			}
 
 			Player target = Bukkit.getPlayer(args[0]);
 			if (target == null) {
-				player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Medics.TargetError").replace("%target%", args[0]));
+				player.sendMessage(getShortPrefixString() + getConfigString("Medics.TargetError").replace("%target%", args[0]));
 				return true;
 			}
 
@@ -55,24 +55,18 @@ public class Medinfo implements CommandExecutor {
 			Location playerLoc = player.getLocation();
 			int blocksDistance = (int) Math.round(playerLoc.distance(target.getLocation()));
 
-			player.sendMessage(StrStructure.START_TITLE_BOX + args[0] + StrStructure.END_TITLE_BOX);
-			player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Vitals").replace("&", "§"));
-			if (targetHealth <= 9.0D) {
-				player.sendMessage("§c" + this.pl.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " §4" + Math.round(targetHealth / 2.0D) + "§c " + this.pl.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
-			}
-			else {
-				player.sendMessage("§a" + this.pl.getConfig().getString("Medics.MedInfo.Health").replace("&", "§") + " §2" + Math.round(targetHealth / 2.0D) + " §a" + this.pl.getConfig().getString("Medics.MedInfo.Hearts").replace("&", "§"));
-			}
-			if (targetFoodLevel <= 9.0D) {
-				player.sendMessage("§c" + this.pl.getConfig().getString("Medics.MedInfo.Food").replace("&", "§") + " §4" + Math.round(targetFoodLevel / 2.0D) + "§c / 10");
-			}
-			else {
-				player.sendMessage("§a" + this.pl.getConfig().getString("Medics.MedInfo.Food").replace("&", "§") + " §2" + Math.round(targetFoodLevel / 2.0D) + "§a / 10");
-			}
+			player.sendMessage(ChatColor.WHITE + "« " + ChatColor.GRAY + "[" + ChatColor.AQUA + target.getDisplayName() + ChatColor.GRAY + "]" + ChatColor.WHITE + " »");
+			player.sendMessage(ChatColor.GRAY + "» " + ChatColor.WHITE + getConfigString("Medics.MedInfo.Vitals"));
 
-			if(!effects.isEmpty()) {
-				player.sendMessage(StrStructure.BOTTOM_BOX);
-				player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Effects").replace("&", "§"));
+			ChatColor targetHealthColor = targetHealth <= 9.0D ? ChatColor.RED : ChatColor.GREEN;
+			ChatColor targetFoodColor = targetFoodLevel <= 9.0D ? ChatColor.RED : ChatColor.GREEN;
+
+			player.sendMessage(ChatColor.GRAY + "» " + getConfigString("Medics.MedInfo.Health") + " " + targetHealthColor + Math.round(targetHealth / 2.0D) + " " + ChatColor.GRAY + getConfigString("Medics.MedInfo.Hearts"));
+			player.sendMessage(ChatColor.GRAY + "» " + getConfigString("Medics.MedInfo.Food") + " " + targetFoodColor + Math.round(targetFoodLevel / 2.0D) + " " + ChatColor.GRAY + "/ 10");
+
+			if (!effects.isEmpty()) {
+				player.sendMessage("");
+				player.sendMessage(ChatColor.GRAY + "» " + ChatColor.WHITE + getConfigString("Medics.MedInfo.Effects"));
 				effects.forEach(effect -> {
 					String effectCategoryLitteral = Objects.equals(effect.getType().getCategory(), PotionEffectTypeCategory.HARMFUL) ? "§4- §c" : "§2+ §a";
 					String effectKey = String.valueOf(effect.getType().getKey());
@@ -86,7 +80,7 @@ public class Medinfo implements CommandExecutor {
 							.append(" ");
 					}
 
-					player.sendMessage(effectCategoryLitteral + result.toString().trim());
+					player.sendMessage(ChatColor.GRAY + "» " + effectCategoryLitteral + result.toString().trim());
 				});
 			}
 
@@ -105,7 +99,7 @@ public class Medinfo implements CommandExecutor {
 			player.sendMessage(StrStructure.BOTTOM_BOX);
 		}
 		else {
-			player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
+			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
 		}
 
 		return true;

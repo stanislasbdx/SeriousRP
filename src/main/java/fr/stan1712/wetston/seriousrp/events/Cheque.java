@@ -57,7 +57,7 @@ public class Cheque implements Listener {
 
 				Main.economy.depositPlayer(player, chequeValue);
 
-				player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Economy.Cheque.Claimed")
+				player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Claimed")
 					.replace("%amount%", String.valueOf(chequeValue))
 					.replace("%issuer%", parsedCheque.getAuthorDisplayName())
 				);
