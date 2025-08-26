@@ -24,5 +24,12 @@ public class Utils {
 		public static Boolean getConfigBoolean(String path) {
 			return plConfig.getBoolean(path);
 		}
+
+		public static String getPrefixString() {
+			return getConfigString("Prefix");
+		}
+		public static String getShortPrefixString() {
+			return getConfigString("ShortPrefix");
+		}
 	}
 }

@@ -8,6 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
+
 public class HRPRevive implements CommandExecutor {
 	private final Plugin pl;
 
@@ -23,7 +26,7 @@ public class HRPRevive implements CommandExecutor {
 		if(player.hasPermission("seriousrp.medics.hrprevive")) {
 			if(player.getHealth() < 4.0D) {
 				player.setHealth(8.0D);
-				player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.SelfRevive").replace("&", "§"));
+				player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.SelfRevive"));
 
 				player.removePotionEffect(PotionEffectType.RESISTANCE);
 				player.removePotionEffect(PotionEffectType.SLOWNESS);
@@ -33,11 +36,11 @@ public class HRPRevive implements CommandExecutor {
 				player.setFoodLevel(20);
 			}
 			else {
-				player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.NoNeed").replace("&", "§"));
+				player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.NoNeed"));
 			}
 		}
 		else {
-			player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
+			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
 		}
 
 		return true;

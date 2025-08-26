@@ -1,16 +1,17 @@
 Version: 0
 ConfigFix: true
-Prefix: SeriousRP
-ShortPrefix: "&6[&eSRP&6]"
+
+Prefix: "&f« &7[&bSeriousRP&7] &f» "
+ShortPrefix: "&7[&bsRP&7] » "
 
 Core:
   NoPerms: "You don't have the permission !"
   Reload: "Config file reloaded !"
   HelpMsg:
-    Help: "Need help ? Type /seriousrp help"
-    VersionHelp: "Plugin version ? /seriousrp version"
-    StatusHelp: "What modules are activated ? /seriousrp modules"
-    ReloadHelp: "You need to reload the config without reloading your server ? /seriousrp reload"
+    Help: "Need help ? Type &b/seriousrp help"
+    VersionHelp: "Plugin version ? &b/seriousrp version"
+    StatusHelp: "What modules are activated ? &b/seriousrp modules"
+    ReloadHelp: "You need to reload the config without reloading your server ? &b/seriousrp reload"
     Dsrtp: "Be able to teleport you randomly"
     DPhone: "Shows the phone menu"
     DHelp: "Shows the help"
@@ -34,6 +35,7 @@ Core:
 
 MicroModules:
   RandomTeleport: "Teleportation to a random location !"
+  RTPDisabledWorld: "&cThis world is disabled for random teleportation"
   RandomBlocks: 1000
   LiftPlayer: "&aYou are carrying %player%"
   LiftedPlayer: "&aYou are carried by %player%"
@@ -42,7 +44,7 @@ MicroModules:
 
 Medics:
   Comate: "&cYou are in the coma, call emergency or type &l/hrprevive&r&c if they are not available"
-  TargetError: "&c%target% is not online, or you misstaken his username"
+  TargetError: "&c%target% is not online, or you mistaken his username"
   MedRevive:
     MedicRevive: "&aYou successfully revived &2%target%"
     SelfRevive: "&aYou successfully revived yourself !"
@@ -65,6 +67,7 @@ Medics:
 Economy:
   Currency: "$"
   NotEnough: "&cYou don't have enough money !"
+  IssuerNotEnough: "&cThe issuer doesn't have enough money !"
   Cheque:
     Usage: "To create a cheque : /cheque <value : only positive integers>"
     Created: "A %amount%€ cheque has been created"

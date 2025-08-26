@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
 
 public class Cheque implements Listener {
 	Plugin plugin;
@@ -53,11 +54,19 @@ public class Cheque implements Listener {
 				double chequeValue = parsedCheque.getValue() * event.getPlayer().getInventory().getItemInMainHand().getAmount();
 
 				OfflinePlayer chequeIssuerPlayer = Bukkit.getPlayer(parsedCheque.getAuthorUUID());
+
+				if (Main.economy.getBalance(chequeIssuerPlayer) < chequeValue) {
+					player.sendMessage(getShortPrefixString() + getConfigString("Economy.IssuerNotEnough"));
+
+					event.setCancelled(true);
+					return;
+				}
+
 				Main.economy.withdrawPlayer(chequeIssuerPlayer, chequeValue);
 
 				Main.economy.depositPlayer(player, chequeValue);
 
-				player.sendMessage(ChatColor.GOLD + "» " + getConfigString("Economy.Cheque.Claimed")
+				player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Claimed")
 					.replace("%amount%", String.valueOf(chequeValue))
 					.replace("%issuer%", parsedCheque.getAuthorDisplayName())
 				);

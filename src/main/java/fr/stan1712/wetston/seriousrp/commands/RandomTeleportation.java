@@ -1,8 +1,8 @@
 package fr.stan1712.wetston.seriousrp.commands;
 
 import fr.stan1712.wetston.seriousrp.Main;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +12,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Random;
+
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
 
 public class RandomTeleportation implements CommandExecutor {
 	private final Plugin pl;
@@ -30,29 +33,33 @@ public class RandomTeleportation implements CommandExecutor {
 		if (!(sender instanceof Player player)) return false;
 
 		if(player.hasPermission("serious.randomtp")) {
-			player.sendMessage(ChatColor.AQUA + "+----- ♖ " + this.pl.getConfig().getString("Prefix").replace("&", "§") + " ♖ -----+");
-			player.sendMessage(ChatColor.GOLD + "» " + this.pl.getConfig().getString("MicroModules.RandomTeleport").replace("&", "§"));
-			player.sendMessage(ChatColor.AQUA + "+----- ----- ----- -----+");
+			if (player.getWorld().getEnvironment() == World.Environment.NORMAL) {
+				player.sendMessage(getConfigString("ShortPrefix") + getConfigString("MicroModules.RandomTeleport"));
 
-			player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 50, 100));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 50, 100));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 50, 100));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 50, 100));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
 
-			Location rtpLocation = player.getLocation();
 
-			double distanceBetweenRandLocAndLoc = 0;
-			while (distanceBetweenRandLocAndLoc < (double) maxBlockRange / 3) {
-				RandomLocation randomLoc = getRandomLocation(player);
+				Location rtpLocation = player.getLocation();
 
-				rtpLocation = new Location(player.getWorld(), randomLoc.randLocX(), randomLoc.randLocY(), randomLoc.randLocZ());
+				double distanceBetweenRandLocAndLoc = 0;
+				while (distanceBetweenRandLocAndLoc < (double) maxBlockRange / 3) {
+					RandomLocation randomLoc = getRandomLocation(player);
 
-				distanceBetweenRandLocAndLoc = rtpLocation.distance(player.getLocation());
+					rtpLocation = new Location(player.getWorld(), randomLoc.randLocX(), randomLoc.randLocY(), randomLoc.randLocZ());
+
+					distanceBetweenRandLocAndLoc = rtpLocation.distance(player.getLocation());
+				}
+
+				player.teleport(rtpLocation);
 			}
-
-			player.teleport(rtpLocation);
+			else {
+				player.sendMessage(getShortPrefixString() + getConfigString("MicroModules.RTPDisabledWorld"));
+			}
 		}
 		else {
-			player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
+			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
 		}
 
 		return true;

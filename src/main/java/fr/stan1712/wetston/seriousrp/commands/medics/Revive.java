@@ -10,6 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
+
 public class Revive implements CommandExecutor {
 	private final Plugin pl;
 
@@ -29,8 +32,8 @@ public class Revive implements CommandExecutor {
 				if(target != null) {
 					if(target.getHealth() < 4.0D) {
 						target.setHealth(8.0D);
-						player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.MedicRevive").replace("&", "§").replace("%target%", target.getDisplayName()));
-						target.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.TargetRevived").replace("&", "§").replace("%medic%", player.getDisplayName()));
+						player.sendMessage(getConfigString("Medics.MedRevive.MedicRevive").replace("%target%", target.getDisplayName()));
+						target.sendMessage(getConfigString("Medics.MedRevive.TargetRevived").replace("%medic%", player.getDisplayName()));
 
 						target.removePotionEffect(PotionEffectType.RESISTANCE);
 						target.removePotionEffect(PotionEffectType.SLOWNESS);
@@ -40,19 +43,20 @@ public class Revive implements CommandExecutor {
 						target.setFoodLevel(20);
 					}
 					else {
-						player.sendMessage(this.pl.getConfig().getString("Medics.MedRevive.NoNeed").replace("&", "§"));
+						player.sendMessage(getConfigString("Medics.MedRevive.NoNeed"));
 					}
 				}
 				else {
-					player.sendMessage(ChatColor.DARK_RED + args[0] + " " + this.pl.getConfig().getString("Medics.MedRevive.Error").replace("&", "§"));
+					assert target != null;
+					player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.mistaken").replace("%target%", target.getDisplayName()));
 				}
 			}
 			else {
-				player.sendMessage(ChatColor.GOLD + "» /revive <player> = " + this.pl.getConfig().getString("Core.HelpMsg.DRevive").replace("&", "§"));
+				player.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/revive <player>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DRevive"));
 			}
 		}
 		else {
-			player.sendMessage("[" + this.pl.getConfig().getString("Prefix").replace("&", "§") + "]" + this.pl.getConfig().getString("Core.NoPerms").replace("&", "§"));
+			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
 		}
 
 		return true;
