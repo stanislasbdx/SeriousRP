@@ -44,7 +44,7 @@ MicroModules:
 
 Medics:
   Comate: "&cYou are in the coma, call emergency or type &l/hrprevive&r&c if they are not available"
-  TargetError: "&c%target% is not online, or you misstaken his username"
+  TargetError: "&c%target% is not online, or you mistaken his username"
   MedRevive:
     MedicRevive: "&aYou successfully revived &2%target%"
     SelfRevive: "&aYou successfully revived yourself !"

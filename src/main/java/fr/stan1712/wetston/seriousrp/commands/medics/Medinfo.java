@@ -84,19 +84,22 @@ public class Medinfo implements CommandExecutor {
 				});
 			}
 
-			player.sendMessage(StrStructure.BOTTOM_BOX);
-			player.sendMessage("§9§l" + this.pl.getConfig().getString("Medics.MedInfo.Location").replace("&", "§"));
-			player.sendMessage(String.format("§2%s §a%s §2%s§a, §2%s§a, §2%s§a %s §2%s§a (%s)",
-				target.getDisplayName(),
-				this.pl.getConfig().getString("Medics.MedInfo.Coordinates.IsAt").replace("&", "§"),
-				targetBlockX,
-				targetBlockY,
-				targetBlockZ,
-				this.pl.getConfig().getString("Medics.MedInfo.Coordinates.InWorld").replace("&", "§"),
-				targetWorld,
-				this.pl.getConfig().getString("Medics.MedInfo.Coordinates.Distance").replace("%blocks%", String.format("§2%s§a", blocksDistance)).replace("&", "§")
-			));
-			player.sendMessage(StrStructure.BOTTOM_BOX);
+			if (target.getWorld() == player.getWorld()) {
+				player.sendMessage("");
+				player.sendMessage(ChatColor.GRAY + "» " + ChatColor.WHITE + getConfigString("Medics.MedInfo.Location"));
+				player.sendMessage(ChatColor.GRAY + "» " +
+					String.format("§b%s §7%s §b%s§7, §b%s§7, §b%s§7 %s §b%s§7 (%s)",
+						target.getDisplayName(),
+						getConfigString("Medics.MedInfo.Coordinates.IsAt"),
+						targetBlockX,
+						targetBlockY,
+						targetBlockZ,
+						getConfigString("Medics.MedInfo.Coordinates.InWorld"),
+						targetWorld,
+						getConfigString("Medics.MedInfo.Coordinates.Distance").replace("%blocks%", String.format("§b%s§7", blocksDistance))
+					)
+				);
+			}
 		}
 		else {
 			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
