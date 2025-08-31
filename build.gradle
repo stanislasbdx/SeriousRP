@@ -26,6 +26,7 @@ sonar {
     properties {
         property "sonar.projectKey", "stanislasbdx_SeriousRP_28a0ef7b-fa03-4300-ab66-7308561e1bc2"
         property "sonar.projectName", "SeriousRP"
+        property "sonar.ws.timeout", "120"
     }
 }
 
