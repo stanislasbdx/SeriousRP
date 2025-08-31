@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id "org.sonarqube" version "5.0.0.4638"
+    id "org.sonarqube" version "6.3.1.5724"
 }
 
 group = 'fr.stan1712.wetston'
@@ -26,10 +26,11 @@ sonar {
     properties {
         property "sonar.projectKey", "stanislasbdx_SeriousRP_28a0ef7b-fa03-4300-ab66-7308561e1bc2"
         property "sonar.projectName", "SeriousRP"
+        property "sonar.ws.timeout", "120"
     }
 }
 
-project.tasks["sonar"].dependsOn("test", "build")
+project.tasks["sonar"].dependsOn("build")
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT"
