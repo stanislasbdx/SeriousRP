@@ -10,9 +10,6 @@ import org.bukkit.inventory.ShapedRecipe;
 public class Recipes implements Listener {
 
 	public Recipes(Main pl) {
-		pl.getConfig();
-
-		Bukkit.resetRecipes();
 
 		NamespacedKey saddleKey = new NamespacedKey(pl, "srp_saddle");
 		ShapedRecipe saddle = new ShapedRecipe(saddleKey, new ItemStack(Material.SADDLE, 1));
@@ -52,7 +49,7 @@ public class Recipes implements Listener {
 		pl.getServer().addRecipe(horsediamond);
 
 		NamespacedKey steakKey = new NamespacedKey(pl, "srp_steak");
-		ShapedRecipe steak = new ShapedRecipe(steakKey, new ItemStack(Material.BEEF));
+		ShapedRecipe steak = new ShapedRecipe(steakKey, new ItemStack(Material.COOKED_BEEF));
 		steak.shape("RRR","RBR","RRR");
 		steak.setIngredient('B', Material.BOWL);
 		steak.setIngredient('R', Material.ROTTEN_FLESH);
