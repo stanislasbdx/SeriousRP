@@ -11,7 +11,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
@@ -20,7 +20,7 @@ public class RandomTeleportation implements CommandExecutor {
 	private final Plugin pl;
 
 	private final int maxBlockRange;
-	private Random randomNum = new Random();
+	private SecureRandom randomNum = new SecureRandom();
 
 	public RandomTeleportation(Main pl) {
 		this.pl = pl;
@@ -66,13 +66,11 @@ public class RandomTeleportation implements CommandExecutor {
 	}
 
 	private RandomLocation getRandomLocation(Player player) {
-		int randLocX = player.getLocation().getBlockX() + randomNum.nextInt(maxBlockRange);
-		int randLocZ = player.getLocation().getBlockZ() + randomNum.nextInt(maxBlockRange);
+		int offsetX = randomNum.nextInt(maxBlockRange * 2 + 1) - maxBlockRange;
+		int offsetZ = randomNum.nextInt(maxBlockRange * 2 + 1) - maxBlockRange;
 
-		if (randomNum.nextInt(maxBlockRange) % 2 == 0) {
-			randLocX = -randLocX;
-			randLocZ = -randLocZ;
-		}
+		int randLocX = player.getLocation().getBlockX() + offsetX;
+		int randLocZ = player.getLocation().getBlockZ() + offsetZ;
 
 		int randLocY = player.getWorld().getHighestBlockYAt(randLocX, randLocZ) + 1;
 
