@@ -12,8 +12,6 @@ public class Recipes implements Listener {
 	public Recipes(Main pl) {
 		pl.getConfig();
 
-		Bukkit.resetRecipes();
-
 		NamespacedKey saddleKey = new NamespacedKey(pl, "srp_saddle");
 		ShapedRecipe saddle = new ShapedRecipe(saddleKey, new ItemStack(Material.SADDLE, 1));
 		saddle.shape(" C ","CFC","I I");
