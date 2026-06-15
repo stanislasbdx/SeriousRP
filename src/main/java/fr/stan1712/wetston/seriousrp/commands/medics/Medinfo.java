@@ -1,7 +1,6 @@
 package fr.stan1712.wetston.seriousrp.commands.medics;
 
 import fr.stan1712.wetston.seriousrp.Main;
-import fr.stan1712.wetston.seriousrp.defaults.StrStructure;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,7 +15,8 @@ import org.bukkit.potion.PotionEffectTypeCategory;
 import java.util.Collection;
 import java.util.Objects;
 
-import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.*;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
+import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
 
 public class Medinfo implements CommandExecutor {
 	private final Plugin pl;
@@ -69,7 +69,7 @@ public class Medinfo implements CommandExecutor {
 				player.sendMessage(ChatColor.GRAY + "» " + ChatColor.WHITE + getConfigString("Medics.MedInfo.Effects"));
 				effects.forEach(effect -> {
 					String effectCategoryLitteral = Objects.equals(effect.getType().getCategory(), PotionEffectTypeCategory.HARMFUL) ? "§4- §c" : "§2+ §a";
-					String effectKey = String.valueOf(effect.getType().getKey());
+					String effectKey = String.valueOf(effect.getType().getKeyOrThrow());
 
 					String[] parts = effectKey.split(":")[1].split("_");
 					StringBuilder result = new StringBuilder();
