@@ -45,23 +45,16 @@ public final class Main extends JavaPlugin {
 			pluginManager.disablePlugin(this);
 			return false;
 		}
-		final String version = versionMatcher.group();
 
-		switch (version) {
-			case "1.21", "1.20" -> {
-				_log.info("[{}] Version check !", logStep);
-				_log.info("[{}] If you got issues, report them on Github", logStep);
-			}
-			case "1.19", "1.18" -> {
-				_log.info("[{}] {} may have issues while running !", logStep, version);
-				_log.info("[{}] If you got any, report them on Github", logStep);
-			}
-			default -> {
-				_log.error("[{}] * Version {} is not supported by {}, disabling plugin.", logStep, serverVersion, getName());
+		if(serverVersion.startsWith("1.21")) {
+			_log.info("[{}] Version check !", logStep);
+			_log.info("[{}] If you got issues, report them on Github", logStep);
+		}
+		else {
+			_log.error("[{}] * Version {} is not supported by {}, disabling plugin.", logStep, serverVersion, getName());
 
-				pluginManager.disablePlugin(this);
-				return false;
-			}
+			pluginManager.disablePlugin(this);
+			return false;
 		}
 
 		return true;
