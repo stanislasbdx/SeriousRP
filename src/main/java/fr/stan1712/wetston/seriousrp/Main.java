@@ -39,14 +39,14 @@ public final class Main extends JavaPlugin {
 
 		final Pattern versionPattern = Pattern.compile("\\d[.]\\d+", Pattern.MULTILINE);
 		final Matcher versionMatcher = versionPattern.matcher(serverVersion);
-		if(!versionMatcher.find() || (!serverType.contains("Spigot") && !serverType.contains("Paper"))) {
+		if(!versionMatcher.find() || (!serverType.contains("Spigot") && !serverType.contains("Paper") && !serverType.contains("Purpur"))) {
 			_log.error("[{}] * Server type {} unknown, disabling plugin.", logStep, serverVersion);
 
 			pluginManager.disablePlugin(this);
 			return false;
 		}
 
-		if(serverVersion.startsWith("1.21")) {
+		if(serverVersion.contains("1.21")) {
 			_log.info("[{}] Version check !", logStep);
 			_log.info("[{}] If you got issues, report them on Github", logStep);
 		}
