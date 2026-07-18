@@ -26,96 +26,91 @@ public class Cheques implements CommandExecutor {
 		this.pl = pl;
 	}
 
-	private static boolean isInt(String s) {
+	private static Double tryParsePositiveDouble(String s) {
 		try {
-			Integer.parseInt(s);
+			double value = Double.parseDouble(s);
+			if (value <= 0 || Double.isNaN(value) || Double.isInfinite(value)) {
+				return null;
+			}
+			return value;
 		}
-		catch (NumberFormatException nfe) {
-			return false;
+		catch (NumberFormatException e) {
+			return null;
 		}
-		return true;
-	}
-
-	private static boolean isFloat(String s) {
-		try {
-			Float.parseFloat(s);
-		}
-		catch (NumberFormatException nfe) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player player)) return true;
 
-		if(Boolean.TRUE.equals(getConfigBoolean("Core.Modules.Economy"))) {
-			if(player.hasPermission("seriousrp.economy.cheques")) {
-
-				if (args.length == 0) {
-					player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
-					return false;
-				}
-
-				final String strValue = args[0];
-
-				if(args.length == 1 && ((isInt(strValue) && Integer.parseInt(strValue) > 0) || (isFloat(strValue) && Float.parseFloat(strValue) > 0))) {
-					ItemStack chequeItem = new ItemStack(Material.PAPER);
-
-					ItemMeta chequeMeta = chequeItem.getItemMeta();
-					ArrayList<String> chequeLore = new ArrayList<>();
-					assert chequeMeta != null;
-					PersistentDataContainer chequeData = chequeMeta.getPersistentDataContainer();
-					NamespacedKey namespacedKey = new NamespacedKey(this.pl, "srp-cheque");
-
-					PCheque pCheque = new PCheque(player, Double.parseDouble(strValue));
-					chequeData.set(namespacedKey, PersistentDataType.STRING, new Gson().toJson(pCheque));
-
-					chequeMeta.setDisplayName(getConfigString("Economy.Cheque.Lores.Title").replace("%amount%", strValue));
-					chequeLore.add(getConfigString("Economy.Cheque.Lores.Value") + "§l" + strValue + getConfigString("Economy.Currency"));
-					chequeLore.add(getConfigString("Economy.Cheque.Lores.Author") + "§7§o" + player.getDisplayName());
-					chequeLore.add(getConfigString("Economy.Cheque.Lores.CreationDate") + "§7§o" + pCheque.getParsedCreationDate());
-					chequeLore.add("");
-					chequeLore.add(getConfigString("Economy.Cheque.Lores.Usage"));
-					chequeMeta.setLore(chequeLore);
-
-					chequeItem.setItemMeta(chequeMeta);
-
-					if (player.getInventory().contains(chequeItem)) {
-						player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Already").replace("%amount%", strValue));
-					}
-					else {
-						if(player.getInventory().firstEmpty() >= 0){
-							double value = Double.parseDouble(strValue);
-
-							if (Main.economy.getBalance(player) < value) {
-								player.sendMessage(getShortPrefixString() + getConfigString("Economy.NotEnough").replace("%amount%", strValue));
-							}
-							else {
-								player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Created").replace("%amount%", strValue));
-
-								player.getInventory().addItem(chequeItem);
-							}
-						}
-						else {
-							player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.InventoryFull"));
-						}
-					}
-				}
-				else {
-					player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
-				}
-
-			}
-			else {
-				player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
-			}
-		}
-		else {
+		// Checks if the economy module is loaded
+		if(!Boolean.TRUE.equals(getConfigBoolean("Core.Modules.Economy"))) {
 			if(Boolean.TRUE.equals(getConfigBoolean("Core.Modules.InactiveDebug"))) {
 				player.sendMessage(getShortPrefixString() + getConfigString("Core.Modules.InactiveMessage").replace("%module%", "Economy"));
 			}
+			return true;
+		}
+
+		// Checks if player can make checks
+		if(!player.hasPermission("seriousrp.economy.cheques")) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
+			return true;
+		}
+
+		// Checks if the player has given an amount
+		if (args.length == 0) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
+			return false;
+		}
+
+		// Gets the checks amount and verifies it is a number
+		String strValue = args[0]
+		Double chequeAmount = tryParsePositiveDouble(args[0])
+		if (chequeAmount == null){
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
+			return true;
+		}
+
+		ItemStack chequeItem = new ItemStack(Material.PAPER);
+
+		ItemMeta chequeMeta = chequeItem.getItemMeta();
+		ArrayList<String> chequeLore = new ArrayList<>();
+		assert chequeMeta != null;
+		PersistentDataContainer chequeData = chequeMeta.getPersistentDataContainer();
+		NamespacedKey namespacedKey = new NamespacedKey(this.pl, "srp-cheque");
+
+		PCheque pCheque = new PCheque(player, chequeAmount);
+		chequeData.set(namespacedKey, PersistentDataType.STRING, new Gson().toJson(pCheque));
+
+		chequeMeta.setDisplayName(getConfigString("Economy.Cheque.Lores.Title").replace("%amount%", strValue));
+		chequeLore.add(getConfigString("Economy.Cheque.Lores.Value") + "§l" + strValue + getConfigString("Economy.Currency"));
+		chequeLore.add(getConfigString("Economy.Cheque.Lores.Author") + "§7§o" + player.getDisplayName());
+		chequeLore.add(getConfigString("Economy.Cheque.Lores.CreationDate") + "§7§o" + pCheque.getParsedCreationDate());
+		chequeLore.add("");
+		chequeLore.add(getConfigString("Economy.Cheque.Lores.Usage"));
+		chequeMeta.setLore(chequeLore);
+
+		chequeItem.setItemMeta(chequeMeta);
+
+		if (player.getInventory().contains(chequeItem)) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Already").replace("%amount%", strValue));
+			return true;
+		}
+
+		if(player.getInventory().firstEmpty() < 0){
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.InventoryFull"));
+			return true;
+		}
+
+		double value = Double.parseDouble(strValue);
+
+		if (Main.economy.getBalance(player) < value) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.NotEnough").replace("%amount%", strValue));
+		}
+		else {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Created").replace("%amount%", strValue));
+
+			player.getInventory().addItem(chequeItem);
 		}
 
 		return true;

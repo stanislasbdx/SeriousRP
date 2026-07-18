@@ -25,39 +25,42 @@ public class Revive implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player player)) return true;
 
-		if(player.hasPermission("seriousrp.medics.revive")) {
-			if(args.length == 1){
-				Player target = Bukkit.getPlayer(args[0]);
-
-				if(target != null) {
-					if(target.getHealth() < 4.0D) {
-						target.setHealth(8.0D);
-						player.sendMessage(getConfigString("Medics.MedRevive.MedicRevive").replace("%target%", target.getDisplayName()));
-						target.sendMessage(getConfigString("Medics.MedRevive.TargetRevived").replace("%medic%", player.getDisplayName()));
-
-						target.removePotionEffect(PotionEffectType.RESISTANCE);
-						target.removePotionEffect(PotionEffectType.SLOWNESS);
-						target.removePotionEffect(PotionEffectType.BLINDNESS);
-						target.removePotionEffect(PotionEffectType.HUNGER);
-
-						target.setFoodLevel(20);
-					}
-					else {
-						player.sendMessage(getConfigString("Medics.MedRevive.NoNeed"));
-					}
-				}
-				else {
-					assert target != null;
-					player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.mistaken").replace("%target%", target.getDisplayName()));
-				}
-			}
-			else {
-				player.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/revive <player>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DRevive"));
-			}
-		}
-		else {
+		// Checks if the player has the right to do the command
+		if(!player.hasPermission("seriousrp.medics.revive")) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
+			return true;
 		}
+
+		// Checks if the correct number of argument was given
+		if(args.length != 1){
+			player.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/revive <player>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DRevive"));
+			return true;
+		}
+
+		// Gets and checks if a target was given
+		Player target = Bukkit.getPlayer(args[0]);
+		if(target == null) {
+			assert target != null;
+			player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.mistaken").replace("%target%", target.getDisplayName()));
+			return true;
+		}
+
+		// Checks if there is a need
+		if(target.getHealth() >= 4.0D) {
+			player.sendMessage(getConfigString("Medics.MedRevive.NoNeed"));
+			return true;
+		}
+
+		target.setHealth(8.0D);
+		player.sendMessage(getConfigString("Medics.MedRevive.MedicRevive").replace("%target%", target.getDisplayName()));
+		target.sendMessage(getConfigString("Medics.MedRevive.TargetRevived").replace("%medic%", player.getDisplayName()));
+
+		target.removePotionEffect(PotionEffectType.RESISTANCE);
+		target.removePotionEffect(PotionEffectType.SLOWNESS);
+		target.removePotionEffect(PotionEffectType.BLINDNESS);
+		target.removePotionEffect(PotionEffectType.HUNGER);
+
+		target.setFoodLevel(20);
 
 		return true;
 	}

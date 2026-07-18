@@ -30,57 +30,67 @@ public class Seriousrp implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender.hasPermission("seriousrp.info")) {
-			if (args.length >= 1) {
-				if (args[0].equalsIgnoreCase("version")) {
-					sender.sendMessage(getPrefixString());
-					sender.sendMessage(ChatColor.GRAY + "» Version " + ChatColor.AQUA + getConfigString("Version"));
-				}
-				else if (args[0].equalsIgnoreCase("help")) {
-					sender.sendMessage(getPrefixString());
-					sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/srtp" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.Dsrtp"));
-					sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/lift" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DLift"));
-					if (this.pl.getConfig().getBoolean("Core.Modules.Medics")) {
-						sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/medinfo <player>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DMedinfo"));
-						sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/revive <player>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DRevive"));
-						sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/hrprevive = " + getConfigString("Core.HelpMsg.DHRPRevive"));
-					}
-					if (this.pl.getConfig().getBoolean("Core.Modules.Economy")) {
-						sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/cheque <amount>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DCheque"));
-					}
-					sender.sendMessage("");
-					sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/seriousrp help" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DVersion"));
-					sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/seriousrp version" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DHelp"));
-					sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/seriousrp modules" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DStatus"));
-					sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/seriousrp reload" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DReload"));
-				}
-				else if (args[0].equalsIgnoreCase("status") || args[0].equalsIgnoreCase("modules")) {
-					sender.sendMessage(getPrefixString());
-					sendMessageStatusModule("CustomRecipes", sender);
-					sendMessageStatusModule("RPDeath", sender);
-					sendMessageStatusModule("Medics", sender);
-					sendMessageStatusModule("Chairs", sender);
-					sendMessageStatusModule("Economy", sender);
-				} else if (args[0].equalsIgnoreCase("reload")) {
-					if (sender.hasPermission("seriousrp.admin.reload")) {
-						new Config();
-						this.pl.saveConfig();
-
-						sender.sendMessage(getShortPrefixString() + getConfigString("Core.Reload"));
-					} else {
-						sender.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
-					}
-				}
-			} else {
-				sender.sendMessage(getPrefixString());
-				sender.sendMessage(ChatColor.GRAY + "» " + getConfigString("Core.HelpMsg.Help"));
-				sender.sendMessage(ChatColor.GRAY + "» " + getConfigString("Core.HelpMsg.VersionHelp"));
-				sender.sendMessage(ChatColor.GRAY + "» " + getConfigString("Core.HelpMsg.StatusHelp"));
-				sender.sendMessage(ChatColor.GRAY + "» " + getConfigString("Core.HelpMsg.ReloadHelp"));
-			}
-		} else {
 			sender.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
+			return true;
 		}
 
-		return true;
+		if (args.length < 1) {
+			sender.sendMessage(getPrefixString());
+			sender.sendMessage(ChatColor.GRAY + "» " + getConfigString("Core.HelpMsg.Help"));
+			sender.sendMessage(ChatColor.GRAY + "» " + getConfigString("Core.HelpMsg.VersionHelp"));
+			sender.sendMessage(ChatColor.GRAY + "» " + getConfigString("Core.HelpMsg.StatusHelp"));
+			sender.sendMessage(ChatColor.GRAY + "» " + getConfigString("Core.HelpMsg.ReloadHelp"));
+		}
+
+		switch (args[0].toLowerCase()){
+			case "version":
+				sender.sendMessage(getPrefixString());
+				sender.sendMessage(ChatColor.GRAY + "» Version " + ChatColor.AQUA + getConfigString("Version"));
+				return true;
+
+			case "help":
+				sender.sendMessage(getPrefixString());
+				sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/srtp" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.Dsrtp"));
+				sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/lift" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DLift"));
+				if (this.pl.getConfig().getBoolean("Core.Modules.Medics")) {
+					sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/medinfo <player>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DMedinfo"));
+					sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/revive <player>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DRevive"));
+					sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/hrprevive = " + getConfigString("Core.HelpMsg.DHRPRevive"));
+				}
+				if (this.pl.getConfig().getBoolean("Core.Modules.Economy")) {
+					sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/cheque <amount>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DCheque"));
+				}
+				sender.sendMessage("");
+				sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/seriousrp help" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DVersion"));
+				sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/seriousrp version" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DHelp"));
+				sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/seriousrp modules" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DStatus"));
+				sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/seriousrp reload" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DReload"));
+				return true;
+
+			case "status":
+			case "modules":
+				sender.sendMessage(getPrefixString());
+				sendMessageStatusModule("CustomRecipes", sender);
+				sendMessageStatusModule("RPDeath", sender);
+				sendMessageStatusModule("Medics", sender);
+				sendMessageStatusModule("Chairs", sender);
+				sendMessageStatusModule("Economy", sender);
+				return true;
+
+			case "reload":
+				if (!sender.hasPermission("seriousrp.admin.reload")) {
+					sender.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
+					return true;
+				}
+	
+				new Config();
+				this.pl.saveConfig();
+
+				sender.sendMessage(getShortPrefixString() + getConfigString("Core.Reload"));
+				return true;
+
+			default:
+				return true;
+		}
 	}
 }

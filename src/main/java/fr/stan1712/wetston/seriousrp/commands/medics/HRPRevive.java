@@ -23,26 +23,27 @@ public class HRPRevive implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player player)) return true;
 
-		if(player.hasPermission("seriousrp.medics.hrprevive")) {
-			if(player.getHealth() < 4.0D) {
-				player.setHealth(8.0D);
-				player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.SelfRevive"));
-
-				player.removePotionEffect(PotionEffectType.RESISTANCE);
-				player.removePotionEffect(PotionEffectType.SLOWNESS);
-				player.removePotionEffect(PotionEffectType.BLINDNESS);
-				player.removePotionEffect(PotionEffectType.HUNGER);
-
-				player.setFoodLevel(20);
-			}
-			else {
-				player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.NoNeed"));
-			}
-		}
-		else {
+		// Checks if player is a medic
+		if(!player.hasPermission("seriousrp.medics.hrprevive")) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
+			return true;
 		}
 
+		// Check if a medic is needed
+		if(player.getHealth() >= 4.0D) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.NoNeed"));
+			return true;
+		}
+
+		player.setHealth(8.0D);
+		player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.SelfRevive"));
+
+		player.removePotionEffect(PotionEffectType.RESISTANCE);
+		player.removePotionEffect(PotionEffectType.SLOWNESS);
+		player.removePotionEffect(PotionEffectType.BLINDNESS);
+		player.removePotionEffect(PotionEffectType.HUNGER);
+
+		player.setFoodLevel(20);
 		return true;
 	}
 }
