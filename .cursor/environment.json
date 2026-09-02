@@ -1,0 +1,10 @@
+{
+  "name": "SeriousRP",
+  "install": "./gradlew build --no-daemon && .cursor/setup-testserver.sh",
+  "terminals": [
+    {
+      "name": "minecraft-test-server",
+      "command": ".cursor/run-testserver.sh"
+    }
+  ]
+}
