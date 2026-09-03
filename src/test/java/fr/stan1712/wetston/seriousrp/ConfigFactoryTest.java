@@ -1,7 +1,9 @@
 package fr.stan1712.wetston.seriousrp;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -9,6 +11,9 @@ import java.lang.reflect.InvocationTargetException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 class ConfigFactoryTest extends ConfigBackedTest {
 
@@ -38,12 +43,11 @@ class ConfigFactoryTest extends ConfigBackedTest {
 		Utils.ConfigFactory.resetConfig();
 		YamlConfiguration live = new YamlConfiguration();
 		live.set("Prefix", "&bLIVE");
-		Main main = org.mockito.Mockito.mock(Main.class);
-		org.mockito.Mockito.when(main.getConfig()).thenReturn(live);
+		Main main = mock(Main.class);
+		when(main.getConfig()).thenReturn(live);
 
-		try (org.mockito.MockedStatic<org.bukkit.plugin.java.JavaPlugin> javaPlugin =
-			     org.mockito.Mockito.mockStatic(org.bukkit.plugin.java.JavaPlugin.class)) {
-			javaPlugin.when(() -> org.bukkit.plugin.java.JavaPlugin.getPlugin(Main.class)).thenReturn(main);
+		try (MockedStatic<JavaPlugin> javaPlugin = mockStatic(JavaPlugin.class)) {
+			javaPlugin.when(() -> JavaPlugin.getPlugin(Main.class)).thenReturn(main);
 			assertEquals("§bLIVE", Utils.ConfigFactory.getPrefixString());
 		}
 	}
