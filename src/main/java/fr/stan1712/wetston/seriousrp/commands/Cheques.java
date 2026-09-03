@@ -86,7 +86,7 @@ public class Cheques implements CommandExecutor {
 		return chequeItem;
 	}
 
-	private void giveChequeIfPossible(Player player, String strValue, ItemStack chequeItem) {
+	void giveChequeIfPossible(Player player, String strValue, ItemStack chequeItem) {
 		if (player.getInventory().contains(chequeItem)) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Already").replace(AMOUNT_PLACEHOLDER, strValue));
 			return;
