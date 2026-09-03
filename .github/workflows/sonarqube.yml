@@ -23,4 +23,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: gradle sonar --stacktrace
+        run: ./gradlew jacocoTestReport sonar --stacktrace

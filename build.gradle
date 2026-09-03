@@ -34,7 +34,7 @@ sonar {
     }
 }
 
-project.tasks["sonar"].dependsOn("build")
+project.tasks["sonar"].dependsOn("jacocoTestReport")
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:26.2-R0.1-SNAPSHOT"
