@@ -2,8 +2,11 @@ package fr.stan1712.wetston.seriousrp.events;
 
 import fr.stan1712.wetston.seriousrp.ConfigBackedTest;
 import fr.stan1712.wetston.seriousrp.Main;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -21,10 +24,15 @@ import org.bukkit.persistence.PersistentDataType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -99,6 +107,53 @@ class EventEarlyExitTest extends ConfigBackedTest {
 		when(plugin.getName()).thenReturn("SeriousRP");
 		when(pdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(null);
 		cheque.onPlayerUse(interactEvent);
+		verify(interactEvent, never()).setCancelled(true);
+	}
+
+	@Test
+	void chequeCancelsWhenIssuerCannotCoverTheValue() {
+		when(plugin.getName()).thenReturn("SeriousRP");
+		when(interactEvent.getPlayer()).thenReturn(player);
+		when(interactEvent.getAction()).thenReturn(Action.RIGHT_CLICK_BLOCK);
+		when(player.getInventory()).thenReturn(inventory);
+		when(inventory.getItemInMainHand()).thenReturn(item);
+		when(item.getType()).thenReturn(Material.PAPER);
+		when(item.getItemMeta()).thenReturn(meta);
+		when(item.getAmount()).thenReturn(2);
+		when(meta.getPersistentDataContainer()).thenReturn(pdc);
+
+		UUID issuerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+		String payload = "{\"author\":\"bank\",\"authorUUID\":\"" + issuerId
+			+ "\",\"authorDisplayName\":\"Bank\",\"value\":40.0,\"creationDate\":1700000000000}";
+		when(pdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(payload);
+
+		Economy economy = mock(Economy.class);
+		Main.economy = economy;
+		when(economy.getBalance(org.mockito.ArgumentMatchers.nullable(OfflinePlayer.class))).thenReturn(10.0);
+
+		try (MockedStatic<Bukkit> ignored = mockStatic(Bukkit.class, invocation -> null)) {
+			new Cheque(plugin).onPlayerUse(interactEvent);
+		}
+
+		verify(interactEvent).setCancelled(true);
+		verify(player).sendMessage(org.mockito.ArgumentMatchers.contains("issuer"));
+		Main.economy = null;
+	}
+
+	@Test
+	void chequeSwallowsInvalidJsonPayload() {
+		when(plugin.getName()).thenReturn("SeriousRP");
+		when(interactEvent.getPlayer()).thenReturn(player);
+		when(interactEvent.getAction()).thenReturn(Action.RIGHT_CLICK_AIR);
+		when(player.getInventory()).thenReturn(inventory);
+		when(inventory.getItemInMainHand()).thenReturn(item);
+		when(item.getType()).thenReturn(Material.PAPER);
+		when(item.getItemMeta()).thenReturn(meta);
+		when(meta.getPersistentDataContainer()).thenReturn(pdc);
+		when(pdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn("{not-json");
+
+		new Cheque(plugin).onPlayerUse(interactEvent);
+
 		verify(interactEvent, never()).setCancelled(true);
 	}
 }

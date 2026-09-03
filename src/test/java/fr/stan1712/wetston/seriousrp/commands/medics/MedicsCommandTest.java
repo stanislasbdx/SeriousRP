@@ -3,6 +3,8 @@ package fr.stan1712.wetston.seriousrp.commands.medics;
 import fr.stan1712.wetston.seriousrp.ConfigBackedTest;
 import fr.stan1712.wetston.seriousrp.Main;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -12,9 +14,12 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,6 +65,53 @@ class MedicsCommandTest extends ConfigBackedTest {
 			assertTrue(new Medinfo(plugin).onCommand(player, command, "vitals", new String[] {"ghost"}));
 		}
 		verify(player).sendMessage(contains("ghost"));
+	}
+
+	@Test
+	void medinfoPrintsVitalsEffectsAndSameWorldLocation() {
+		when(player.hasPermission("seriousrp.medics.info")).thenReturn(true);
+		when(target.getDisplayName()).thenReturn("Stan");
+		when(target.getHealth()).thenReturn(8.0);
+		when(target.getFoodLevel()).thenReturn(20);
+		World world = mock(World.class);
+		when(world.getName()).thenReturn("world");
+		when(target.getWorld()).thenReturn(world);
+		when(player.getWorld()).thenReturn(world);
+		Location targetLoc = mock(Location.class);
+		Location playerLoc = mock(Location.class);
+		when(target.getLocation()).thenReturn(targetLoc);
+		when(player.getLocation()).thenReturn(playerLoc);
+		when(targetLoc.getBlockX()).thenReturn(10);
+		when(targetLoc.getBlockY()).thenReturn(64);
+		when(targetLoc.getBlockZ()).thenReturn(-4);
+		when(playerLoc.distance(targetLoc)).thenReturn(12.4);
+		when(target.getActivePotionEffects()).thenReturn(List.of());
+
+		try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
+			bukkit.when(() -> Bukkit.getPlayer("stan")).thenReturn(target);
+			assertTrue(new Medinfo(plugin).onCommand(player, command, "vitals", new String[] {"stan"}));
+		}
+
+		verify(player).sendMessage(contains("hearts"));
+		verify(player).sendMessage(contains("is at"));
+	}
+
+	@Test
+	void medinfoSkipsLocationWhenWorldsDiffer() {
+		when(player.hasPermission("seriousrp.medics.info")).thenReturn(true);
+		when(target.getDisplayName()).thenReturn("Stan");
+		when(target.getHealth()).thenReturn(20.0);
+		when(target.getFoodLevel()).thenReturn(4);
+		when(target.getActivePotionEffects()).thenReturn(List.of());
+		when(target.getWorld()).thenReturn(mock(World.class));
+		when(player.getWorld()).thenReturn(mock(World.class));
+
+		try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
+			bukkit.when(() -> Bukkit.getPlayer("stan")).thenReturn(target);
+			assertTrue(new Medinfo(plugin).onCommand(player, command, "vitals", new String[] {"stan"}));
+		}
+
+		verify(player).sendMessage(contains("Food"));
 	}
 
 	@Test
