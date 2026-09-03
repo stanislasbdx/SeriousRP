@@ -71,21 +71,8 @@ public class Medinfo implements CommandExecutor {
 		player.sendMessage(ChatColor.GRAY + "» " + ChatColor.WHITE + getConfigString("Medics.MedInfo.Effects"));
 		effects.forEach(effect -> {
 			String effectCategoryLitteral = Objects.equals(effect.getType().getCategory(), PotionEffectTypeCategory.HARMFUL) ? "§4- §c" : "§2+ §a";
-			player.sendMessage(ChatColor.GRAY + "» " + effectCategoryLitteral + formatEffectName(effect));
+			player.sendMessage(ChatColor.GRAY + "» " + effectCategoryLitteral + EffectNameFormatter.formatNamespacedKey(String.valueOf(effect.getType().getKeyOrThrow())));
 		});
-	}
-
-	private String formatEffectName(PotionEffect effect) {
-		String effectKey = String.valueOf(effect.getType().getKeyOrThrow());
-		String[] parts = effectKey.split(":")[1].split("_");
-		StringBuilder result = new StringBuilder();
-		for (String part : parts) {
-			result
-				.append(Character.toUpperCase(part.charAt(0)))
-				.append(part.substring(1))
-				.append(" ");
-		}
-		return result.toString().trim();
 	}
 
 	private void sendLocation(Player player, Player target) {
