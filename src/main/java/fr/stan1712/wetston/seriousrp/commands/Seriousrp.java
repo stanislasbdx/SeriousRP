@@ -11,17 +11,17 @@ import org.bukkit.plugin.Plugin;
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.*;
 
 public class Seriousrp implements CommandExecutor {
+	private static final String STATUS_ON = ChatColor.GREEN + "ON";
+	private static final String STATUS_OFF = ChatColor.RED + "OFF";
+
 	private final Plugin pl;
 
 	public Seriousrp(Main pl) {
 		this.pl = pl;
 	}
-
-	private final String statusOnStr = ChatColor.GREEN + "ON";
-	private final String statusOffStr = ChatColor.RED + "OFF";
-
 	public void sendMessageStatusModule(String moduleName, CommandSender sender) {
-		String status = getConfigBoolean("Core.Modules." + moduleName) ? statusOnStr : statusOffStr;
+		boolean moduleEnabled = this.pl.getConfig().getBoolean("Core.Modules." + moduleName);
+		String status = moduleEnabled ? STATUS_ON : STATUS_OFF;
 		sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + moduleName + ChatColor.GRAY + " > " + status);
 	}
 
@@ -34,21 +34,28 @@ public class Seriousrp implements CommandExecutor {
 
 		if (args.length == 0) {
 			handleUsage(sender);
-			return true;
+			return false;
 		}
 
 		String subCommand = args[0];
 		if (subCommand.equalsIgnoreCase("version")) {
 			handleVersion(sender);
-		} else if (subCommand.equalsIgnoreCase("help")) {
+			return true;
+		}
+		if (subCommand.equalsIgnoreCase("help")) {
 			handleHelp(sender);
-		} else if (subCommand.equalsIgnoreCase("status") || subCommand.equalsIgnoreCase("modules")) {
+			return true;
+		}
+		if (subCommand.equalsIgnoreCase("status") || subCommand.equalsIgnoreCase("modules")) {
 			handleModules(sender);
-		} else if (subCommand.equalsIgnoreCase("reload")) {
+			return true;
+		}
+		if (subCommand.equalsIgnoreCase("reload")) {
 			handleReload(sender);
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	private void handleVersion(CommandSender sender) {
