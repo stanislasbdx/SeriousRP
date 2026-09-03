@@ -32,35 +32,36 @@ public class RandomTeleportation implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player player)) return false;
 
-		if(player.hasPermission("serious.randomtp")) {
-			if (player.getWorld().getEnvironment() == World.Environment.NORMAL) {
-				player.sendMessage(getConfigString("ShortPrefix") + getConfigString("MicroModules.RandomTeleport"));
-
-				player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 50, 100));
-				player.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 50, 100));
-				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
-
-
-				Location rtpLocation = player.getLocation();
-
-				double distanceBetweenRandLocAndLoc = 0;
-				while (distanceBetweenRandLocAndLoc < (double) maxBlockRange / 3) {
-					RandomLocation randomLoc = getRandomLocation(player);
-
-					rtpLocation = new Location(player.getWorld(), randomLoc.randLocX(), randomLoc.randLocY(), randomLoc.randLocZ());
-
-					distanceBetweenRandLocAndLoc = rtpLocation.distance(player.getLocation());
-				}
-
-				player.teleport(rtpLocation);
-			}
-			else {
-				player.sendMessage(getShortPrefixString() + getConfigString("MicroModules.RTPDisabledWorld"));
-			}
-		}
-		else {
+		// Checks if the player has the right
+		if(!player.hasPermission("serious.randomtp")) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
+			return true;
 		}
+
+		// Checks it is in a world where random tp is allowed
+		if (player.getWorld().getEnvironment() != World.Environment.NORMAL) {
+			player.sendMessage(getShortPrefixString() + getConfigString("MicroModules.RTPDisabledWorld"));
+			return true;
+		}
+
+		player.sendMessage(getConfigString("ShortPrefix") + getConfigString("MicroModules.RandomTeleport"));
+
+		player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 50, 100));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 50, 100));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
+
+		Location rtpLocation = player.getLocation();
+
+		double distanceBetweenRandLocAndLoc = 0;
+		while (distanceBetweenRandLocAndLoc < (double) maxBlockRange / 3) {
+			RandomLocation randomLoc = getRandomLocation(player);
+
+			rtpLocation = new Location(player.getWorld(), randomLoc.randLocX(), randomLoc.randLocY(), randomLoc.randLocZ());
+
+			distanceBetweenRandLocAndLoc = rtpLocation.distance(player.getLocation());
+		}
+
+		player.teleport(rtpLocation);
 
 		return true;
 	}
