@@ -12,7 +12,7 @@ public final class RtpLocationSampler {
 
 	public record HorizontalLocation(int x, int z) {
 		public double horizontalDistanceTo(int originX, int originZ) {
-			return Math.hypot(x - originX, z - originZ);
+			return hypotDelta(x, originX, z, originZ);
 		}
 	}
 
@@ -23,7 +23,7 @@ public final class RtpLocationSampler {
 
 		double minRange = maxBlockRange / 3.0;
 		double maxRange = maxBlockRange;
-		HorizontalLocation last = null;
+		HorizontalLocation last = new HorizontalLocation(originX, originZ);
 
 		for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
 			double radius = minRange + random.nextDouble() * (maxRange - minRange);
@@ -41,30 +41,31 @@ public final class RtpLocationSampler {
 	}
 
 	static HorizontalLocation clampToRange(int originX, int originZ, HorizontalLocation location, double minRange, double maxRange) {
-		double dx = location.x() - originX;
-		double dz = location.z() - originZ;
+		double dx = (double) location.x() - originX;
+		double dz = (double) location.z() - originZ;
 		double dist = Math.hypot(dx, dz);
 
 		if (dist == 0.0) {
-			int fallback = Math.max(1, (int) Math.round(minRange));
-			if (fallback > maxRange) {
-				fallback = (int) maxRange;
-			}
-			return new HorizontalLocation(originX + fallback, originZ);
+			return fallbackAlongX(originX, originZ, minRange, maxRange);
 		}
 
-		double target = dist > maxRange ? maxRange : (dist < minRange ? minRange : dist);
+		double target = Math.clamp(dist, minRange, maxRange);
 		int x = originX + (int) Math.round(dx * (target / dist));
 		int z = originZ + (int) Math.round(dz * (target / dist));
-		double newDist = Math.hypot(x - originX, z - originZ);
+		double newDist = hypotDelta(x, originX, z, originZ);
 		if (newDist >= minRange && newDist <= maxRange) {
 			return new HorizontalLocation(x, z);
 		}
 
-		int fallback = Math.max(1, (int) Math.round(minRange));
-		if (fallback > maxRange) {
-			fallback = (int) maxRange;
-		}
+		return fallbackAlongX(originX, originZ, minRange, maxRange);
+	}
+
+	private static HorizontalLocation fallbackAlongX(int originX, int originZ, double minRange, double maxRange) {
+		int fallback = (int) Math.clamp(Math.round(minRange), 1L, (long) maxRange);
 		return new HorizontalLocation(originX + fallback, originZ);
+	}
+
+	private static double hypotDelta(int x, int originX, int z, int originZ) {
+		return Math.hypot((double) x - originX, (double) z - originZ);
 	}
 }
