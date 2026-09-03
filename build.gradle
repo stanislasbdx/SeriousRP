@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id "org.sonarqube" version "6.3.1.5724"
 }
 
@@ -28,6 +29,8 @@ sonar {
         property "sonar.projectName", "SeriousRP"
         property "sonar.scanner.socketTimeout", "120"
         property "sonar.exclusions", "**/Metrics.java"
+        property "sonar.coverage.exclusions", "**/Metrics.java"
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
     }
 }
 
@@ -44,11 +47,50 @@ dependencies {
     implementation "com.google.code.gson:gson:2.11.0"
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.11.4"
+    testImplementation "org.mockito:mockito-junit-jupiter:5.14.2"
+    testImplementation "org.spigotmc:spigot-api:26.2-R0.1-SNAPSHOT"
+    testImplementation "com.github.MilkBowl:VaultAPI:1.7.1"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
+def bstatsExcludes = ['**/Metrics.class', '**/Metrics$*.class']
+
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: bstatsExcludes)
+        }))
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.60
+            }
+        }
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: bstatsExcludes)
+        }))
+    }
 }
 
 def targetJavaVersion = 21
