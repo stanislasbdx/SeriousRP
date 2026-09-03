@@ -17,11 +17,11 @@ public class Utils {
 			throw new IllegalStateException("Utility class");
 		}
 
-		static void overrideConfig(FileConfiguration config) {
+		public static void overrideConfig(FileConfiguration config) {
 			plConfig = config;
 		}
 
-		static void resetConfig() {
+		public static void resetConfig() {
 			plConfig = null;
 		}
 
