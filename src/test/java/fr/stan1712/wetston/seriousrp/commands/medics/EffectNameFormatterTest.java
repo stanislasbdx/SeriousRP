@@ -21,6 +21,7 @@ class EffectNameFormatterTest {
 		assertEquals("", EffectNameFormatter.formatNamespacedKey(null));
 		assertEquals("", EffectNameFormatter.formatNamespacedKey("speed"));
 		assertEquals("", EffectNameFormatter.formatNamespacedKey("minecraft:"));
+		assertEquals("", EffectNameFormatter.formatNamespacedKey("minecraft::x"));
 		assertEquals("Slow", EffectNameFormatter.formatNamespacedKey("minecraft:_slow_"));
 	}
 

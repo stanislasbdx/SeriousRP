@@ -92,6 +92,26 @@ class RtpLocationSamplerTest {
 	}
 
 	@Test
+	void sampleRejectsCandidatesThatRoundPastMaxRange() {
+		Random alwaysCorner = new Random() {
+			private int calls;
+
+			@Override
+			public double nextDouble() {
+				calls++;
+				return calls % 2 == 1 ? 1.0 : 0.125;
+			}
+		};
+
+		Optional<RtpLocationSampler.HorizontalLocation> sample =
+			RtpLocationSampler.sample(0, 0, 1, alwaysCorner);
+
+		assertTrue(sample.isPresent());
+		assertEquals(1, sample.get().x());
+		assertEquals(0, sample.get().z());
+	}
+
+	@Test
 	void sampleFallsBackToClampWhenEveryAttemptRoundsOutsideRange() {
 		Random alwaysZero = new Random() {
 			@Override
@@ -106,6 +126,20 @@ class RtpLocationSamplerTest {
 		assertTrue(sample.isPresent());
 		assertEquals(1, sample.get().x());
 		assertEquals(0, sample.get().z());
+	}
+
+	@Test
+	void clampFallsBackWhenRoundingUndershootsMinRange() {
+		RtpLocationSampler.HorizontalLocation clamped = RtpLocationSampler.clampToRange(
+			0,
+			0,
+			new RtpLocationSampler.HorizontalLocation(1, 0),
+			2.4,
+			2.4
+		);
+
+		assertEquals(2, clamped.x());
+		assertEquals(0, clamped.z());
 	}
 
 	@Test

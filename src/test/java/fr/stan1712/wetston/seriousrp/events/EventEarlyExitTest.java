@@ -107,6 +107,35 @@ class EventEarlyExitTest extends ConfigBackedTest {
 	}
 
 	@Test
+	void bleedingPlaysEffectForNonMiscSpawnCategories() {
+		org.bukkit.World world = mock(org.bukkit.World.class);
+		org.bukkit.Location location = mock(org.bukkit.Location.class);
+		when(damageByEntityEvent.getEntity()).thenReturn(cow);
+		when(cow.getLocation()).thenReturn(location);
+		when(cow.getSpawnCategory()).thenReturn(SpawnCategory.MONSTER);
+		when(cow.getWorld()).thenReturn(world);
+
+		new Bleeding(plugin).onBleeding(damageByEntityEvent);
+
+		verify(world).playEffect(location, org.bukkit.Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+	}
+
+	@Test
+	void bleedingPlaysEffectForMiscVillagers() {
+		org.bukkit.World world = mock(org.bukkit.World.class);
+		org.bukkit.Location location = mock(org.bukkit.Location.class);
+		when(damageByEntityEvent.getEntity()).thenReturn(cow);
+		when(cow.getLocation()).thenReturn(location);
+		when(cow.getSpawnCategory()).thenReturn(SpawnCategory.MISC);
+		when(cow.getType()).thenReturn(EntityType.VILLAGER);
+		when(cow.getWorld()).thenReturn(world);
+
+		new Bleeding(plugin).onBleeding(damageByEntityEvent);
+
+		verify(world).playEffect(location, org.bukkit.Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+	}
+
+	@Test
 	void bleedingSkipsMiscNonPlayerEntities() {
 		when(damageByEntityEvent.getEntity()).thenReturn(cow);
 		when(cow.getLocation()).thenReturn(null);
@@ -133,6 +162,13 @@ class EventEarlyExitTest extends ConfigBackedTest {
 		when(item.getType()).thenReturn(Material.STONE);
 		cheque.onPlayerUse(interactEvent);
 		verify(item, never()).getItemMeta();
+
+		when(item.getType()).thenReturn(Material.PAPER);
+		when(item.getItemMeta()).thenReturn(null);
+		org.junit.jupiter.api.Assertions.assertThrows(
+			AssertionError.class,
+			() -> cheque.onPlayerUse(interactEvent)
+		);
 
 		when(item.getType()).thenReturn(Material.PAPER);
 		when(item.getItemMeta()).thenReturn(meta);

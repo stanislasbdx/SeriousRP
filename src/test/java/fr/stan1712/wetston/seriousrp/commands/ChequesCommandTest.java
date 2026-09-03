@@ -143,6 +143,17 @@ class ChequesCommandTest extends ConfigBackedTest {
 	}
 
 	@Test
+	void createChequeItemRejectsNullItemMeta() {
+		try (org.mockito.MockedConstruction<ItemStack> ignored = org.mockito.Mockito.mockConstruction(ItemStack.class,
+			(mock, context) -> when(mock.getItemMeta()).thenReturn(null))) {
+			org.junit.jupiter.api.Assertions.assertThrows(
+				AssertionError.class,
+				() -> new Cheques(plugin).createChequeItem(player, "25")
+			);
+		}
+	}
+
+	@Test
 	void createChequeItemWritesPersistentDataAndLore() {
 		when(plugin.getName()).thenReturn("SeriousRP");
 		when(player.getName()).thenReturn("stan");
