@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.*;
 
 public class Cheques implements CommandExecutor {
+	private static final String AMOUNT_PLACEHOLDER = "%amount%";
+
 	private final Plugin pl;
 
 	public Cheques(Main pl) {
@@ -46,78 +48,87 @@ public class Cheques implements CommandExecutor {
 		return true;
 	}
 
+	private static boolean isPositiveAmount(String strValue) {
+		return (isInt(strValue) && Integer.parseInt(strValue) > 0)
+			|| (isFloat(strValue) && Float.parseFloat(strValue) > 0);
+	}
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player player)) return true;
 
-		if(Boolean.TRUE.equals(getConfigBoolean("Core.Modules.Economy"))) {
-			if(player.hasPermission("seriousrp.economy.cheques")) {
-
-				if (args.length == 0) {
-					player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
-					return false;
-				}
-
-				final String strValue = args[0];
-
-				if(args.length == 1 && ((isInt(strValue) && Integer.parseInt(strValue) > 0) || (isFloat(strValue) && Float.parseFloat(strValue) > 0))) {
-					ItemStack chequeItem = new ItemStack(Material.PAPER);
-
-					ItemMeta chequeMeta = chequeItem.getItemMeta();
-					ArrayList<String> chequeLore = new ArrayList<>();
-					assert chequeMeta != null;
-					PersistentDataContainer chequeData = chequeMeta.getPersistentDataContainer();
-					NamespacedKey namespacedKey = new NamespacedKey(this.pl, "srp-cheque");
-
-					PCheque pCheque = new PCheque(player, Double.parseDouble(strValue));
-					chequeData.set(namespacedKey, PersistentDataType.STRING, new Gson().toJson(pCheque));
-
-					chequeMeta.setDisplayName(getConfigString("Economy.Cheque.Lores.Title").replace("%amount%", strValue));
-					chequeLore.add(getConfigString("Economy.Cheque.Lores.Value") + "§l" + strValue + getConfigString("Economy.Currency"));
-					chequeLore.add(getConfigString("Economy.Cheque.Lores.Author") + "§7§o" + player.getDisplayName());
-					chequeLore.add(getConfigString("Economy.Cheque.Lores.CreationDate") + "§7§o" + pCheque.getParsedCreationDate());
-					chequeLore.add("");
-					chequeLore.add(getConfigString("Economy.Cheque.Lores.Usage"));
-					chequeMeta.setLore(chequeLore);
-
-					chequeItem.setItemMeta(chequeMeta);
-
-					if (player.getInventory().contains(chequeItem)) {
-						player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Already").replace("%amount%", strValue));
-					}
-					else {
-						if(player.getInventory().firstEmpty() >= 0){
-							double value = Double.parseDouble(strValue);
-
-							if (Main.economy.getBalance(player) < value) {
-								player.sendMessage(getShortPrefixString() + getConfigString("Economy.NotEnough").replace("%amount%", strValue));
-							}
-							else {
-								player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Created").replace("%amount%", strValue));
-
-								player.getInventory().addItem(chequeItem);
-							}
-						}
-						else {
-							player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.InventoryFull"));
-						}
-					}
-				}
-				else {
-					player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
-				}
-
-			}
-			else {
-				player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
-			}
-		}
-		else {
-			if(Boolean.TRUE.equals(getConfigBoolean("Core.Modules.InactiveDebug"))) {
-				player.sendMessage(getShortPrefixString() + getConfigString("Core.Modules.InactiveMessage").replace("%module%", "Economy"));
-			}
+		if (!Boolean.TRUE.equals(getConfigBoolean("Core.Modules.Economy"))) {
+			sendInactiveEconomyMessage(player);
+			return true;
 		}
 
+		if (!player.hasPermission("seriousrp.economy.cheques")) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
+			return true;
+		}
+
+		if (args.length == 0) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
+			return false;
+		}
+
+		final String strValue = args[0];
+		if (args.length != 1 || !isPositiveAmount(strValue)) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
+			return true;
+		}
+
+		giveChequeIfPossible(player, strValue, createChequeItem(player, strValue));
 		return true;
+	}
+
+	private void sendInactiveEconomyMessage(Player player) {
+		if (Boolean.TRUE.equals(getConfigBoolean("Core.Modules.InactiveDebug"))) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Core.Modules.InactiveMessage").replace("%module%", "Economy"));
+		}
+	}
+
+	private ItemStack createChequeItem(Player player, String strValue) {
+		ItemStack chequeItem = new ItemStack(Material.PAPER);
+		ItemMeta chequeMeta = chequeItem.getItemMeta();
+		assert chequeMeta != null;
+
+		PCheque pCheque = new PCheque(player, Double.parseDouble(strValue));
+		PersistentDataContainer chequeData = chequeMeta.getPersistentDataContainer();
+		NamespacedKey namespacedKey = new NamespacedKey(this.pl, "srp-cheque");
+		chequeData.set(namespacedKey, PersistentDataType.STRING, new Gson().toJson(pCheque));
+
+		ArrayList<String> chequeLore = new ArrayList<>();
+		chequeMeta.setDisplayName(getConfigString("Economy.Cheque.Lores.Title").replace(AMOUNT_PLACEHOLDER, strValue));
+		chequeLore.add(getConfigString("Economy.Cheque.Lores.Value") + "§l" + strValue + getConfigString("Economy.Currency"));
+		chequeLore.add(getConfigString("Economy.Cheque.Lores.Author") + "§7§o" + player.getDisplayName());
+		chequeLore.add(getConfigString("Economy.Cheque.Lores.CreationDate") + "§7§o" + pCheque.getParsedCreationDate());
+		chequeLore.add("");
+		chequeLore.add(getConfigString("Economy.Cheque.Lores.Usage"));
+		chequeMeta.setLore(chequeLore);
+
+		chequeItem.setItemMeta(chequeMeta);
+		return chequeItem;
+	}
+
+	private void giveChequeIfPossible(Player player, String strValue, ItemStack chequeItem) {
+		if (player.getInventory().contains(chequeItem)) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Already").replace(AMOUNT_PLACEHOLDER, strValue));
+			return;
+		}
+
+		if (player.getInventory().firstEmpty() < 0) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.InventoryFull"));
+			return;
+		}
+
+		double value = Double.parseDouble(strValue);
+		if (Main.economy.getBalance(player) < value) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.NotEnough").replace(AMOUNT_PLACEHOLDER, strValue));
+			return;
+		}
+
+		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Created").replace(AMOUNT_PLACEHOLDER, strValue));
+		player.getInventory().addItem(chequeItem);
 	}
 }

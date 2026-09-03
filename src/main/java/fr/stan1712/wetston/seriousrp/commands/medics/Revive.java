@@ -23,7 +23,7 @@ public class Revive implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player player)) return true;
+		if (!(sender instanceof Player player)) return false;
 
 		if(player.hasPermission("seriousrp.medics.revive")) {
 			if(args.length == 1){
@@ -47,12 +47,12 @@ public class Revive implements CommandExecutor {
 					}
 				}
 				else {
-					assert target != null;
-					player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.mistaken").replace("%target%", target.getDisplayName()));
+					player.sendMessage(getShortPrefixString() + getConfigString("Medics.MedRevive.mistaken").replace("%target%", args[0]));
 				}
 			}
 			else {
 				player.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/revive <player>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DRevive"));
+				return false;
 			}
 		}
 		else {

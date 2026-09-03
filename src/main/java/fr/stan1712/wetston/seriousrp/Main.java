@@ -13,6 +13,7 @@ import fr.stan1712.wetston.seriousrp.events.Cheque;
 import fr.stan1712.wetston.seriousrp.events.Death;
 import fr.stan1712.wetston.seriousrp.events.Fall;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -81,11 +82,11 @@ public final class Main extends JavaPlugin {
 		});
 	}
 
-	private boolean setupEconomy() {
-		if (pluginManager.getPlugin("Vault") == null) {
+	private static boolean setupEconomy() {
+		if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
 			return false;
 		}
-		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
 		if (rsp == null) {
 			return false;
 		}
