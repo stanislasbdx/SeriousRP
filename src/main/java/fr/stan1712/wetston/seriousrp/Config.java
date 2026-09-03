@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -47,7 +48,7 @@ public class Config implements Listener {
 					FileConfiguration configReport = YamlConfiguration.loadConfiguration(upgradeFile);
 
 					final ArrayList<String> headerUpgradeStrings = new ArrayList<>();
-					headerUpgradeStrings.add(String.format("SeriousRP Upgrade Log [%s]", UPGRADE_LOG_DATE_FORMAT.format(LocalDateTime.now())));
+					headerUpgradeStrings.add(String.format("SeriousRP Upgrade Log [%s]", UPGRADE_LOG_DATE_FORMAT.format(LocalDateTime.now(ZoneId.systemDefault()))));
 					headerUpgradeStrings.add(String.format("Upgrade from version %s to %s", fileVersion, version));
 					headerUpgradeStrings.add("All those informations can be used and sent to a developer in you have issues with upgrading your plugin");
 					configReport.options().setHeader(headerUpgradeStrings);
