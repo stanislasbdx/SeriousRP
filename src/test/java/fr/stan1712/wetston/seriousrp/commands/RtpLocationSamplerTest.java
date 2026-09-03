@@ -76,4 +76,94 @@ class RtpLocationSamplerTest {
 	void unusedRandomDoesNotThrowForInvalidRange() {
 		assertFalse(RtpLocationSampler.sample(100, 100, 0, new Random()).isPresent());
 	}
+
+	@Test
+	void clampToRangeFallsBackAlongXWhenSampleIsOnOrigin() {
+		RtpLocationSampler.HorizontalLocation clamped = RtpLocationSampler.clampToRange(
+			10,
+			20,
+			new RtpLocationSampler.HorizontalLocation(10, 20),
+			100,
+			1000
+		);
+
+		assertEquals(110, clamped.x());
+		assertEquals(20, clamped.z());
+	}
+
+	@Test
+	void sampleRejectsCandidatesThatRoundPastMaxRange() {
+		Random alwaysCorner = new Random() {
+			private int calls;
+
+			@Override
+			public double nextDouble() {
+				calls++;
+				return calls % 2 == 1 ? 1.0 : 0.125;
+			}
+		};
+
+		Optional<RtpLocationSampler.HorizontalLocation> sample =
+			RtpLocationSampler.sample(0, 0, 1, alwaysCorner);
+
+		assertTrue(sample.isPresent());
+		assertEquals(1, sample.get().x());
+		assertEquals(0, sample.get().z());
+	}
+
+	@Test
+	void sampleFallsBackToClampWhenEveryAttemptRoundsOutsideRange() {
+		Random alwaysZero = new Random() {
+			@Override
+			public double nextDouble() {
+				return 0.0;
+			}
+		};
+
+		Optional<RtpLocationSampler.HorizontalLocation> sample =
+			RtpLocationSampler.sample(0, 0, 1, alwaysZero);
+
+		assertTrue(sample.isPresent());
+		assertEquals(1, sample.get().x());
+		assertEquals(0, sample.get().z());
+	}
+
+	@Test
+	void clampFallsBackWhenRoundingUndershootsMinRange() {
+		RtpLocationSampler.HorizontalLocation clamped = RtpLocationSampler.clampToRange(
+			0,
+			0,
+			new RtpLocationSampler.HorizontalLocation(1, 0),
+			2.4,
+			2.4
+		);
+
+		assertEquals(2, clamped.x());
+		assertEquals(0, clamped.z());
+	}
+
+	@Test
+	void clampFallsBackWhenRoundingLeavesTheRequestedBand() {
+		RtpLocationSampler.HorizontalLocation clamped = RtpLocationSampler.clampToRange(
+			0,
+			0,
+			new RtpLocationSampler.HorizontalLocation(1, 1),
+			2.4,
+			2.4
+		);
+
+		assertEquals(2, clamped.x());
+		assertEquals(0, clamped.z());
+	}
+
+	@Test
+	void constructorIsHidden() throws Exception {
+		var constructor = RtpLocationSampler.class.getDeclaredConstructor();
+		constructor.setAccessible(true);
+		var thrown = org.junit.jupiter.api.Assertions.assertThrows(
+			java.lang.reflect.InvocationTargetException.class,
+			constructor::newInstance
+		);
+		assertEquals(IllegalStateException.class, thrown.getCause().getClass());
+	}
 }
