@@ -8,6 +8,7 @@ import fr.stan1712.wetston.seriousrp.commands.medics.HRPRevive;
 import fr.stan1712.wetston.seriousrp.commands.medics.Medinfo;
 import fr.stan1712.wetston.seriousrp.commands.medics.Revive;
 import fr.stan1712.wetston.seriousrp.defaults.EnumModules;
+import fr.stan1712.wetston.seriousrp.defaults.ServerCompatibility;
 import fr.stan1712.wetston.seriousrp.events.Bleeding;
 import fr.stan1712.wetston.seriousrp.events.Cheque;
 import fr.stan1712.wetston.seriousrp.events.Death;
@@ -21,8 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class Main extends JavaPlugin {
 	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - Core");
@@ -38,16 +37,14 @@ public final class Main extends JavaPlugin {
 
 		_log.info("[{}] Checking server version : {} {}", logStep, serverType, serverVersion);
 
-		final Pattern versionPattern = Pattern.compile("\\d[.]\\d+", Pattern.MULTILINE);
-		final Matcher versionMatcher = versionPattern.matcher(serverVersion);
-		if(!versionMatcher.find() || (!serverType.contains("Spigot") && !serverType.contains("Paper") && !serverType.contains("Purpur"))) {
+		if (!ServerCompatibility.hasMinecraftVersionToken(serverVersion) || !ServerCompatibility.isSupportedServerType(serverType)) {
 			_log.error("[{}] * Server type {} unknown, disabling plugin.", logStep, serverVersion);
 
 			pluginManager.disablePlugin(this);
 			return false;
 		}
 
-		if(serverVersion.contains("1.21")) {
+		if(ServerCompatibility.isSupportedMinecraftRelease(serverVersion)) {
 			_log.info("[{}] Version check !", logStep);
 			_log.info("[{}] If you got issues, report them on Github", logStep);
 		}
