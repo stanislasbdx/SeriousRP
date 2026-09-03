@@ -17,7 +17,7 @@ public class HRPRevive implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player player)) return true;
+		if (!(sender instanceof Player player)) return false;
 
 		if(player.hasPermission("seriousrp.medics.hrprevive")) {
 			if(player.getHealth() < 4.0D) {

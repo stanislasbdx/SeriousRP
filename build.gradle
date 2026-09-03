@@ -26,7 +26,8 @@ sonar {
     properties {
         property "sonar.projectKey", "stanislasbdx_SeriousRP_28a0ef7b-fa03-4300-ab66-7308561e1bc2"
         property "sonar.projectName", "SeriousRP"
-        property "sonar.ws.timeout", "120"
+        property "sonar.scanner.socketTimeout", "120"
+        property "sonar.exclusions", "**/Metrics.java"
     }
 }
 
@@ -41,6 +42,13 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:1.18.46"
 
     implementation "com.google.code.gson:gson:2.11.0"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.4"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }
 
 def targetJavaVersion = 21

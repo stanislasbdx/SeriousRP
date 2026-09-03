@@ -4,6 +4,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,12 +17,15 @@ import java.util.ArrayList;
 import static fr.stan1712.wetston.seriousrp.Main.SPIGOT_PLUGIN_ID;
 
 public class Config implements Listener {
-	private final Plugin plugin = Main.getPlugin(Main.class);
+	private static final String CONFIG_KEY_VERSION = "Version";
+	private static final String CONFIG_KEY_FIX = "ConfigFix";
 	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - Config");
 	private static final DateTimeFormatter UPGRADE_LOG_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 
+	private final Plugin plugin = JavaPlugin.getPlugin(Main.class);
+
 	String version = this.plugin.getDescription().getVersion();
-	String fileVersion = this.plugin.getConfig().getString("Version");
+	String fileVersion = this.plugin.getConfig().getString(CONFIG_KEY_VERSION);
 
 	private void checkConfigVersion() {
 		plugin.getConfig();
@@ -54,9 +58,9 @@ public class Config implements Listener {
 						if(!plugin.getDescription().getVersion().equalsIgnoreCase(remoteVersion)) configReport.set("report.versionDiffers", remoteVersion);
 					});
 
-					configReport.set("options.configFix", plugin.getConfig().getBoolean("ConfigFix"));
+					configReport.set("options.configFix", plugin.getConfig().getBoolean(CONFIG_KEY_FIX));
 
-					configReport.set("plugin.firstRun", plugin.getConfig().getInt("Version") == 0);
+					configReport.set("plugin.firstRun", plugin.getConfig().getInt(CONFIG_KEY_VERSION) == 0);
 
 					configReport.set("plugin.dependencies.vault", new File("plugins/Vault").exists());
 
@@ -72,7 +76,7 @@ public class Config implements Listener {
 
 					_log.debug("{}Log created (upgrades/{}_to_{}.yml) !", logStep, fileVersion, version);
 
-					plugin.getConfig().set("Version", version);
+					plugin.getConfig().set(CONFIG_KEY_VERSION, version);
 					_log.info("{}config.yml upgraded ({} -> {}) !", logStep, fileVersion, version);
 				}
 				else {
@@ -82,7 +86,7 @@ public class Config implements Listener {
 				_log.error("{}Unable to create the upgrade log !", logStep);
 			}
 
-			plugin.getConfig().set("ConfigFix", Boolean.TRUE);
+			plugin.getConfig().set(CONFIG_KEY_FIX, Boolean.TRUE);
 			new Config();
 			plugin.saveConfig();
 		}
@@ -101,11 +105,11 @@ public class Config implements Listener {
 		headerStrings.add("Material list : https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html (for the Chairs module)");
 		config.options().setHeader(headerStrings);
 
-		if(config.getBoolean("ConfigFix")) {
+		if(config.getBoolean(CONFIG_KEY_FIX)) {
 			config.options().copyDefaults(true);
 			config.options().parseComments(true);
 
-			config.set("ConfigFix", Boolean.FALSE);
+			config.set(CONFIG_KEY_FIX, Boolean.FALSE);
 
 			_log.debug("Config file 'config.yml' updated !");
 		}
