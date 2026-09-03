@@ -2,6 +2,7 @@ package fr.stan1712.wetston.seriousrp;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ public class Utils {
 		throw new IllegalStateException("Utility class");
 	}
 
-	private static final Plugin plugin = Main.getPlugin(Main.class);
+	private static final Plugin plugin = JavaPlugin.getPlugin(Main.class);
 	private static final FileConfiguration plConfig = plugin.getConfig();
 
 	public static class ConfigFactory {
