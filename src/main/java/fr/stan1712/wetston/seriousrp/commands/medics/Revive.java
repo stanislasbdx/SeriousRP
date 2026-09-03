@@ -1,5 +1,6 @@
 package fr.stan1712.wetston.seriousrp.commands.medics;
 
+import fr.stan1712.wetston.seriousrp.BukkitStatusEffects;
 import fr.stan1712.wetston.seriousrp.Main;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -7,14 +8,22 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
+
+import java.util.function.Consumer;
 
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
 
 public class Revive implements CommandExecutor {
+	private final Consumer<Player> comaClearer;
+
 	public Revive(Main pl) {
+		this(pl, BukkitStatusEffects::clearComa);
+	}
+
+	Revive(Main pl, Consumer<Player> comaClearer) {
 		pl.getConfig();
+		this.comaClearer = comaClearer;
 	}
 
 	@Override
@@ -30,12 +39,7 @@ public class Revive implements CommandExecutor {
 						target.setHealth(8.0D);
 						player.sendMessage(getConfigString("Medics.MedRevive.MedicRevive").replace("%target%", target.getDisplayName()));
 						target.sendMessage(getConfigString("Medics.MedRevive.TargetRevived").replace("%medic%", player.getDisplayName()));
-
-						target.removePotionEffect(PotionEffectType.RESISTANCE);
-						target.removePotionEffect(PotionEffectType.SLOWNESS);
-						target.removePotionEffect(PotionEffectType.BLINDNESS);
-						target.removePotionEffect(PotionEffectType.HUNGER);
-
+						comaClearer.accept(target);
 						target.setFoodLevel(20);
 					}
 					else {

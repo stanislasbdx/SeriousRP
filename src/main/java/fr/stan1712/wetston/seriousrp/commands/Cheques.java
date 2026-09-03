@@ -16,6 +16,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.function.BiFunction;
 
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.*;
 
@@ -23,9 +24,16 @@ public class Cheques implements CommandExecutor {
 	private static final String AMOUNT_PLACEHOLDER = "%amount%";
 
 	private final Plugin pl;
+	private final BiFunction<Player, String, ItemStack> chequeFactory;
 
 	public Cheques(Main pl) {
 		this.pl = pl;
+		this.chequeFactory = this::createChequeItem;
+	}
+
+	Cheques(Main pl, BiFunction<Player, String, ItemStack> chequeFactory) {
+		this.pl = pl;
+		this.chequeFactory = chequeFactory;
 	}
 
 	@Override
@@ -53,7 +61,7 @@ public class Cheques implements CommandExecutor {
 			return true;
 		}
 
-		giveChequeIfPossible(player, strValue, createChequeItem(player, strValue));
+		giveChequeIfPossible(player, strValue, chequeFactory.apply(player, strValue));
 		return true;
 	}
 
@@ -63,7 +71,7 @@ public class Cheques implements CommandExecutor {
 		}
 	}
 
-	private ItemStack createChequeItem(Player player, String strValue) {
+	ItemStack createChequeItem(Player player, String strValue) {
 		ItemStack chequeItem = new ItemStack(Material.PAPER);
 		ItemMeta chequeMeta = chequeItem.getItemMeta();
 		assert chequeMeta != null;

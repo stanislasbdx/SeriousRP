@@ -1,5 +1,6 @@
 package fr.stan1712.wetston.seriousrp.commands.medics;
 
+import fr.stan1712.wetston.seriousrp.BukkitStatusEffects;
 import fr.stan1712.wetston.seriousrp.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -8,17 +9,23 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectTypeCategory;
 
 import java.util.Collection;
-import java.util.Objects;
+import java.util.function.Function;
 
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
 
 public class Medinfo implements CommandExecutor {
+	private final Function<PotionEffect, String> effectLabel;
+
 	public Medinfo(Main pl) {
+		this(pl, BukkitStatusEffects::potionLabel);
+	}
+
+	Medinfo(Main pl, Function<PotionEffect, String> effectLabel) {
 		pl.getConfig();
+		this.effectLabel = effectLabel;
 	}
 
 	@Override
@@ -69,10 +76,7 @@ public class Medinfo implements CommandExecutor {
 
 		player.sendMessage("");
 		player.sendMessage(ChatColor.GRAY + "» " + ChatColor.WHITE + getConfigString("Medics.MedInfo.Effects"));
-		effects.forEach(effect -> {
-			String effectCategoryLitteral = Objects.equals(effect.getType().getCategory(), PotionEffectTypeCategory.HARMFUL) ? "§4- §c" : "§2+ §a";
-			player.sendMessage(ChatColor.GRAY + "» " + effectCategoryLitteral + EffectNameFormatter.formatNamespacedKey(String.valueOf(effect.getType().getKeyOrThrow())));
-		});
+		effects.forEach(effect -> player.sendMessage(ChatColor.GRAY + "» " + effectLabel.apply(effect)));
 	}
 
 	private void sendLocation(Player player, Player target) {
