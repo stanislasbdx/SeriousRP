@@ -34,6 +34,21 @@ class ConfigFactoryTest extends ConfigBackedTest {
 	}
 
 	@Test
+	void configFallsBackToJavaPluginWhenNotOverridden() {
+		Utils.ConfigFactory.resetConfig();
+		YamlConfiguration live = new YamlConfiguration();
+		live.set("Prefix", "&bLIVE");
+		Main main = org.mockito.Mockito.mock(Main.class);
+		org.mockito.Mockito.when(main.getConfig()).thenReturn(live);
+
+		try (org.mockito.MockedStatic<org.bukkit.plugin.java.JavaPlugin> javaPlugin =
+			     org.mockito.Mockito.mockStatic(org.bukkit.plugin.java.JavaPlugin.class)) {
+			javaPlugin.when(() -> org.bukkit.plugin.java.JavaPlugin.getPlugin(Main.class)).thenReturn(main);
+			assertEquals("§bLIVE", Utils.ConfigFactory.getPrefixString());
+		}
+	}
+
+	@Test
 	void utilityConstructorsAreHidden() throws Exception {
 		assertHiddenUtility(Utils.class);
 		assertHiddenUtility(Utils.ConfigFactory.class);

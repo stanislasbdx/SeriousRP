@@ -125,4 +125,18 @@ class SeriousrpCommandTest extends ConfigBackedTest {
 		new Seriousrp(plugin).sendMessageStatusModule("Chairs", player);
 		verify(player).sendMessage(contains("ON"));
 	}
+
+	@Test
+	void reloadWithAdminPermissionSavesConfig() {
+		when(sender.hasPermission("seriousrp.info")).thenReturn(true);
+		when(sender.hasPermission("seriousrp.admin.reload")).thenReturn(true);
+
+		try (org.mockito.MockedConstruction<fr.stan1712.wetston.seriousrp.Config> ignored =
+			     org.mockito.Mockito.mockConstruction(fr.stan1712.wetston.seriousrp.Config.class)) {
+			assertTrue(new Seriousrp(plugin).onCommand(sender, command, "seriousrp", new String[] {"reload"}));
+		}
+
+		verify(plugin).saveConfig();
+		verify(sender).sendMessage(contains("reloaded"));
+	}
 }

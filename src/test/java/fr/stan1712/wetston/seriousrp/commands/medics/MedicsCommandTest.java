@@ -161,4 +161,56 @@ class MedicsCommandTest extends ConfigBackedTest {
 		assertTrue(new HRPRevive(plugin).onCommand(player, command, "hrprevive", new String[0]));
 		verify(player).sendMessage(contains("doesn't need"));
 	}
+
+	@Test
+	void reviveHealsLowHealthTarget() {
+		when(player.hasPermission("seriousrp.medics.revive")).thenReturn(true);
+		when(player.getDisplayName()).thenReturn("Medic");
+		when(target.getHealth()).thenReturn(2.0);
+		when(target.getDisplayName()).thenReturn("Stan");
+		java.util.concurrent.atomic.AtomicBoolean cleared = new java.util.concurrent.atomic.AtomicBoolean();
+
+		try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
+			bukkit.when(() -> Bukkit.getPlayer("stan")).thenReturn(target);
+			assertTrue(new Revive(plugin, p -> cleared.set(true)).onCommand(player, command, "revive", new String[] {"stan"}));
+		}
+
+		verify(target).setHealth(8.0D);
+		verify(target).setFoodLevel(20);
+		verify(player).sendMessage(contains("Stan"));
+		verify(target).sendMessage(contains("Medic"));
+		org.junit.jupiter.api.Assertions.assertTrue(cleared.get());
+	}
+
+	@Test
+	void hrpReviveHealsSelfWhenInComa() {
+		when(player.hasPermission("seriousrp.medics.hrprevive")).thenReturn(true);
+		when(player.getHealth()).thenReturn(1.0);
+		java.util.concurrent.atomic.AtomicBoolean cleared = new java.util.concurrent.atomic.AtomicBoolean();
+
+		assertTrue(new HRPRevive(plugin, p -> cleared.set(true)).onCommand(player, command, "hrprevive", new String[0]));
+
+		verify(player).setHealth(8.0D);
+		verify(player).setFoodLevel(20);
+		verify(player).sendMessage(contains("yourself"));
+		org.junit.jupiter.api.Assertions.assertTrue(cleared.get());
+	}
+
+	@Test
+	void medinfoListsInjectedEffectLabels() {
+		when(player.hasPermission("seriousrp.medics.info")).thenReturn(true);
+		when(target.getDisplayName()).thenReturn("Stan");
+		when(target.getHealth()).thenReturn(20.0);
+		when(target.getFoodLevel()).thenReturn(20);
+		when(target.getActivePotionEffects()).thenReturn(List.of(mock(org.bukkit.potion.PotionEffect.class)));
+		when(target.getWorld()).thenReturn(mock(World.class));
+		when(player.getWorld()).thenReturn(mock(World.class));
+
+		try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
+			bukkit.when(() -> Bukkit.getPlayer("stan")).thenReturn(target);
+			assertTrue(new Medinfo(plugin, effect -> "§4- §cPoison").onCommand(player, command, "vitals", new String[] {"stan"}));
+		}
+
+		verify(player).sendMessage(contains("Poison"));
+	}
 }

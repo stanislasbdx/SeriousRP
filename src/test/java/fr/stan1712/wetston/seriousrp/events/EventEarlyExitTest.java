@@ -74,6 +74,39 @@ class EventEarlyExitTest extends ConfigBackedTest {
 	}
 
 	@Test
+	void fallAppliesInjectedEffectsOnHardPlayerFall() {
+		java.util.concurrent.atomic.AtomicBoolean applied = new java.util.concurrent.atomic.AtomicBoolean();
+		Fall fall = new Fall(plugin, (entity, damage) -> {
+			applied.set(true);
+			assert entity == playerEntity;
+			assert damage == 4.0D;
+		});
+
+		when(damageEvent.getEntity()).thenReturn(playerEntity);
+		when(playerEntity.getType()).thenReturn(EntityType.PLAYER);
+		when(damageEvent.getCause()).thenReturn(EntityDamageEvent.DamageCause.FALL);
+		when(damageEvent.getDamage()).thenReturn(4.0D);
+
+		fall.onFall(damageEvent);
+		org.junit.jupiter.api.Assertions.assertTrue(applied.get());
+	}
+
+	@Test
+	void bleedingPlaysEffectForPlayers() {
+		org.bukkit.World world = mock(org.bukkit.World.class);
+		org.bukkit.Location location = mock(org.bukkit.Location.class);
+		when(damageByEntityEvent.getEntity()).thenReturn(cow);
+		when(cow.getLocation()).thenReturn(location);
+		when(cow.getSpawnCategory()).thenReturn(SpawnCategory.MISC);
+		when(cow.getType()).thenReturn(EntityType.PLAYER);
+		when(cow.getWorld()).thenReturn(world);
+
+		new Bleeding(plugin).onBleeding(damageByEntityEvent);
+
+		verify(world).playEffect(location, org.bukkit.Effect.STEP_SOUND, Material.REDSTONE_BLOCK);
+	}
+
+	@Test
 	void bleedingSkipsMiscNonPlayerEntities() {
 		when(damageByEntityEvent.getEntity()).thenReturn(cow);
 		when(cow.getLocation()).thenReturn(null);
