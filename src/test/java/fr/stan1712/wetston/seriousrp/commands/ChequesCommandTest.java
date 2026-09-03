@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
@@ -144,12 +145,10 @@ class ChequesCommandTest extends ConfigBackedTest {
 
 	@Test
 	void createChequeItemRejectsNullItemMeta() {
+		Cheques cheques = new Cheques(plugin);
 		try (org.mockito.MockedConstruction<ItemStack> ignored = org.mockito.Mockito.mockConstruction(ItemStack.class,
 			(mock, context) -> when(mock.getItemMeta()).thenReturn(null))) {
-			org.junit.jupiter.api.Assertions.assertThrows(
-				AssertionError.class,
-				() -> new Cheques(plugin).createChequeItem(player, "25")
-			);
+			assertThrows(AssertionError.class, () -> cheques.createChequeItem(player, "25"));
 		}
 	}
 
