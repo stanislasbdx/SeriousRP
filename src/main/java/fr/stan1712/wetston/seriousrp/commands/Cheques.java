@@ -28,31 +28,6 @@ public class Cheques implements CommandExecutor {
 		this.pl = pl;
 	}
 
-	private static boolean isInt(String s) {
-		try {
-			Integer.parseInt(s);
-		}
-		catch (NumberFormatException nfe) {
-			return false;
-		}
-		return true;
-	}
-
-	private static boolean isFloat(String s) {
-		try {
-			Float.parseFloat(s);
-		}
-		catch (NumberFormatException nfe) {
-			return false;
-		}
-		return true;
-	}
-
-	private static boolean isPositiveAmount(String strValue) {
-		return (isInt(strValue) && Integer.parseInt(strValue) > 0)
-			|| (isFloat(strValue) && Float.parseFloat(strValue) > 0);
-	}
-
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player player)) return true;
@@ -73,7 +48,7 @@ public class Cheques implements CommandExecutor {
 		}
 
 		final String strValue = args[0];
-		if (args.length != 1 || !isPositiveAmount(strValue)) {
+		if (args.length != 1 || !ChequeAmountParser.isPositiveAmount(strValue)) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.Usage"));
 			return true;
 		}
