@@ -23,7 +23,7 @@ public class InactiveCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player player)) return true;
+		if (!(sender instanceof Player player)) return false;
 
 		if(this.pl.getConfig().getBoolean("Core.Modules.InactiveDebug")) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Core.Modules.InactiveMessage").replace("%module%", inactiveModule));
