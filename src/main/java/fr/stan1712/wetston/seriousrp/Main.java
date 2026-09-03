@@ -39,29 +39,22 @@ public final class Main extends JavaPlugin {
 
 		final Pattern versionPattern = Pattern.compile("\\d[.]\\d+", Pattern.MULTILINE);
 		final Matcher versionMatcher = versionPattern.matcher(serverVersion);
-		if(!versionMatcher.find() || (!serverType.contains("Spigot") && !serverType.contains("Paper"))) {
+		if(!versionMatcher.find() || (!serverType.contains("Spigot") && !serverType.contains("Paper") && !serverType.contains("Purpur"))) {
 			_log.error("[{}] * Server type {} unknown, disabling plugin.", logStep, serverVersion);
 
 			pluginManager.disablePlugin(this);
 			return false;
 		}
-		final String version = versionMatcher.group();
 
-		switch (version) {
-			case "1.21", "1.20" -> {
-				_log.info("[{}] Version check !", logStep);
-				_log.info("[{}] If you got issues, report them on Github", logStep);
-			}
-			case "1.19", "1.18" -> {
-				_log.info("[{}] {} may have issues while running !", logStep, version);
-				_log.info("[{}] If you got any, report them on Github", logStep);
-			}
-			default -> {
-				_log.error("[{}] * Version {} is not supported by {}, disabling plugin.", logStep, serverVersion, getName());
+		if(serverVersion.contains("1.21")) {
+			_log.info("[{}] Version check !", logStep);
+			_log.info("[{}] If you got issues, report them on Github", logStep);
+		}
+		else {
+			_log.error("[{}] * Version {} is not supported by {}, disabling plugin.", logStep, serverVersion, getName());
 
-				pluginManager.disablePlugin(this);
-				return false;
-			}
+			pluginManager.disablePlugin(this);
+			return false;
 		}
 
 		return true;
