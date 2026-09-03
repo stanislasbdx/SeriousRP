@@ -24,16 +24,16 @@ repositories {
 
 sonar {
     properties {
-        sonar.projectKey = "stanislasbdx_SeriousRP_28a0ef7b-fa03-4300-ab66-7308561e1bc2"
-        sonar.projectName = "SeriousRP"
-        sonar.ws.timeout = "120"
+        property "sonar.projectKey", "stanislasbdx_SeriousRP_28a0ef7b-fa03-4300-ab66-7308561e1bc2"
+        property "sonar.projectName", "SeriousRP"
+        property "sonar.ws.timeout", "120"
     }
 }
 
 project.tasks["sonar"].dependsOn("build")
 
 dependencies {
-    compileOnly "org.spigotmc:spigot-api:1.21.9-R0.1-SNAPSHOT"
+    compileOnly "org.spigotmc:spigot-api:26.2-R0.1-SNAPSHOT"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7.1"
     implementation "org.slf4j:slf4j-api:2.0.16"
 
