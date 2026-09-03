@@ -76,4 +76,29 @@ class RtpLocationSamplerTest {
 	void unusedRandomDoesNotThrowForInvalidRange() {
 		assertFalse(RtpLocationSampler.sample(100, 100, 0, new Random()).isPresent());
 	}
+
+	@Test
+	void clampToRangeFallsBackAlongXWhenSampleIsOnOrigin() {
+		RtpLocationSampler.HorizontalLocation clamped = RtpLocationSampler.clampToRange(
+			10,
+			20,
+			new RtpLocationSampler.HorizontalLocation(10, 20),
+			100,
+			1000
+		);
+
+		assertEquals(110, clamped.x());
+		assertEquals(20, clamped.z());
+	}
+
+	@Test
+	void constructorIsHidden() throws Exception {
+		var constructor = RtpLocationSampler.class.getDeclaredConstructor();
+		constructor.setAccessible(true);
+		var thrown = org.junit.jupiter.api.Assertions.assertThrows(
+			java.lang.reflect.InvocationTargetException.class,
+			constructor::newInstance
+		);
+		assertEquals(IllegalStateException.class, thrown.getCause().getClass());
+	}
 }
