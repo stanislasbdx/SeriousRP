@@ -3,10 +3,13 @@ package fr.stan1712.wetston.seriousrp.commands;
 import fr.stan1712.wetston.seriousrp.ConfigBackedTest;
 import fr.stan1712.wetston.seriousrp.Main;
 import fr.stan1712.wetston.seriousrp.Utils;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.command.Command;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -27,6 +30,9 @@ class ChequesCommandTest extends ConfigBackedTest {
 	@Mock ConsoleCommandSender console;
 	@Mock Player player;
 	@Mock FileConfiguration overrideConfig;
+	@Mock PlayerInventory inventory;
+	@Mock ItemStack chequeItem;
+	@Mock Economy economy;
 
 	@Test
 	void consoleSenderIsIgnored() {
@@ -68,5 +74,50 @@ class ChequesCommandTest extends ConfigBackedTest {
 		assertTrue(new Cheques(plugin).onCommand(player, command, "cheque", new String[] {"-1"}));
 		verify(player).sendMessage(contains("/cheque"));
 		verify(player, never()).getInventory();
+	}
+
+	@Test
+	void extraArgumentsShowUsage() {
+		when(player.hasPermission("seriousrp.economy.cheques")).thenReturn(true);
+
+		assertTrue(new Cheques(plugin).onCommand(player, command, "cheque", new String[] {"10", "extra"}));
+		verify(player).sendMessage(contains("/cheque"));
+	}
+
+	@Test
+	void inactiveEconomyStaysSilentWhenDebugIsOff() {
+		when(overrideConfig.getBoolean("Core.Modules.Economy")).thenReturn(false);
+		when(overrideConfig.getBoolean("Core.Modules.InactiveDebug")).thenReturn(false);
+		Utils.ConfigFactory.overrideConfig(overrideConfig);
+
+		assertTrue(new Cheques(plugin).onCommand(player, command, "cheque", new String[] {"10"}));
+		verify(player, never()).sendMessage(org.mockito.ArgumentMatchers.anyString());
+	}
+
+	@Test
+	void giveChequeIfPossibleCoversInventoryBalanceAndSuccess() {
+		Cheques cheques = new Cheques(plugin);
+		when(player.getInventory()).thenReturn(inventory);
+
+		when(inventory.contains(chequeItem)).thenReturn(true);
+		cheques.giveChequeIfPossible(player, "10", chequeItem);
+		verify(player).sendMessage(contains("already"));
+
+		when(inventory.contains(chequeItem)).thenReturn(false);
+		when(inventory.firstEmpty()).thenReturn(-1);
+		cheques.giveChequeIfPossible(player, "10", chequeItem);
+		verify(player).sendMessage(contains("full"));
+
+		when(inventory.firstEmpty()).thenReturn(3);
+		Main.economy = economy;
+		when(economy.getBalance(player)).thenReturn(1.0);
+		cheques.giveChequeIfPossible(player, "10", chequeItem);
+		verify(player).sendMessage(contains("enough"));
+
+		when(economy.getBalance(player)).thenReturn(100.0);
+		cheques.giveChequeIfPossible(player, "10", chequeItem);
+		verify(player).sendMessage(contains("created"));
+		verify(inventory).addItem(chequeItem);
+		Main.economy = null;
 	}
 }

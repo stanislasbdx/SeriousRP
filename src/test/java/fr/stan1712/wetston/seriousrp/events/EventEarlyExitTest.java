@@ -141,6 +141,39 @@ class EventEarlyExitTest extends ConfigBackedTest {
 	}
 
 	@Test
+	void chequeClaimsWhenIssuerHasFunds() {
+		when(plugin.getName()).thenReturn("SeriousRP");
+		when(interactEvent.getPlayer()).thenReturn(player);
+		when(interactEvent.getAction()).thenReturn(Action.RIGHT_CLICK_AIR);
+		when(player.getInventory()).thenReturn(inventory);
+		when(inventory.getItemInMainHand()).thenReturn(item);
+		when(item.getType()).thenReturn(Material.PAPER);
+		when(item.getItemMeta()).thenReturn(meta);
+		when(item.getAmount()).thenReturn(1);
+		when(meta.getPersistentDataContainer()).thenReturn(pdc);
+
+		UUID issuerId = UUID.fromString("22222222-2222-2222-2222-222222222222");
+		String payload = "{\"author\":\"bank\",\"authorUUID\":\"" + issuerId
+			+ "\",\"authorDisplayName\":\"Bank\",\"value\":15.0,\"creationDate\":1700000000000}";
+		when(pdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(payload);
+
+		Economy economy = mock(Economy.class);
+		Main.economy = economy;
+		when(economy.getBalance(org.mockito.ArgumentMatchers.nullable(OfflinePlayer.class))).thenReturn(100.0);
+
+		try (MockedStatic<Bukkit> ignored = mockStatic(Bukkit.class, invocation -> null)) {
+			new Cheque(plugin).onPlayerUse(interactEvent);
+		}
+
+		verify(economy).withdrawPlayer(org.mockito.ArgumentMatchers.nullable(OfflinePlayer.class), eq(15.0));
+		verify(economy).depositPlayer(player, 15.0);
+		verify(inventory).remove(item);
+		verify(interactEvent).setCancelled(true);
+		verify(player).sendMessage(org.mockito.ArgumentMatchers.contains("Bank"));
+		Main.economy = null;
+	}
+
+	@Test
 	void chequeSwallowsInvalidJsonPayload() {
 		when(plugin.getName()).thenReturn("SeriousRP");
 		when(interactEvent.getPlayer()).thenReturn(player);

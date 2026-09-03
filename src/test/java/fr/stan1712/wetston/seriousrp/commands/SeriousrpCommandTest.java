@@ -96,12 +96,33 @@ class SeriousrpCommandTest extends ConfigBackedTest {
 	}
 
 	@Test
-	void sendMessageStatusModuleUsesPluginConfigKey() {
+	void helpOmitsDisabledModules() {
+		when(sender.hasPermission("seriousrp.info")).thenReturn(true);
 		when(plugin.getConfig()).thenReturn(pluginConfig);
-		when(pluginConfig.getBoolean("Core.Modules.Chairs")).thenReturn(false);
+		when(pluginConfig.getBoolean("Core.Modules.Medics")).thenReturn(false);
+		when(pluginConfig.getBoolean("Core.Modules.Economy")).thenReturn(false);
+
+		assertTrue(new Seriousrp(plugin).onCommand(sender, command, "seriousrp", new String[] {"help"}));
+		verify(sender, never()).sendMessage(contains("/medinfo"));
+		verify(sender, never()).sendMessage(contains("/cheque"));
+		verify(sender).sendMessage(contains("/srtp"));
+	}
+
+	@Test
+	void modulesAliasUsesSameHandlerAsStatus() {
+		when(sender.hasPermission("seriousrp.info")).thenReturn(true);
+		when(plugin.getConfig()).thenReturn(pluginConfig);
+
+		assertTrue(new Seriousrp(plugin).onCommand(sender, command, "seriousrp", new String[] {"modules"}));
+		verify(sender).sendMessage(contains("CustomRecipes"));
+	}
+
+	@Test
+	void sendMessageStatusModuleReportsOn() {
+		when(plugin.getConfig()).thenReturn(pluginConfig);
+		when(pluginConfig.getBoolean("Core.Modules.Chairs")).thenReturn(true);
 
 		new Seriousrp(plugin).sendMessageStatusModule("Chairs", player);
-		verify(player).sendMessage(contains("Chairs"));
-		verify(player).sendMessage(contains("OFF"));
+		verify(player).sendMessage(contains("ON"));
 	}
 }
