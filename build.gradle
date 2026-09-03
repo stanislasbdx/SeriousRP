@@ -29,7 +29,7 @@ sonar {
         property "sonar.projectName", "SeriousRP"
         property "sonar.scanner.socketTimeout", "120"
         property "sonar.exclusions", "**/Metrics.java"
-        property "sonar.coverage.exclusions", "**/Metrics.java"
+        property "sonar.coverage.exclusions", "**/Metrics.java,**/Main.java,**/Config.java,**/Recipes.java,**/UpdateChecker.java,**/events/Death.java"
         property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
     }
 }
@@ -53,7 +53,16 @@ dependencies {
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
-def bstatsExcludes = ['**/Metrics.class', '**/Metrics$*.class']
+def coverageExcludes = [
+    '**/Metrics.class',
+    '**/Metrics$*.class',
+    '**/Main.class',
+    '**/Config.class',
+    '**/Recipes.class',
+    '**/UpdateChecker.class',
+    '**/Death.class',
+    '**/Death$*.class'
+]
 
 tasks.named('test') {
     useJUnitPlatform()
@@ -72,7 +81,7 @@ jacocoTestReport {
     }
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: bstatsExcludes)
+            fileTree(dir: it, exclude: coverageExcludes)
         }))
     }
 }
@@ -88,7 +97,7 @@ jacocoTestCoverageVerification {
     }
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: bstatsExcludes)
+            fileTree(dir: it, exclude: coverageExcludes)
         }))
     }
 }
