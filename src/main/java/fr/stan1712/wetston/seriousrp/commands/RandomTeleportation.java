@@ -11,6 +11,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Optional;
 import java.util.Random;
 
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
@@ -20,7 +21,7 @@ public class RandomTeleportation implements CommandExecutor {
 	private final Plugin pl;
 
 	private final int maxBlockRange;
-	private Random randomNum = new Random();
+	private final Random randomNum = new Random();
 
 	public RandomTeleportation(Main pl) {
 		this.pl = pl;
@@ -40,19 +41,9 @@ public class RandomTeleportation implements CommandExecutor {
 				player.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 50, 100));
 				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 50, 100));
 
-
-				Location rtpLocation = player.getLocation();
-
-				double distanceBetweenRandLocAndLoc = 0;
-				while (distanceBetweenRandLocAndLoc < (double) maxBlockRange / 3) {
-					RandomLocation randomLoc = getRandomLocation(player);
-
-					rtpLocation = new Location(player.getWorld(), randomLoc.randLocX(), randomLoc.randLocY(), randomLoc.randLocZ());
-
-					distanceBetweenRandLocAndLoc = rtpLocation.distance(player.getLocation());
-				}
-
-				player.teleport(rtpLocation);
+				getRandomLocation(player).ifPresent(randomLoc ->
+					player.teleport(new Location(player.getWorld(), randomLoc.randLocX(), randomLoc.randLocY(), randomLoc.randLocZ()))
+				);
 			}
 			else {
 				player.sendMessage(getShortPrefixString() + getConfigString("MicroModules.RTPDisabledWorld"));
@@ -65,18 +56,15 @@ public class RandomTeleportation implements CommandExecutor {
 		return true;
 	}
 
-	private RandomLocation getRandomLocation(Player player) {
-		int randLocX = player.getLocation().getBlockX() + randomNum.nextInt(maxBlockRange);
-		int randLocZ = player.getLocation().getBlockZ() + randomNum.nextInt(maxBlockRange);
+	private Optional<RandomLocation> getRandomLocation(Player player) {
+		int originX = player.getLocation().getBlockX();
+		int originZ = player.getLocation().getBlockZ();
 
-		if (randomNum.nextInt(maxBlockRange) % 2 == 0) {
-			randLocX = -randLocX;
-			randLocZ = -randLocZ;
-		}
-
-		int randLocY = player.getWorld().getHighestBlockYAt(randLocX, randLocZ) + 1;
-
-		return new RandomLocation(randLocX, randLocZ, randLocY);
+		return RtpLocationSampler.sample(originX, originZ, maxBlockRange, randomNum)
+			.map(horizontal -> {
+				int randLocY = player.getWorld().getHighestBlockYAt(horizontal.x(), horizontal.z()) + 1;
+				return new RandomLocation(horizontal.x(), horizontal.z(), randLocY);
+			});
 	}
 
 	private record RandomLocation(int randLocX, int randLocZ, int randLocY) {
