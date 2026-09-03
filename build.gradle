@@ -67,6 +67,7 @@ def coverageExcludes = [
 
 tasks.named('test') {
     useJUnitPlatform()
+    jvmArgs '-ea'
     finalizedBy jacocoTestReport
 }
 
