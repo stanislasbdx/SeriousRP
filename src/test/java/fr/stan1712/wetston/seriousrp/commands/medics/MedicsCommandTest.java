@@ -103,8 +103,10 @@ class MedicsCommandTest extends ConfigBackedTest {
 		when(target.getHealth()).thenReturn(20.0);
 		when(target.getFoodLevel()).thenReturn(4);
 		when(target.getActivePotionEffects()).thenReturn(List.of());
-		when(target.getWorld()).thenReturn(mock(World.class));
-		when(player.getWorld()).thenReturn(mock(World.class));
+		World targetWorld = mock(World.class);
+		World playerWorld = mock(World.class);
+		when(target.getWorld()).thenReturn(targetWorld);
+		when(player.getWorld()).thenReturn(playerWorld);
 
 		try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
 			bukkit.when(() -> Bukkit.getPlayer("stan")).thenReturn(target);
