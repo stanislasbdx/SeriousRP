@@ -10,18 +10,20 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import static fr.stan1712.wetston.seriousrp.Main.SPIGOT_PLUGIN_ID;
 
 public class Config implements Listener {
 	private static final String CONFIG_KEY_VERSION = "Version";
 	private static final String CONFIG_KEY_FIX = "ConfigFix";
+	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - Config");
+	private static final DateTimeFormatter UPGRADE_LOG_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 
 	private final Plugin plugin = JavaPlugin.getPlugin(Main.class);
-	final private static Logger _log = LoggerFactory.getLogger("SeriousRP - Config");
 
 	String version = this.plugin.getDescription().getVersion();
 	String fileVersion = this.plugin.getConfig().getString(CONFIG_KEY_VERSION);
@@ -34,27 +36,27 @@ public class Config implements Listener {
 			final String upgradeFilesDir = plugin.getDataFolder() + "/upgrades/";
 
 			final boolean upgradeDirCreated = new File(upgradeFilesDir).mkdirs();
-			if(upgradeDirCreated) _log.debug(logStep + new File(upgradeFilesDir).getPath() + " folder created");
+			if(upgradeDirCreated) _log.debug("{}{} folder created", logStep, new File(upgradeFilesDir).getPath());
 
 			File upgradeFile = new File(upgradeFilesDir, fileVersion + "_to_" + version + ".yml");
 
 			try {
 				if(!upgradeFile.exists()) {
 					final boolean upgradeFileCreated = upgradeFile.createNewFile();
-					if(upgradeFileCreated) _log.debug(upgradeFile.getPath() + ".yml file created");
+					if(upgradeFileCreated) _log.debug("{}.yml file created", upgradeFile.getPath());
 
 					FileConfiguration configReport = YamlConfiguration.loadConfiguration(upgradeFile);
 
 					final ArrayList<String> headerUpgradeStrings = new ArrayList<>();
-					headerUpgradeStrings.add("SeriousRP Upgrade Log [" + new SimpleDateFormat("yyyy/MM/dd HH:mm").format(Calendar.getInstance().getTime()) + "]");
-					headerUpgradeStrings.add("Upgrade from version " + fileVersion + " to " + version);
+					headerUpgradeStrings.add(String.format("SeriousRP Upgrade Log [%s]", UPGRADE_LOG_DATE_FORMAT.format(LocalDateTime.now(ZoneId.systemDefault()))));
+					headerUpgradeStrings.add(String.format("Upgrade from version %s to %s", fileVersion, version));
 					headerUpgradeStrings.add("All those informations can be used and sent to a developer in you have issues with upgrading your plugin");
 					configReport.options().setHeader(headerUpgradeStrings);
 
 					configReport.set("report.serverVersion", plugin.getServer().getVersion());
 
-					new UpdateChecker(this.plugin, SPIGOT_PLUGIN_ID).getVersion(version -> {
-						if(!plugin.getDescription().getVersion().equalsIgnoreCase(version)) configReport.set("report.versionDiffers", version);
+					new UpdateChecker(this.plugin, SPIGOT_PLUGIN_ID).getVersion(remoteVersion -> {
+						if(!plugin.getDescription().getVersion().equalsIgnoreCase(remoteVersion)) configReport.set("report.versionDiffers", remoteVersion);
 					});
 
 					configReport.set("options.configFix", plugin.getConfig().getBoolean(CONFIG_KEY_FIX));
@@ -73,16 +75,16 @@ public class Config implements Listener {
 
 					configReport.save(upgradeFile);
 
-					_log.debug(logStep + "Log created (upgrades/" + fileVersion + "_to_" + version + ".yml) !");
+					_log.debug("{}Log created (upgrades/{}_to_{}.yml) !", logStep, fileVersion, version);
 
 					plugin.getConfig().set(CONFIG_KEY_VERSION, version);
-					_log.info(logStep + "config.yml upgraded (" + fileVersion + " -> " + version + ") !");
+					_log.info("{}config.yml upgraded ({} -> {}) !", logStep, fileVersion, version);
 				}
 				else {
-					_log.warn(logStep + "Log " + fileVersion + "_to_" + version + ".yml already exists !");
+					_log.warn("{}Log {}_to_{}.yml already exists !", logStep, fileVersion, version);
 				}
 			} catch (IOException e) {
-				_log.error(logStep + "Unable to create the upgrade log !");
+				_log.error("{}Unable to create the upgrade log !", logStep);
 			}
 
 			plugin.getConfig().set(CONFIG_KEY_FIX, Boolean.TRUE);

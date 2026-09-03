@@ -5,17 +5,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
 
 public class HRPRevive implements CommandExecutor {
-	private final Plugin pl;
-
 	public HRPRevive(Main pl) {
-		this.pl = pl;
 		pl.getConfig();
 	}
 
