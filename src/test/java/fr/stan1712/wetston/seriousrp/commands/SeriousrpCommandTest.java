@@ -27,10 +27,6 @@ class SeriousrpCommandTest extends ConfigBackedTest {
 	@Mock CommandSender sender;
 	@Mock Player player;
 
-	private Seriousrp command() {
-		return new Seriousrp(plugin);
-	}
-
 	@Test
 	void deniesSendersWithoutInfoPermission() {
 		when(sender.hasPermission("seriousrp.info")).thenReturn(false);
