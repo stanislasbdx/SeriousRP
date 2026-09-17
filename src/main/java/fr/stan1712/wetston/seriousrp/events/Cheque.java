@@ -53,7 +53,7 @@ public class Cheque implements Listener {
 
 				double chequeValue = parsedCheque.getValue() * event.getPlayer().getInventory().getItemInMainHand().getAmount();
 
-				OfflinePlayer chequeIssuerPlayer = Bukkit.getPlayer(parsedCheque.getAuthorUUID());
+				OfflinePlayer chequeIssuerPlayer = Bukkit.getOfflinePlayer(parsedCheque.getAuthorUUID());
 
 				if (Main.economy.getBalance(chequeIssuerPlayer) < chequeValue) {
 					player.sendMessage(getShortPrefixString() + getConfigString("Economy.IssuerNotEnough"));
