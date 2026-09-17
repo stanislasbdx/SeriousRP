@@ -196,11 +196,13 @@ class EventEarlyExitTest extends ConfigBackedTest {
 			+ "\",\"authorDisplayName\":\"Bank\",\"value\":40.0,\"creationDate\":1700000000000}";
 		when(pdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(payload);
 
+		OfflinePlayer issuer = mock(OfflinePlayer.class);
 		Economy economy = mock(Economy.class);
 		Main.economy = economy;
-		when(economy.getBalance(org.mockito.ArgumentMatchers.nullable(OfflinePlayer.class))).thenReturn(10.0);
+		when(economy.getBalance(issuer)).thenReturn(10.0);
 
-		try (MockedStatic<Bukkit> ignored = mockStatic(Bukkit.class, invocation -> null)) {
+		try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class, invocation -> null)) {
+			bukkit.when(() -> Bukkit.getOfflinePlayer(issuerId)).thenReturn(issuer);
 			new Cheque(plugin).onPlayerUse(interactEvent);
 		}
 
@@ -226,19 +228,58 @@ class EventEarlyExitTest extends ConfigBackedTest {
 			+ "\",\"authorDisplayName\":\"Bank\",\"value\":15.0,\"creationDate\":1700000000000}";
 		when(pdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(payload);
 
+		OfflinePlayer issuer = mock(OfflinePlayer.class);
 		Economy economy = mock(Economy.class);
 		Main.economy = economy;
-		when(economy.getBalance(org.mockito.ArgumentMatchers.nullable(OfflinePlayer.class))).thenReturn(100.0);
+		when(economy.getBalance(issuer)).thenReturn(100.0);
 
-		try (MockedStatic<Bukkit> ignored = mockStatic(Bukkit.class, invocation -> null)) {
+		try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class, invocation -> null)) {
+			bukkit.when(() -> Bukkit.getOfflinePlayer(issuerId)).thenReturn(issuer);
 			new Cheque(plugin).onPlayerUse(interactEvent);
 		}
 
-		verify(economy).withdrawPlayer(org.mockito.ArgumentMatchers.nullable(OfflinePlayer.class), eq(15.0));
+		verify(economy).withdrawPlayer(issuer, 15.0);
 		verify(economy).depositPlayer(player, 15.0);
 		verify(inventory).remove(item);
 		verify(interactEvent).setCancelled(true);
 		verify(player).sendMessage(org.mockito.ArgumentMatchers.contains("Bank"));
+		Main.economy = null;
+	}
+
+	@Test
+	void chequeClaimsWhenIssuerIsOffline() {
+		when(plugin.getName()).thenReturn("SeriousRP");
+		when(interactEvent.getPlayer()).thenReturn(player);
+		when(interactEvent.getAction()).thenReturn(Action.RIGHT_CLICK_AIR);
+		when(player.getInventory()).thenReturn(inventory);
+		when(inventory.getItemInMainHand()).thenReturn(item);
+		when(item.getType()).thenReturn(Material.PAPER);
+		when(item.getItemMeta()).thenReturn(meta);
+		when(item.getAmount()).thenReturn(1);
+		when(meta.getPersistentDataContainer()).thenReturn(pdc);
+
+		UUID issuerId = UUID.fromString("33333333-3333-3333-3333-333333333333");
+		String payload = "{\"author\":\"bank\",\"authorUUID\":\"" + issuerId
+			+ "\",\"authorDisplayName\":\"Bank\",\"value\":25.0,\"creationDate\":1700000000000}";
+		when(pdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(payload);
+
+		OfflinePlayer issuer = mock(OfflinePlayer.class);
+		Economy economy = mock(Economy.class);
+		Main.economy = economy;
+		when(economy.getBalance(issuer)).thenReturn(25.0);
+
+		try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class, invocation -> null)) {
+			bukkit.when(() -> Bukkit.getPlayer(issuerId)).thenReturn(null);
+			bukkit.when(() -> Bukkit.getOfflinePlayer(issuerId)).thenReturn(issuer);
+			new Cheque(plugin).onPlayerUse(interactEvent);
+			bukkit.verify(() -> Bukkit.getOfflinePlayer(issuerId));
+			bukkit.verify(() -> Bukkit.getPlayer(any(UUID.class)), never());
+		}
+
+		verify(economy).withdrawPlayer(issuer, 25.0);
+		verify(economy).depositPlayer(player, 25.0);
+		verify(inventory).remove(item);
+		verify(interactEvent).setCancelled(true);
 		Main.economy = null;
 	}
 
