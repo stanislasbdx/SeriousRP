@@ -65,9 +65,96 @@ Medics:
       Distance: "you are %blocks% blocks away"
 
 Economy:
-  Currency: "$"
+  Currency: "€"
   NotEnough: "&cYou don't have enough money !"
   IssuerNotEnough: "&cThe issuer doesn't have enough money !"
+  Cash:
+    Enabled: true
+    Wallet:
+      DefaultSlots: 18
+      Material: LEATHER
+      DisplayName: "&6Portefeuille"
+      LoreTotal: "&7Contenu : &e%amount%%currency%"
+      Recipe:
+        Shape:
+          - " L "
+          - "LPL"
+          - " L "
+        Ingredients:
+          L: LEATHER
+          P: PAPER
+    Atm:
+      SignHeader: "[sATM]"
+      ViewRadius: 5
+      Presets:
+        - 10
+        - 25
+        - 50
+        - 100
+    Denominations:
+      - value: 1
+        material: GOLD_NUGGET
+        name: "&ePièce de 1€"
+      - value: 2
+        material: GOLD_INGOT
+        name: "&ePièce de 2€"
+      - value: 5
+        material: PAPER
+        custom-model-data: 5
+        name: "&aBillet de 5€"
+      - value: 10
+        material: PAPER
+        custom-model-data: 10
+        name: "&aBillet de 10€"
+      - value: 20
+        material: PAPER
+        custom-model-data: 20
+        name: "&aBillet de 20€"
+      - value: 50
+        material: PAPER
+        custom-model-data: 50
+        name: "&aBillet de 50€"
+      - value: 100
+        material: PAPER
+        custom-model-data: 100
+        name: "&aBillet de 100€"
+      - value: 200
+        material: PAPER
+        custom-model-data: 200
+        name: "&aBillet de 200€"
+      - value: 500
+        material: PAPER
+        custom-model-data: 500
+        name: "&aBillet de 500€"
+    Transform:
+      Usage: "Usage : /cash transform <player> <amount> OR /cash transform <player> <denomination> <quantity>"
+      UnknownPlayer: "&c%target% is not online"
+      UnknownDenomination: "&cUnknown denomination"
+      NotEnough: "&c%target% doesn't have enough money on their account"
+      InventoryFull: "&c%target%'s inventory is full"
+      Done: "&aTransformed %amount%%currency% from %target%'s account into cash"
+    AtmGui:
+      Title: "&2ATM"
+      Account: "&aAccount : &f%amount%%currency%"
+      Pocket: "&eCash on you : &f%amount%%currency%"
+      Deposit: "&aDeposit %amount%%currency%"
+      DepositAll: "&aDeposit everything (%amount%%currency%)"
+      Withdraw: "&cWithdraw %amount%%currency%"
+      WithdrawAll: "&cWithdraw everything (%amount%%currency%)"
+      CustomAmount: "&6Custom amount"
+      Prompt: "&eType the amount in chat, or 'cancel'"
+      PromptCancelled: "&cCancelled"
+      InvalidAmount: "&cInvalid amount"
+      NotEnoughCash: "&cYou don't have enough cash on you"
+      NotEnoughAccount: "&cYou don't have enough money on your account"
+      Deposited: "&aDeposited %amount%%currency%"
+      Withdrawn: "&aWithdrawn %amount%%currency%"
+      Created: "&aATM created"
+      DeniedCreate: "&cYou can't create an ATM"
+      DeniedBreak: "&cYou can't break this ATM"
+    Wallet:
+      OpenDenied: "&cHold the wallet in your main hand"
+      NotCash: "&cOnly cash can go in a wallet"
   Cheque:
     Usage: "To create a cheque : /cheque <value : only positive integers>"
     Created: "A %amount%€ cheque has been created"
