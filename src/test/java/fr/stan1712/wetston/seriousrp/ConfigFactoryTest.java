@@ -52,7 +52,7 @@ class ConfigFactoryTest extends ConfigBackedTest {
 			new InputStreamReader(stream, StandardCharsets.UTF_8)
 		);
 		assertEquals(18, loaded.getInt("Economy.Cash.Wallet.DefaultSlots"));
-		assertEquals("LEATHER", loaded.getString("Economy.Cash.Wallet.Material"));
+		assertEquals("BOOK", loaded.getString("Economy.Cash.Wallet.Material"));
 		assertEquals("&7Contenu : &e%amount%%currency%", loaded.getString("Economy.Cash.Wallet.LoreTotal"));
 		assertTrue(loaded.contains("Economy.Cash.Wallet.Recipe.Shape"));
 	}

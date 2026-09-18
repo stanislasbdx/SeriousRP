@@ -73,7 +73,7 @@ Economy:
     Enabled: true
     Wallet:
       DefaultSlots: 18
-      Material: LEATHER
+      Material: BOOK
       DisplayName: "&6Portefeuille"
       LoreTotal: "&7Contenu : &e%amount%%currency%"
       Recipe:
@@ -99,37 +99,37 @@ Economy:
         - 100
     Denominations:
       - value: 1
-        material: GOLD_NUGGET
+        material: IRON_NUGGET
         name: "&ePièce de 1€"
       - value: 2
-        material: GOLD_INGOT
+        material: GOLD_NUGGET
         name: "&ePièce de 2€"
       - value: 5
-        material: PAPER
+        material: RESIN_BRICK
         custom-model-data: 5
         name: "&aBillet de 5€"
       - value: 10
-        material: PAPER
+        material: RESIN_BRICK
         custom-model-data: 10
         name: "&aBillet de 10€"
       - value: 20
-        material: PAPER
+        material: RESIN_BRICK
         custom-model-data: 20
         name: "&aBillet de 20€"
       - value: 50
-        material: PAPER
+        material: RESIN_BRICK
         custom-model-data: 50
         name: "&aBillet de 50€"
       - value: 100
-        material: PAPER
+        material: RESIN_BRICK
         custom-model-data: 100
         name: "&aBillet de 100€"
       - value: 200
-        material: PAPER
+        material: RESIN_BRICK
         custom-model-data: 200
         name: "&aBillet de 200€"
       - value: 500
-        material: PAPER
+        material: RESIN_BRICK
         custom-model-data: 500
         name: "&aBillet de 500€"
     Transform:

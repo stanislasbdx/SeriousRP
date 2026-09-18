@@ -53,6 +53,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
@@ -123,6 +124,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		listener = new AtmListener(plugin, cash, walletItems, bank, Runnable::run, (h, s, t) -> gui);
 		when(block.getState()).thenReturn(sign);
 		when(sign.getPersistentDataContainer()).thenReturn(signPdc);
+		when(gui.getSize()).thenReturn(AtmListener.GUI_SIZE);
 	}
 
 	@Test
@@ -140,7 +142,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		when(allowed.getBlock()).thenReturn(block);
 		when(player.hasPermission(Atm.CREATE_PERM)).thenReturn(true);
 		listener.onSignChange(allowed);
-		verify(allowed).setLine(0, "[sATM]");
+		verify(allowed).setLine(0, "§2§l[sATM]");
 		verify(signPdc).set(any(NamespacedKey.class), eq(PersistentDataType.STRING), eq(playerId.toString()));
 		verify(sign).update();
 		assertEquals(100, account.get());
@@ -181,7 +183,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		when(paid.getPlayer()).thenReturn(player);
 		when(paid.getBlock()).thenReturn(block);
 		priced.onSignChange(paid);
-		verify(paid).setLine(0, "[sATM]");
+		verify(paid).setLine(0, "§2§l[sATM]");
 		verify(player).sendMessage(contains("created for 150"));
 		assertEquals(50, account.get());
 	}
@@ -258,10 +260,14 @@ class AtmListenerTest extends ConfigBackedTest {
 		when(cashPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(10);
 		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[] {cashItem, null});
 		when(buttonPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(10);
+		when(player.getOpenInventory()).thenReturn(view);
+		when(gui.getSize()).thenReturn(AtmListener.GUI_SIZE);
 		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
 			listener.onClick(deposit);
 		}
 		assertEquals(110, account.get());
+		verify(gui, atLeastOnce()).setItem(eq(AtmListener.ACCOUNT_SLOT), any());
+		verify(gui, atLeastOnce()).setItem(eq(AtmListener.POCKET_SLOT), any());
 
 		when(buttonPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn("WITHDRAW");
 		InventoryClickEvent withdraw = mock(InventoryClickEvent.class);
@@ -273,6 +279,12 @@ class AtmListenerTest extends ConfigBackedTest {
 			listener.onClick(withdraw);
 		}
 		assertEquals(100, account.get());
+
+		when(gui.getHolder()).thenReturn(null);
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			listener.runOperation(player, Atm.Operation.WITHDRAW, 10, false);
+		}
+		when(gui.getHolder()).thenReturn(new AtmListener.Holder(location));
 
 		when(buttonPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn("DEPOSIT");
 		when(buttonPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(1);
@@ -709,6 +721,21 @@ class AtmListenerTest extends ConfigBackedTest {
 		})) {
 			assertThrows(AssertionError.class, () -> listener.onInteract(event));
 		}
+
+		java.util.concurrent.atomic.AtomicInteger buttons = new java.util.concurrent.atomic.AtomicInteger();
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, (item, context) -> {
+			if (buttons.getAndIncrement() < 4) {
+				ItemMeta meta = mock(ItemMeta.class);
+				PersistentDataContainer pdc = mock(PersistentDataContainer.class);
+				when(item.getItemMeta()).thenReturn(meta);
+				when(meta.getPersistentDataContainer()).thenReturn(pdc);
+			}
+			else {
+				when(item.getItemMeta()).thenReturn(null);
+			}
+		})) {
+			assertThrows(AssertionError.class, () -> listener.onInteract(event));
+		}
 	}
 
 	@Test
@@ -746,7 +773,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		ItemStack wallet = mock(ItemStack.class);
 		ItemMeta meta = mock(ItemMeta.class);
 		PersistentDataContainer pdc = mock(PersistentDataContainer.class);
-		when(wallet.getType()).thenReturn(Material.LEATHER);
+		when(wallet.getType()).thenReturn(Material.BOOK);
 		when(wallet.getItemMeta()).thenReturn(meta);
 		when(meta.getPersistentDataContainer()).thenReturn(pdc);
 		Wallet.Payload payload = new Wallet.Payload("w-atm", 9, List.of(new Cash.Stack(denomination, amount)));

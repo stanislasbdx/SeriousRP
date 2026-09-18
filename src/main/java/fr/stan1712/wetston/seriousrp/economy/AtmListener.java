@@ -20,6 +20,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -43,6 +44,11 @@ public final class AtmListener implements Listener {
 	static final String AMOUNT_KEY = "srp-atm-amount";
 	static final String ALL_KEY = "srp-atm-all";
 	static final String CUSTOM_KEY = "srp-atm-custom";
+	static final int GUI_SIZE = 36;
+	static final int ACCOUNT_SLOT = 3;
+	static final int POCKET_SLOT = 5;
+	static final int DEPOSIT_START = 10;
+	static final int WITHDRAW_START = 19;
 
 	interface Bank {
 		double balance(Player player);
@@ -146,8 +152,8 @@ public final class AtmListener implements Listener {
 				getConfigString("Economy.Cash.AtmGui.CreateNotEnough"), cost));
 			return;
 		}
-		event.setLine(0, cash.atmHeader());
 		String[] generic = Atm.genericLines(cash);
+		event.setLine(0, generic[0]);
 		event.setLine(1, generic[1]);
 		event.setLine(2, generic[2]);
 		event.setLine(3, generic[3]);
@@ -307,6 +313,7 @@ public final class AtmListener implements Listener {
 				? "Economy.Cash.AtmGui.Deposited"
 				: "Economy.Cash.AtmGui.Withdrawn";
 			player.sendMessage(getShortPrefixString() + cash.applyAmount(getConfigString(key), amount.getAsInt()));
+			refreshOpenGui(player);
 		}
 		else {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.InventoryFull"));
@@ -342,32 +349,76 @@ public final class AtmListener implements Listener {
 
 	private void openGui(Player player, Location location) {
 		Holder holder = new Holder(location);
-		Inventory inventory = inventories.create(holder, 27, getConfigString("Economy.Cash.AtmGui.Title"));
+		Inventory inventory = inventories.create(holder, GUI_SIZE, getConfigString("Economy.Cash.AtmGui.Title"));
+		fillGui(inventory, player);
+		player.openInventory(inventory);
+	}
+
+	private void refreshOpenGui(Player player) {
+		InventoryView view = player.getOpenInventory();
+		if (view == null) {
+			return;
+		}
+		Inventory top = view.getTopInventory();
+		if (top.getHolder() instanceof Holder) {
+			fillGui(top, player);
+		}
+	}
+
+	private void fillGui(Inventory inventory, Player player) {
 		int account = (int) Math.floor(bank.balance(player));
 		int pocket = pocketTotal(player);
-		inventory.setItem(0, infoItem(Material.GOLD_INGOT, cash.applyAmount(
+		fillFrame(inventory);
+		inventory.setItem(ACCOUNT_SLOT, infoItem(Material.GOLD_INGOT, cash.applyAmount(
 			getConfigString("Economy.Cash.AtmGui.Account"), account)));
-		inventory.setItem(1, infoItem(Material.SUNFLOWER, cash.applyAmount(
+		inventory.setItem(POCKET_SLOT, infoItem(Material.SUNFLOWER, cash.applyAmount(
 			getConfigString("Economy.Cash.AtmGui.Pocket"), pocket)));
-		int slot = 9;
-		for (int preset : cash.atmPresets()) {
-			inventory.setItem(slot++, button(Atm.Operation.DEPOSIT, preset, false, false,
-				cash.applyAmount(getConfigString("Economy.Cash.AtmGui.Deposit"), preset)));
+		placeActionRow(inventory, DEPOSIT_START, Atm.Operation.DEPOSIT, Material.EMERALD,
+			getConfigString("Economy.Cash.AtmGui.Deposit"),
+			cash.applyAmount(getConfigString("Economy.Cash.AtmGui.DepositAll"), pocket));
+		placeActionRow(inventory, WITHDRAW_START, Atm.Operation.WITHDRAW, Material.REDSTONE,
+			getConfigString("Economy.Cash.AtmGui.Withdraw"),
+			cash.applyAmount(getConfigString("Economy.Cash.AtmGui.WithdrawAll"), account));
+	}
+
+	private void fillFrame(Inventory inventory) {
+		ItemStack edge = pane(Material.BLACK_STAINED_GLASS_PANE);
+		ItemStack inner = pane(Material.GRAY_STAINED_GLASS_PANE);
+		int lastRow = inventory.getSize() / 9 - 1;
+		for (int slot = 0; slot < inventory.getSize(); slot++) {
+			int column = slot % 9;
+			int row = slot / 9;
+			boolean border = row == 0 || row == lastRow || column == 0 || column == 8;
+			inventory.setItem(slot, border ? edge : inner);
 		}
-		inventory.setItem(slot++, button(Atm.Operation.DEPOSIT, null, true, false,
-			cash.applyAmount(getConfigString("Economy.Cash.AtmGui.DepositAll"), pocket)));
-		inventory.setItem(slot, button(Atm.Operation.DEPOSIT, null, false, true,
-			getConfigString("Economy.Cash.AtmGui.CustomAmount")));
-		slot = 18;
+	}
+
+	private void placeActionRow(
+		Inventory inventory,
+		int start,
+		Atm.Operation operation,
+		Material material,
+		String presetTemplate,
+		String allName
+	) {
+		int slot = start;
 		for (int preset : cash.atmPresets()) {
-			inventory.setItem(slot++, button(Atm.Operation.WITHDRAW, preset, false, false,
-				cash.applyAmount(getConfigString("Economy.Cash.AtmGui.Withdraw"), preset)));
+			inventory.setItem(slot++, button(material, operation, preset, false, false,
+				cash.applyAmount(presetTemplate, preset)));
 		}
-		inventory.setItem(slot++, button(Atm.Operation.WITHDRAW, null, true, false,
-			cash.applyAmount(getConfigString("Economy.Cash.AtmGui.WithdrawAll"), account)));
-		inventory.setItem(slot, button(Atm.Operation.WITHDRAW, null, false, true,
+		inventory.setItem(slot++, button(Material.SUNFLOWER, operation, null, true, false, allName));
+		inventory.setItem(slot, button(Material.NAME_TAG, operation, null, false, true,
 			getConfigString("Economy.Cash.AtmGui.CustomAmount")));
-		player.openInventory(inventory);
+	}
+
+	private ItemStack pane(Material material) {
+		ItemStack item = new ItemStack(material);
+		ItemMeta meta = item.getItemMeta();
+		assert meta != null;
+		meta.setDisplayName(" ");
+		meta.setHideTooltip(true);
+		item.setItemMeta(meta);
+		return item;
 	}
 
 	private ItemStack infoItem(Material material, String name) {
@@ -375,15 +426,24 @@ public final class AtmListener implements Listener {
 		ItemMeta meta = item.getItemMeta();
 		assert meta != null;
 		meta.setDisplayName(name);
+		Cash.applyGlow(meta);
 		item.setItemMeta(meta);
 		return item;
 	}
 
-	private ItemStack button(Atm.Operation operation, Integer amount, boolean all, boolean custom, String name) {
-		ItemStack item = new ItemStack(Material.PAPER);
+	private ItemStack button(
+		Material material,
+		Atm.Operation operation,
+		Integer amount,
+		boolean all,
+		boolean custom,
+		String name
+	) {
+		ItemStack item = new ItemStack(material);
 		ItemMeta meta = item.getItemMeta();
 		assert meta != null;
 		meta.setDisplayName(name);
+		Cash.applyGlow(meta);
 		meta.getPersistentDataContainer().set(opKey, PersistentDataType.STRING, operation.name());
 		if (amount != null) {
 			meta.getPersistentDataContainer().set(amountKey, PersistentDataType.INTEGER, amount);

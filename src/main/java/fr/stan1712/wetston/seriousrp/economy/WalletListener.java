@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -98,13 +99,16 @@ public final class WalletListener implements Listener {
 		return cash.walletSlots();
 	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		if (!cash.isEnabled()) {
 			return;
 		}
 		Action action = event.getAction();
 		if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) {
+			return;
+		}
+		if (event.getHand() != null && event.getHand() != EquipmentSlot.HAND) {
 			return;
 		}
 		Player player = event.getPlayer();
@@ -271,6 +275,7 @@ public final class WalletListener implements Listener {
 		assert meta != null;
 		meta.setDisplayName(cash.walletDisplayName());
 		meta.setLore(Wallet.lore(payload, cash));
+		Cash.applyGlow(meta);
 		Wallet.write(meta.getPersistentDataContainer(), walletKey, payload);
 		item.setItemMeta(meta);
 		return item;
@@ -285,6 +290,7 @@ public final class WalletListener implements Listener {
 		if (denomination.customModelData() != null) {
 			meta.setCustomModelData(denomination.customModelData());
 		}
+		Cash.applyGlow(meta);
 		Cash.writeDenomination(meta.getPersistentDataContainer(), cashKey, stack.denomination());
 		item.setItemMeta(meta);
 		return item;

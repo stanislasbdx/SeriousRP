@@ -46,15 +46,20 @@ public final class Atm {
 	}
 
 	public static String[] genericLines(Cash cash) {
-		return new String[] {cash.atmHeader(), "", "Right click", ""};
+		return new String[] {
+			Cash.colorize("&2&l[sATM]"),
+			Cash.colorize("&8&m              "),
+			Cash.colorize("&aBanque &8· &ecash"),
+			Cash.colorize("&8» &7Clic droit")
+		};
 	}
 
 	public static String[] nearbyLines(Cash cash, int account, int pocket) {
 		return new String[] {
-			cash.atmHeader(),
-			trimLine("Compte: " + account + cash.currency()),
-			trimLine("Cash: " + pocket + cash.currency()),
-			"Clic droit"
+			Cash.colorize("&2&l[sATM]"),
+			trimLine(Cash.colorize("&aCompte &f" + account + cash.currency())),
+			trimLine(Cash.colorize("&eCash &f" + pocket + cash.currency())),
+			Cash.colorize("&8» &7Clic droit")
 		};
 	}
 
@@ -88,9 +93,9 @@ public final class Atm {
 	}
 
 	static String trimLine(String line) {
-		if (line.length() <= 16) {
+		if (line.length() <= 40) {
 			return line;
 		}
-		return line.substring(0, 16);
+		return line.substring(0, 40);
 	}
 }

@@ -138,6 +138,6 @@ class WalletTest {
 
 	@Test
 	void unusedWalletMaterialConstantStillLoads() {
-		assertEquals(Material.LEATHER, euroCash().walletMaterial());
+		assertEquals(Material.BOOK, euroCash().walletMaterial());
 	}
 }

@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -129,7 +130,20 @@ class WalletListenerTest extends ConfigBackedTest {
 		verify(event, never()).getPlayer();
 
 		when(event.getAction()).thenReturn(Action.RIGHT_CLICK_AIR);
+		when(event.getHand()).thenReturn(EquipmentSlot.HAND);
 		when(event.getPlayer()).thenReturn(player);
+		when(playerInventory.getItemInMainHand()).thenReturn(null);
+		listener.onInteract(event);
+		verify(event, never()).setCancelled(true);
+
+		when(event.getHand()).thenReturn(EquipmentSlot.OFF_HAND);
+		when(playerInventory.getItemInMainHand()).thenReturn(walletStack);
+		stubWalletItem();
+		listener.onInteract(event);
+		verify(event, never()).setCancelled(true);
+
+		when(event.getAction()).thenReturn(Action.RIGHT_CLICK_BLOCK);
+		when(event.getHand()).thenReturn(null);
 		when(playerInventory.getItemInMainHand()).thenReturn(null);
 		listener.onInteract(event);
 		verify(event, never()).setCancelled(true);
@@ -142,7 +156,9 @@ class WalletListenerTest extends ConfigBackedTest {
 		when(playerInventory.getHeldItemSlot()).thenReturn(2);
 		when(topInventory.getSize()).thenReturn(9);
 		PlayerInteractEvent event = mock(PlayerInteractEvent.class);
-		when(event.getAction()).thenReturn(Action.RIGHT_CLICK_BLOCK);
+		when(event.getAction()).thenReturn(Action.RIGHT_CLICK_AIR);
+		when(event.getHand()).thenReturn(EquipmentSlot.HAND);
+		when(event.isCancelled()).thenReturn(true);
 		when(event.getPlayer()).thenReturn(player);
 
 		listener.onInteract(event);
@@ -402,6 +418,7 @@ class WalletListenerTest extends ConfigBackedTest {
 			listener.createCashItem(new Cash.Stack(1, 1));
 		}
 		verify(meta).setCustomModelData(20);
+		verify(meta, times(2)).setEnchantmentGlintOverride(true);
 		verify(meta, never()).setCustomModelData(1);
 		assertThrows(java.util.NoSuchElementException.class, () -> listener.createCashItem(new Cash.Stack(50, 1)));
 	}
@@ -410,7 +427,7 @@ class WalletListenerTest extends ConfigBackedTest {
 	void readHelpersRejectWrongItems() {
 		when(walletStack.getType()).thenReturn(Material.STONE);
 		assertTrue(listener.readWalletItem(walletStack).isEmpty());
-		when(walletStack.getType()).thenReturn(Material.LEATHER);
+		when(walletStack.getType()).thenReturn(cash.walletMaterial());
 		when(walletStack.getItemMeta()).thenReturn(null);
 		assertTrue(listener.readWalletItem(walletStack).isEmpty());
 		assertTrue(listener.readCashItem(null).isEmpty());
@@ -652,7 +669,7 @@ class WalletListenerTest extends ConfigBackedTest {
 		ItemStack otherWallet = mock(ItemStack.class);
 		ItemMeta otherMeta = mock(ItemMeta.class);
 		PersistentDataContainer otherPdc = mock(PersistentDataContainer.class);
-		when(otherWallet.getType()).thenReturn(Material.LEATHER);
+		when(otherWallet.getType()).thenReturn(cash.walletMaterial());
 		when(otherWallet.getItemMeta()).thenReturn(otherMeta);
 		when(otherMeta.getPersistentDataContainer()).thenReturn(otherPdc);
 		when(otherPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING)))
@@ -710,7 +727,7 @@ class WalletListenerTest extends ConfigBackedTest {
 	}
 
 	private void stubWalletItem() {
-		when(walletStack.getType()).thenReturn(Material.LEATHER);
+		when(walletStack.getType()).thenReturn(cash.walletMaterial());
 		when(walletStack.getItemMeta()).thenReturn(walletMeta);
 		when(walletMeta.getPersistentDataContainer()).thenReturn(walletPdc);
 		when(walletPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(Wallet.toJson(payload));

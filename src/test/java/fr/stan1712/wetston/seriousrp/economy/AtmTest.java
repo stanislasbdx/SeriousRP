@@ -38,11 +38,16 @@ class AtmTest {
 	@Test
 	void signLinesAndAmountResolution() {
 		Cash cash = Cash.fromConfig(new YamlConfiguration());
-		assertArrayEquals(new String[] {"[sATM]", "", "Right click", ""}, Atm.genericLines(cash));
-		assertEquals("[sATM]", Atm.nearbyLines(cash, 12, 4)[0]);
+		assertArrayEquals(new String[] {
+			"§2§l[sATM]",
+			"§8§m              ",
+			"§aBanque §8· §ecash",
+			"§8» §7Clic droit"
+		}, Atm.genericLines(cash));
+		assertEquals("§2§l[sATM]", Atm.nearbyLines(cash, 12, 4)[0]);
 		assertTrue(Atm.nearbyLines(cash, 12, 4)[1].contains("12"));
 		assertTrue(Atm.nearbyLines(cash, 12, 4)[2].contains("4"));
-		assertEquals(16, Atm.trimLine("abcdefghijklmnopqr").length());
+		assertEquals(40, Atm.trimLine("abcdefghijklmnopqrstuvwxyz0123456789XXXXX").length());
 		assertEquals("short", Atm.trimLine("short"));
 
 		assertEquals(10, Atm.resolveAmount(Atm.Operation.DEPOSIT, 10, false, 40, 5).orElse(0));

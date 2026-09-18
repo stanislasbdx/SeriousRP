@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -104,7 +105,7 @@ public final class Cash {
 		denoms.sort(Comparator.comparingInt(Denomination::value).reversed());
 
 		int slots = config.getInt("Economy.Cash.Wallet.DefaultSlots", 18);
-		Material walletMaterial = materialOr(config.getString("Economy.Cash.Wallet.Material"), Material.LEATHER);
+		Material walletMaterial = materialOr(config.getString("Economy.Cash.Wallet.Material"), Material.BOOK);
 		String walletName = colorize(nullable(config.getString("Economy.Cash.Wallet.DisplayName"), "&6Portefeuille"));
 		String walletLore = colorize(nullable(
 			config.getString("Economy.Cash.Wallet.LoreTotal"),
@@ -134,6 +135,10 @@ public final class Cash {
 			new WalletSettings(slots, walletMaterial, walletName, walletLore, shape, ingredients),
 			new AtmSettings(header, radius, presets, createCost)
 		);
+	}
+
+	public static void applyGlow(ItemMeta meta) {
+		meta.setEnchantmentGlintOverride(true);
 	}
 
 	public static OptionalInt readDenomination(PersistentDataContainer container, NamespacedKey key) {
@@ -278,16 +283,23 @@ public final class Cash {
 	private static List<Denomination> defaultDenominations(String currency) {
 		List<Denomination> defaults = new ArrayList<>();
 		for (int value : DEFAULT_VALUES) {
-			Material material = value <= 2 ? Material.GOLD_NUGGET : Material.PAPER;
-			if (value == 2) {
-				material = Material.GOLD_INGOT;
-			}
+			Material material = defaultMaterial(value);
 			String name = colorize("&e" + value + currency);
 			Integer model = value >= 5 ? value : null;
 			defaults.add(new Denomination(value, material, name, model));
 		}
 		defaults.sort(Comparator.comparingInt(Denomination::value).reversed());
 		return defaults;
+	}
+
+	private static Material defaultMaterial(int value) {
+		if (value == 1) {
+			return Material.IRON_NUGGET;
+		}
+		if (value == 2) {
+			return Material.GOLD_NUGGET;
+		}
+		return Material.RESIN_BRICK;
 	}
 
 	private static Map<Character, Material> parseIngredients(ConfigurationSection section) {
