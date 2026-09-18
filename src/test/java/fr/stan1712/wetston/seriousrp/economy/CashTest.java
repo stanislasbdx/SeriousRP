@@ -36,6 +36,7 @@ class CashTest {
 		config.set("Economy.Cash.Wallet.Recipe.Ingredients.Z", "NOT_A_MATERIAL");
 		config.set("Economy.Cash.Atm.SignHeader", "[sATM]");
 		config.set("Economy.Cash.Atm.ViewRadius", 8);
+		config.set("Economy.Cash.Atm.CreateCost", 80);
 		config.set("Economy.Cash.Atm.Presets", java.util.Arrays.asList(10, null, 25, 10, -5, 0));
 		config.set("Economy.Cash.Denominations", List.of(
 			Map.of("value", 20, "material", "PAPER", "name", "&a20", "custom-model-data", 20),
@@ -63,6 +64,7 @@ class CashTest {
 		assertEquals(Material.PAPER, cash.denomination(20).orElseThrow().material());
 		assertEquals(20, cash.denomination(20).orElseThrow().customModelData());
 		assertEquals(8, cash.viewRadius());
+		assertEquals(80, cash.atmCreateCost());
 		assertEquals(List.of(10, 25), cash.atmPresets());
 		assertEquals("[sATM]", cash.atmHeader());
 		assertTrue(cash.isAtmHeader("§a[sATM]"));
@@ -96,6 +98,7 @@ class CashTest {
 		assertEquals(Material.LEATHER, cash.walletMaterial());
 		assertEquals("§6Portefeuille", cash.walletDisplayName());
 		assertEquals(1, cash.viewRadius());
+		assertEquals(150, cash.atmCreateCost());
 		assertEquals(List.of(10, 25, 50, 100), cash.atmPresets());
 		assertEquals(List.of(500, 200, 100, 50, 20, 10, 5, 2, 1), cash.descendingValues());
 		assertFalse(cash.walletLoreTotal().isBlank());
@@ -124,6 +127,15 @@ class CashTest {
 		assertTrue(Cash.parsePositiveInt("-2").isEmpty());
 		assertTrue(Cash.parsePositiveInt("no").isEmpty());
 		assertEquals(4, Cash.parsePositiveInt("4").orElse(0));
+	}
+
+	@Test
+	void atmCreateCostClampsNegativeValuesToZero() {
+		YamlConfiguration config = new YamlConfiguration();
+		config.set("Economy.Cash.Atm.CreateCost", -20);
+		assertEquals(0, Cash.fromConfig(config).atmCreateCost());
+		config.set("Economy.Cash.Atm.CreateCost", 0);
+		assertEquals(0, Cash.fromConfig(config).atmCreateCost());
 	}
 
 	@Test

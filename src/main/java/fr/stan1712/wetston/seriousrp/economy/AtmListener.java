@@ -139,6 +139,13 @@ public final class AtmListener implements Listener {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.DeniedCreate"));
 			return;
 		}
+		int cost = cash.atmCreateCost();
+		if (cost > 0 && !bank.withdraw(player, cost)) {
+			event.setCancelled(true);
+			player.sendMessage(getShortPrefixString() + cash.applyAmount(
+				getConfigString("Economy.Cash.AtmGui.CreateNotEnough"), cost));
+			return;
+		}
 		event.setLine(0, cash.atmHeader());
 		String[] generic = Atm.genericLines(cash);
 		event.setLine(1, generic[1]);
@@ -146,7 +153,10 @@ public final class AtmListener implements Listener {
 		event.setLine(3, generic[3]);
 		UUID owner = player.getUniqueId();
 		mainThread.run(() -> stampOwner(event.getBlock(), owner));
-		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.Created"));
+		String created = cost > 0
+			? cash.applyAmount(getConfigString("Economy.Cash.AtmGui.CreatedPaid"), cost)
+			: getConfigString("Economy.Cash.AtmGui.Created");
+		player.sendMessage(getShortPrefixString() + created);
 	}
 
 	@EventHandler(ignoreCancelled = true)

@@ -91,6 +91,7 @@ Economy:
     Atm:
       SignHeader: "[sATM]"
       ViewRadius: 5
+      CreateCost: 150
       Presets:
         - 10
         - 25
@@ -155,6 +156,8 @@ Economy:
       Deposited: "&aDeposited %amount%%currency%"
       Withdrawn: "&aWithdrawn %amount%%currency%"
       Created: "&aATM created"
+      CreatedPaid: "&aATM created for %amount%%currency%"
+      CreateNotEnough: "&cYou need %amount%%currency% on your account to create an ATM"
       DeniedCreate: "&cYou can't create an ATM"
       DeniedBreak: "&cYou can't break this ATM"
   Cheque:

@@ -23,6 +23,7 @@ public final class Cash {
 	public static final int MAX_STACK_SIZE = 64;
 	private static final int[] DEFAULT_VALUES = {1, 2, 5, 10, 20, 50, 100, 200, 500};
 	private static final List<Integer> DEFAULT_PRESETS = List.of(10, 25, 50, 100);
+	private static final int DEFAULT_CREATE_COST = 150;
 	private static final List<String> DEFAULT_RECIPE_SHAPE = List.of(" L ", "LPL", " L ");
 	private static final Pattern COLOR_CODE = Pattern.compile("§[0-9a-fk-orxA-FK-ORX]");
 
@@ -56,10 +57,11 @@ public final class Cash {
 		}
 	}
 
-	public record AtmSettings(String header, int viewRadius, List<Integer> presets) {
+	public record AtmSettings(String header, int viewRadius, List<Integer> presets, int createCost) {
 		public AtmSettings {
 			viewRadius = Math.max(1, viewRadius);
 			presets = List.copyOf(presets);
+			createCost = Math.max(0, createCost);
 		}
 	}
 
@@ -122,6 +124,7 @@ public final class Cash {
 
 		String header = nullable(config.getString("Economy.Cash.Atm.SignHeader"), "[sATM]");
 		int radius = config.getInt("Economy.Cash.Atm.ViewRadius", 5);
+		int createCost = config.getInt("Economy.Cash.Atm.CreateCost", DEFAULT_CREATE_COST);
 		List<Integer> presets = parsePresets(config.getIntegerList("Economy.Cash.Atm.Presets"));
 
 		return new Cash(
@@ -129,7 +132,7 @@ public final class Cash {
 			currency,
 			denoms,
 			new WalletSettings(slots, walletMaterial, walletName, walletLore, shape, ingredients),
-			new AtmSettings(header, radius, presets)
+			new AtmSettings(header, radius, presets, createCost)
 		);
 	}
 
@@ -237,6 +240,10 @@ public final class Cash {
 
 	public List<Integer> atmPresets() {
 		return atm.presets();
+	}
+
+	public int atmCreateCost() {
+		return atm.createCost();
 	}
 
 	public String applyAmount(String template, int amount) {

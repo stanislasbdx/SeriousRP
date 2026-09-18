@@ -92,6 +92,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		YamlConfiguration config = new YamlConfiguration();
 		config.set("Economy.Cash.Enabled", true);
 		config.set("Economy.Cash.Atm.ViewRadius", 1);
+		config.set("Economy.Cash.Atm.CreateCost", 0);
 		config.set("Economy.Cash.Denominations", List.of(
 			Map.of("value", 1, "material", "GOLD_NUGGET"),
 			Map.of("value", 10, "material", "PAPER")
@@ -142,6 +143,47 @@ class AtmListenerTest extends ConfigBackedTest {
 		verify(allowed).setLine(0, "[sATM]");
 		verify(signPdc).set(any(NamespacedKey.class), eq(PersistentDataType.STRING), eq(playerId.toString()));
 		verify(sign).update();
+		assertEquals(100, account.get());
+	}
+
+	@Test
+	void signCreateChargesConfiguredBankCost() {
+		YamlConfiguration pricedConfig = new YamlConfiguration();
+		pricedConfig.set("Economy.Cash.Enabled", true);
+		pricedConfig.set("Economy.Cash.Atm.CreateCost", 150);
+		pricedConfig.set("Economy.Cash.Denominations", List.of(
+			Map.of("value", 1, "material", "GOLD_NUGGET"),
+			Map.of("value", 10, "material", "PAPER")
+		));
+		AtmListener priced = new AtmListener(
+			plugin,
+			Cash.fromConfig(pricedConfig),
+			walletItems,
+			bank,
+			Runnable::run,
+			(h, s, t) -> gui
+		);
+		when(player.hasPermission(Atm.CREATE_PERM)).thenReturn(true);
+
+		account.set(149);
+		SignChangeEvent tooPoor = mock(SignChangeEvent.class);
+		when(tooPoor.getLine(0)).thenReturn("[sATM]");
+		when(tooPoor.getPlayer()).thenReturn(player);
+		priced.onSignChange(tooPoor);
+		verify(tooPoor).setCancelled(true);
+		verify(tooPoor, never()).setLine(anyInt(), any());
+		verify(player).sendMessage(contains("150"));
+		assertEquals(149, account.get());
+
+		account.set(200);
+		SignChangeEvent paid = mock(SignChangeEvent.class);
+		when(paid.getLine(0)).thenReturn("[sATM]");
+		when(paid.getPlayer()).thenReturn(player);
+		when(paid.getBlock()).thenReturn(block);
+		priced.onSignChange(paid);
+		verify(paid).setLine(0, "[sATM]");
+		verify(player).sendMessage(contains("created for 150"));
+		assertEquals(50, account.get());
 	}
 
 	@Test
