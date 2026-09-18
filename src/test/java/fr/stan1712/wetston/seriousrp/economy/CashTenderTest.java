@@ -23,6 +23,10 @@ class CashTenderTest {
 			List.of(new Cash.Stack(20, 5), new Cash.Stack(1, 64), new Cash.Stack(1, 6)),
 			CashTender.toInventoryStacks(stacks)
 		);
+		assertEquals(
+			List.of(new Cash.Stack(1, 64), new Cash.Stack(1, 64)),
+			CashTender.toInventoryStacks(List.of(new Cash.Stack(1, 128)))
+		);
 	}
 
 	@Test
@@ -73,6 +77,24 @@ class CashTenderTest {
 			List.of(3)
 		).isEmpty());
 		assertTrue(CashTender.pay(ledger, 999, EURO).isEmpty());
+		assertTrue(CashTender.pay(ledger, 0, EURO).isEmpty());
+	}
+
+	@Test
+	void payFromWalletsOnlyAndStopsWhenWalletCannotMakeChange() {
+		CashTender.Ledger walletsOnly = new CashTender.Ledger(
+			List.of(),
+			List.of(List.of(new Cash.Stack(50, 2)))
+		);
+		CashTender.Ledger paid = CashTender.pay(walletsOnly, 50, EURO).orElseThrow();
+		assertTrue(paid.inventory().isEmpty());
+		assertEquals(List.of(List.of(new Cash.Stack(50, 1))), paid.wallets());
+
+		assertTrue(CashTender.pay(
+			new CashTender.Ledger(List.of(), List.of(List.of(new Cash.Stack(3, 1)))),
+			1,
+			List.of(3)
+		).isEmpty());
 	}
 
 	@Test
@@ -104,6 +126,7 @@ class CashTenderTest {
 		assertTrue(CashTender.parseTransform(new String[] {"stan", "nope"}, EURO).isEmpty());
 		assertTrue(CashTender.parseTransform(new String[] {"stan", "7", "1"}, EURO).isEmpty());
 		assertTrue(CashTender.parseTransform(new String[] {"stan", "50", "no"}, EURO).isEmpty());
+		assertTrue(CashTender.parseTransform(new String[] {"stan", "nope", "1"}, EURO).isEmpty());
 		assertTrue(CashTender.parseTransform(new String[] {"stan", "50", "3", "extra"}, EURO).isEmpty());
 		assertTrue(CashTender.parseTransform(new String[] {"stan", "50", String.valueOf(Integer.MAX_VALUE)}, EURO).isEmpty());
 	}

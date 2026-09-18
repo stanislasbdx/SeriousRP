@@ -36,7 +36,7 @@ class CashTest {
 		config.set("Economy.Cash.Wallet.Recipe.Ingredients.Z", "NOT_A_MATERIAL");
 		config.set("Economy.Cash.Atm.SignHeader", "[sATM]");
 		config.set("Economy.Cash.Atm.ViewRadius", 8);
-		config.set("Economy.Cash.Atm.Presets", java.util.Arrays.asList(10, null, 25));
+		config.set("Economy.Cash.Atm.Presets", java.util.Arrays.asList(10, null, 25, 10, -5, 0));
 		config.set("Economy.Cash.Denominations", List.of(
 			Map.of("value", 20, "material", "PAPER", "name", "&a20", "custom-model-data", 20),
 			Map.of("value", "1", "material", "GOLD_NUGGET", "name", "1€"),

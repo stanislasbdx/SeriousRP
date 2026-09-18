@@ -49,6 +49,7 @@ class WalletTest {
 		assertTrue(Wallet.fromJson("null").isEmpty());
 		assertTrue(Wallet.fromJson("{\"slots\":9}").isEmpty());
 		assertTrue(Wallet.fromJson("{\"id\":\"  \",\"slots\":9}").isEmpty());
+		assertEquals("w1", Wallet.fromJson("{\"id\":\"w1\",\"slots\":9}").orElseThrow().id());
 
 		Wallet.Payload messy = Wallet.fromJson(
 			"{\"id\":\"w1\",\"slots\":9,\"stacks\":[null,{\"denomination\":0,\"amount\":1},{\"denomination\":1,\"amount\":0},{\"denomination\":1,\"amount\":4}]}"

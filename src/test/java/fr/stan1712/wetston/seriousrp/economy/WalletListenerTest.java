@@ -519,7 +519,7 @@ class WalletListenerTest extends ConfigBackedTest {
 	}
 
 	@Test
-	void collectCashHandlesNullContents() {
+	void collectCashHandlesMismatchedWalletHolder() {
 		wallets.tryOpen(player.getUniqueId(), "wallet-1", 2);
 		when(topInventory.getHolder()).thenReturn(new WalletListener.Holder("other", 9));
 		when(topInventory.getContents()).thenReturn(new ItemStack[0]);
@@ -528,6 +528,183 @@ class WalletListenerTest extends ConfigBackedTest {
 		when(event.getPlayer()).thenReturn(player);
 		listener.onClose(event);
 		verify(playerInventory, never()).setItem(anyInt(), any());
+	}
+
+	@Test
+	void clickDragCloseAndCraftCoverRemainingGuards() {
+		stubWalletItem();
+		stubCashItem(20, 2);
+		wallets.tryOpen(player.getUniqueId(), "wallet-1", 2);
+		when(view.getTopInventory()).thenReturn(topInventory);
+		when(topInventory.getHolder()).thenReturn(new WalletListener.Holder("wallet-1", 9));
+		when(topInventory.getSize()).thenReturn(9);
+
+		InventoryClickEvent nullClicked = mock(InventoryClickEvent.class);
+		when(nullClicked.getView()).thenReturn(view);
+		when(nullClicked.getWhoClicked()).thenReturn(player);
+		when(nullClicked.getClickedInventory()).thenReturn(null);
+		when(nullClicked.getHotbarButton()).thenReturn(-1);
+		when(nullClicked.getCurrentItem()).thenReturn(null);
+		when(nullClicked.getCursor()).thenReturn(null);
+		listener.onClick(nullClicked);
+		verify(nullClicked, never()).setCancelled(true);
+
+		InventoryClickEvent cursorWallet = mock(InventoryClickEvent.class);
+		when(cursorWallet.getView()).thenReturn(view);
+		when(cursorWallet.getWhoClicked()).thenReturn(player);
+		when(cursorWallet.getClickedInventory()).thenReturn(topInventory);
+		when(cursorWallet.getHotbarButton()).thenReturn(-1);
+		when(cursorWallet.getCurrentItem()).thenReturn(null);
+		when(cursorWallet.getCursor()).thenReturn(walletStack);
+		listener.onClick(cursorWallet);
+		verify(cursorWallet).setCancelled(true);
+
+		InventoryClickEvent cashOnTop = mock(InventoryClickEvent.class);
+		when(cashOnTop.getView()).thenReturn(view);
+		when(cashOnTop.getWhoClicked()).thenReturn(player);
+		when(cashOnTop.getClickedInventory()).thenReturn(topInventory);
+		when(cashOnTop.getHotbarButton()).thenReturn(-1);
+		when(cashOnTop.getCurrentItem()).thenReturn(null);
+		when(cashOnTop.getCursor()).thenReturn(cashStack);
+		listener.onClick(cashOnTop);
+		verify(cashOnTop, never()).setCancelled(true);
+
+		InventoryClickEvent emptyCursorTop = mock(InventoryClickEvent.class);
+		when(emptyCursorTop.getView()).thenReturn(view);
+		when(emptyCursorTop.getWhoClicked()).thenReturn(player);
+		when(emptyCursorTop.getClickedInventory()).thenReturn(topInventory);
+		when(emptyCursorTop.getHotbarButton()).thenReturn(-1);
+		when(emptyCursorTop.getCurrentItem()).thenReturn(null);
+		when(emptyCursorTop.getCursor()).thenReturn(null);
+		listener.onClick(emptyCursorTop);
+		verify(emptyCursorTop, never()).setCancelled(true);
+
+		when(otherStack.getType()).thenReturn(Material.STONE);
+		when(otherStack.getAmount()).thenReturn(1);
+		when(otherStack.getItemMeta()).thenReturn(null);
+		InventoryClickEvent junkNoShift = mock(InventoryClickEvent.class);
+		when(junkNoShift.getView()).thenReturn(view);
+		when(junkNoShift.getWhoClicked()).thenReturn(player);
+		when(junkNoShift.getClickedInventory()).thenReturn(playerInventory);
+		when(junkNoShift.getSlot()).thenReturn(1);
+		when(junkNoShift.getHotbarButton()).thenReturn(-1);
+		when(junkNoShift.getCurrentItem()).thenReturn(otherStack);
+		when(junkNoShift.getCursor()).thenReturn(null);
+		when(junkNoShift.isShiftClick()).thenReturn(false);
+		listener.onClick(junkNoShift);
+		verify(junkNoShift, never()).setCancelled(true);
+
+		InventoryClickEvent shiftEmpty = mock(InventoryClickEvent.class);
+		when(shiftEmpty.getView()).thenReturn(view);
+		when(shiftEmpty.getWhoClicked()).thenReturn(player);
+		when(shiftEmpty.getClickedInventory()).thenReturn(playerInventory);
+		when(shiftEmpty.getSlot()).thenReturn(1);
+		when(shiftEmpty.getHotbarButton()).thenReturn(-1);
+		when(shiftEmpty.getCurrentItem()).thenReturn(null);
+		when(shiftEmpty.getCursor()).thenReturn(null);
+		when(shiftEmpty.isShiftClick()).thenReturn(true);
+		listener.onClick(shiftEmpty);
+		verify(shiftEmpty, never()).setCancelled(true);
+
+		InventoryClickEvent shiftCash = mock(InventoryClickEvent.class);
+		when(shiftCash.getView()).thenReturn(view);
+		when(shiftCash.getWhoClicked()).thenReturn(player);
+		when(shiftCash.getClickedInventory()).thenReturn(playerInventory);
+		when(shiftCash.getSlot()).thenReturn(1);
+		when(shiftCash.getHotbarButton()).thenReturn(-1);
+		when(shiftCash.getCurrentItem()).thenReturn(cashStack);
+		when(shiftCash.getCursor()).thenReturn(null);
+		when(shiftCash.isShiftClick()).thenReturn(true);
+		listener.onClick(shiftCash);
+		verify(shiftCash, never()).setCancelled(true);
+
+		InventoryDragEvent cashDrag = mock(InventoryDragEvent.class);
+		when(cashDrag.getView()).thenReturn(view);
+		when(cashDrag.getWhoClicked()).thenReturn(player);
+		when(cashDrag.getRawSlots()).thenReturn(new HashSet<>(List.of(0)));
+		when(cashDrag.getOldCursor()).thenReturn(cashStack);
+		listener.onDrag(cashDrag);
+		verify(cashDrag, never()).setCancelled(true);
+
+		org.bukkit.entity.HumanEntity human = mock(org.bukkit.entity.HumanEntity.class);
+		InventoryDragEvent dragHuman = mock(InventoryDragEvent.class);
+		when(dragHuman.getView()).thenReturn(view);
+		when(dragHuman.getWhoClicked()).thenReturn(human);
+		listener.onDrag(dragHuman);
+		verify(dragHuman, never()).setCancelled(true);
+
+		InventoryCloseEvent closeHuman = mock(InventoryCloseEvent.class);
+		when(closeHuman.getInventory()).thenReturn(topInventory);
+		when(closeHuman.getPlayer()).thenReturn(human);
+		listener.onClose(closeHuman);
+		verify(closeHuman, never()).getView();
+
+		wallets.close(player.getUniqueId());
+		InventoryCloseEvent closeNoSession = mock(InventoryCloseEvent.class);
+		when(closeNoSession.getInventory()).thenReturn(topInventory);
+		when(closeNoSession.getPlayer()).thenReturn(player);
+		listener.onClose(closeNoSession);
+		verify(playerInventory, never()).setItem(anyInt(), any());
+
+		wallets.tryOpen(player.getUniqueId(), "wallet-1", 2);
+		ItemStack otherWallet = mock(ItemStack.class);
+		ItemMeta otherMeta = mock(ItemMeta.class);
+		PersistentDataContainer otherPdc = mock(PersistentDataContainer.class);
+		when(otherWallet.getType()).thenReturn(Material.LEATHER);
+		when(otherWallet.getItemMeta()).thenReturn(otherMeta);
+		when(otherMeta.getPersistentDataContainer()).thenReturn(otherPdc);
+		when(otherPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING)))
+			.thenReturn(Wallet.toJson(new Wallet.Payload("other-id", 9, List.of())));
+		when(playerInventory.getItem(2)).thenReturn(otherWallet);
+		when(topInventory.getContents()).thenReturn(new ItemStack[0]);
+		InventoryCloseEvent wrongHand = mock(InventoryCloseEvent.class);
+		when(wrongHand.getInventory()).thenReturn(topInventory);
+		when(wrongHand.getPlayer()).thenReturn(player);
+		listener.onClose(wrongHand);
+		verify(playerInventory, never()).setItem(eq(2), any());
+
+		wallets.tryOpen(player.getUniqueId(), "wallet-1", 2);
+		Item dropped = mock(Item.class);
+		when(dropped.getItemStack()).thenReturn(otherWallet);
+		PlayerDropItemEvent dropOtherId = mock(PlayerDropItemEvent.class);
+		when(dropOtherId.getPlayer()).thenReturn(player);
+		when(dropOtherId.getItemDrop()).thenReturn(dropped);
+		listener.onDrop(dropOtherId);
+		verify(dropOtherId, never()).setCancelled(true);
+
+		ShapedRecipe recipe = mock(ShapedRecipe.class);
+		NamespacedKey key = new NamespacedKey(plugin, WalletListener.RECIPE_KEY);
+		when(recipe.getKey()).thenReturn(key);
+		when(view.getPlayer()).thenReturn(human);
+		CraftingInventory crafting = mock(CraftingInventory.class);
+		PrepareItemCraftEvent prepareHuman = mock(PrepareItemCraftEvent.class);
+		when(prepareHuman.getRecipe()).thenReturn(recipe);
+		when(prepareHuman.getView()).thenReturn(view);
+		when(prepareHuman.getInventory()).thenReturn(crafting);
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			listener.onPrepareCraft(prepareHuman);
+			verify(crafting).setResult(any(ItemStack.class));
+		}
+
+		CraftItemEvent craftHuman = mock(CraftItemEvent.class);
+		when(craftHuman.getRecipe()).thenReturn(recipe);
+		when(craftHuman.getWhoClicked()).thenReturn(human);
+		listener.onCraft(craftHuman);
+		verify(craftHuman, never()).setCancelled(true);
+
+		ShapedRecipe otherRecipe = mock(ShapedRecipe.class);
+		NamespacedKey otherKey = new NamespacedKey(plugin, "other");
+		when(otherRecipe.getKey()).thenReturn(otherKey);
+		assertFalse(listener.isWalletRecipe(otherRecipe));
+
+		wallets.close(player.getUniqueId());
+		when(topInventory.getSize()).thenReturn(9);
+		Wallet.Payload oversized = new Wallet.Payload("big", 9, List.of(new Cash.Stack(1, 577)));
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			listener.openWallet(player, oversized, 1);
+			verify(topInventory).setItem(eq(8), any(ItemStack.class));
+			verify(topInventory, never()).setItem(eq(9), any(ItemStack.class));
+		}
 	}
 
 	private void stubWalletItem() {

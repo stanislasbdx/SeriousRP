@@ -78,6 +78,12 @@ class CashCommandTest extends ConfigBackedTest {
 		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"transform", "stan", "10"}));
 		verify(player).sendMessage(contains("Economy"));
 
+		assertTrue(commandExecutor.onCommand(console, command, "cash", new String[] {"transform", "stan", "10"}));
+
+		override.set("Core.Modules.InactiveDebug", false);
+		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"transform", "stan", "10"}));
+		assertTrue(commandExecutor.onCommand(console, command, "cash", new String[] {"transform", "stan", "10"}));
+
 		override.set("Core.Modules.Economy", true);
 		override.set("Core.NoPerms", "nope");
 		fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.overrideConfig(override);
@@ -90,6 +96,8 @@ class CashCommandTest extends ConfigBackedTest {
 	void usageUnknownPlayerAndDisabledCash() {
 		assertFalse(commandExecutor.onCommand(player, command, "cash", new String[0]));
 		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"nope"}));
+		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"give", "stan"}));
+		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"transform", "stan", "nope"}));
 		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"transform", "stan", "7"}));
 		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"transform", "missing", "10"}));
 		verify(player).sendMessage(contains("missing"));
@@ -97,7 +105,7 @@ class CashCommandTest extends ConfigBackedTest {
 		YamlConfiguration disabled = new YamlConfiguration();
 		disabled.set("Economy.Cash.Enabled", false);
 		CashCommand off = new CashCommand(Cash.fromConfig(disabled), walletItems, name -> player);
-		assertTrue(off.onCommand(console, command, "cash", new String[] {"transform", "stan", "10"}));
+		assertTrue(off.onCommand(player, command, "cash", new String[] {"transform", "stan", "10"}));
 	}
 
 	@Test
@@ -127,7 +135,11 @@ class CashCommandTest extends ConfigBackedTest {
 		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"transform", "stan", "10"}));
 		verify(player, org.mockito.Mockito.atLeastOnce()).sendMessage(contains("full"));
 
-		when(inventory.getStorageContents()).thenReturn(new ItemStack[36]);
+		ItemStack air = mock(ItemStack.class);
+		when(air.getType()).thenReturn(Material.AIR);
+		ItemStack[] airSlots = new ItemStack[36];
+		java.util.Arrays.fill(airSlots, air);
+		when(inventory.getStorageContents()).thenReturn(airSlots);
 		when(economy.getBalance(player)).thenReturn(1D);
 		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"transform", "stan", "10"}));
 		verify(player).sendMessage(contains("enough"));
