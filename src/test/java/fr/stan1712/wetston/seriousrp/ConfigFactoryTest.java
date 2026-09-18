@@ -65,9 +65,10 @@ class ConfigFactoryTest extends ConfigBackedTest {
 
 	@Test
 	void yamlLoaderRejectsDuplicateMappingKeys() {
+		Yaml yaml = uniqueKeyYaml();
 		DuplicateKeyException thrown = assertThrows(
 			DuplicateKeyException.class,
-			() -> uniqueKeyYaml().load("Wallet: 1\nWallet: 2\n")
+			() -> yaml.load("Wallet: 1\nWallet: 2\n")
 		);
 		assertNotNull(thrown.getMessage());
 		assertTrue(thrown.toString().contains("Wallet"));

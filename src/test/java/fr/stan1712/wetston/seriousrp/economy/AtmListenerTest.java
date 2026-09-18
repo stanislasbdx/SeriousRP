@@ -642,7 +642,8 @@ class AtmListenerTest extends ConfigBackedTest {
 	void openGuiRejectsNullItemMeta() {
 		when(signPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(playerId.toString());
 		when(player.hasPermission(Atm.USE_PERM)).thenReturn(true);
-		when(block.getLocation()).thenReturn(mock(Location.class));
+		Location guiLocation = mock(Location.class);
+		when(block.getLocation()).thenReturn(guiLocation);
 		PlayerInteractEvent event = mock(PlayerInteractEvent.class);
 		when(event.getAction()).thenReturn(Action.RIGHT_CLICK_BLOCK);
 		when(event.getClickedBlock()).thenReturn(block);
