@@ -289,7 +289,7 @@ public final class Cash {
 		}
 		Map<Character, Material> ingredients = new LinkedHashMap<>();
 		for (String key : section.getKeys(false)) {
-			if (key == null || key.length() != 1) {
+			if (key.length() != 1) {
 				continue;
 			}
 			Material material = materialOr(section.getString(key), null);

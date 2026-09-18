@@ -50,9 +50,7 @@ public final class CashTender {
 		}
 		List<Cash.Stack> compacted = new ArrayList<>();
 		for (var entry : merged.entrySet()) {
-			if (entry.getValue() > 0) {
-				compacted.add(new Cash.Stack(entry.getKey(), entry.getValue()));
-			}
+			compacted.add(new Cash.Stack(entry.getKey(), entry.getValue()));
 		}
 		return List.copyOf(compacted);
 	}
@@ -61,12 +59,10 @@ public final class CashTender {
 		List<Cash.Stack> split = new ArrayList<>();
 		for (Cash.Stack stack : compact(stacks)) {
 			int remaining = stack.amount();
-			while (remaining > Cash.MAX_STACK_SIZE) {
-				split.add(new Cash.Stack(stack.denomination(), Cash.MAX_STACK_SIZE));
-				remaining -= Cash.MAX_STACK_SIZE;
-			}
-			if (remaining > 0) {
-				split.add(new Cash.Stack(stack.denomination(), remaining));
+			while (remaining > 0) {
+				int count = Math.min(remaining, Cash.MAX_STACK_SIZE);
+				split.add(new Cash.Stack(stack.denomination(), count));
+				remaining -= count;
 			}
 		}
 		return List.copyOf(split);
@@ -141,9 +137,6 @@ public final class CashTender {
 			remaining -= take;
 		}
 
-		if (remaining != 0) {
-			return Optional.empty();
-		}
 		return Optional.of(new Ledger(inventory, wallets));
 	}
 
