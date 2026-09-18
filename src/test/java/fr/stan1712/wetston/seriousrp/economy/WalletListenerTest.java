@@ -51,13 +51,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -326,7 +326,7 @@ class WalletListenerTest extends ConfigBackedTest {
 		PlayerDeathEvent death = mock(PlayerDeathEvent.class);
 		when(death.getEntity()).thenReturn(player);
 		listener.onDeath(death);
-		verify(player, org.mockito.Mockito.times(3)).closeInventory();
+		verify(player, times(3)).closeInventory();
 	}
 
 	@Test
@@ -353,11 +353,7 @@ class WalletListenerTest extends ConfigBackedTest {
 		when(prepare.getRecipe()).thenReturn(recipe);
 		when(prepare.getView()).thenReturn(view);
 		when(prepare.getInventory()).thenReturn(crafting);
-		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, (mock, context) -> {
-			ItemMeta meta = mock(ItemMeta.class);
-			when(mock.getItemMeta()).thenReturn(meta);
-			when(meta.getPersistentDataContainer()).thenReturn(mock(PersistentDataContainer.class));
-		})) {
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
 			listener.onPrepareCraft(prepare);
 			verify(crafting).setResult(any(ItemStack.class));
 		}
@@ -373,11 +369,7 @@ class WalletListenerTest extends ConfigBackedTest {
 		when(single.getRecipe()).thenReturn(recipe);
 		when(single.getWhoClicked()).thenReturn(player);
 		when(single.isShiftClick()).thenReturn(false);
-		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, (mock, context) -> {
-			ItemMeta meta = mock(ItemMeta.class);
-			when(mock.getItemMeta()).thenReturn(meta);
-			when(meta.getPersistentDataContainer()).thenReturn(mock(PersistentDataContainer.class));
-		})) {
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
 			listener.onCraft(single);
 			verify(single).setCurrentItem(any(ItemStack.class));
 		}
@@ -436,11 +428,7 @@ class WalletListenerTest extends ConfigBackedTest {
 	void registerRecipePushesConfiguredShape() {
 		AtomicReference<ShapedRecipe> captured = new AtomicReference<>();
 		WalletListener crafting = new WalletListener(plugin, cash, wallets, captured::set, (h, s, t) -> topInventory);
-		try (MockedConstruction<ItemStack> items = mockConstruction(ItemStack.class, (mock, context) -> {
-			ItemMeta meta = mock(ItemMeta.class);
-			when(mock.getItemMeta()).thenReturn(meta);
-			when(meta.getPersistentDataContainer()).thenReturn(mock(PersistentDataContainer.class));
-		});
+		try (MockedConstruction<ItemStack> items = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta());
 			MockedConstruction<ShapedRecipe> recipes = mockConstruction(ShapedRecipe.class, (mock, context) -> {
 			})) {
 			crafting.registerRecipe();
@@ -498,11 +486,7 @@ class WalletListenerTest extends ConfigBackedTest {
 	void openWalletFillsCashAndPublicConstructorCreatesInventory() {
 		Wallet.Payload loaded = new Wallet.Payload("wallet-1", 9, List.of(new Cash.Stack(20, 2)));
 		when(topInventory.getSize()).thenReturn(9);
-		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, (mock, context) -> {
-			ItemMeta meta = mock(ItemMeta.class);
-			when(mock.getItemMeta()).thenReturn(meta);
-			when(meta.getPersistentDataContainer()).thenReturn(mock(PersistentDataContainer.class));
-		})) {
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
 			listener.openWallet(player, loaded, 1);
 			verify(topInventory).setItem(eq(0), any(ItemStack.class));
 		}
@@ -518,9 +502,10 @@ class WalletListenerTest extends ConfigBackedTest {
 
 	@Test
 	void createCashItemRejectsNullMeta() {
+		Cash.Stack stack = new Cash.Stack(1, 1);
 		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class,
 			(mock, context) -> when(mock.getItemMeta()).thenReturn(null))) {
-			assertThrows(AssertionError.class, () -> listener.createCashItem(new Cash.Stack(1, 1)));
+			assertThrows(AssertionError.class, () -> listener.createCashItem(stack));
 		}
 	}
 
@@ -537,7 +522,7 @@ class WalletListenerTest extends ConfigBackedTest {
 	void collectCashHandlesNullContents() {
 		wallets.tryOpen(player.getUniqueId(), "wallet-1", 2);
 		when(topInventory.getHolder()).thenReturn(new WalletListener.Holder("other", 9));
-		when(topInventory.getContents()).thenReturn(null);
+		when(topInventory.getContents()).thenReturn(new ItemStack[0]);
 		InventoryCloseEvent event = mock(InventoryCloseEvent.class);
 		when(event.getInventory()).thenReturn(topInventory);
 		when(event.getPlayer()).thenReturn(player);

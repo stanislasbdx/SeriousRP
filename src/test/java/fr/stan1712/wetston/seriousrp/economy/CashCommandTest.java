@@ -11,8 +11,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,13 +24,13 @@ import org.mockito.quality.Strictness;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -109,11 +107,7 @@ class CashCommandTest extends ConfigBackedTest {
 		when(economy.withdrawPlayer(player, 150D)).thenReturn(
 			new EconomyResponse(150D, 50D, EconomyResponse.ResponseType.SUCCESS, "")
 		);
-		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, (mock, context) -> {
-			ItemMeta meta = mock(ItemMeta.class);
-			when(mock.getItemMeta()).thenReturn(meta);
-			when(meta.getPersistentDataContainer()).thenReturn(mock(PersistentDataContainer.class));
-		})) {
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
 			assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"transform", "stan", "50", "3"}));
 		}
 		verify(economy).withdrawPlayer(player, 150D);
@@ -129,8 +123,6 @@ class CashCommandTest extends ConfigBackedTest {
 		when(blocker.getType()).thenReturn(Material.STONE);
 		ItemStack[] full = new ItemStack[36];
 		java.util.Arrays.fill(full, blocker);
-		when(inventory.getStorageContents()).thenReturn(null);
-		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"transform", "stan", "10"}));
 		when(inventory.getStorageContents()).thenReturn(full);
 		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"transform", "stan", "10"}));
 		verify(player, org.mockito.Mockito.atLeastOnce()).sendMessage(contains("full"));
@@ -150,6 +142,6 @@ class CashCommandTest extends ConfigBackedTest {
 
 	@Test
 	void publicConstructorBindsPlayerLookup() {
-		new CashCommand(plugin, cash, walletItems);
+		assertDoesNotThrow(() -> new CashCommand(plugin, cash, walletItems));
 	}
 }

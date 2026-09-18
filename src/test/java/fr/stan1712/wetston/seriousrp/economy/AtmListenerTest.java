@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -173,11 +174,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		when(event.getAction()).thenReturn(Action.RIGHT_CLICK_BLOCK);
 		when(event.getClickedBlock()).thenReturn(block);
 		when(event.getPlayer()).thenReturn(player);
-		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, (mock, context) -> {
-			ItemMeta meta = mock(ItemMeta.class);
-			when(mock.getItemMeta()).thenReturn(meta);
-			when(meta.getPersistentDataContainer()).thenReturn(mock(PersistentDataContainer.class));
-		})) {
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
 			listener.onInteract(event);
 		}
 		verify(event).setCancelled(true);
@@ -212,11 +209,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		when(cashPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(10);
 		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[] {cashItem, null});
 		when(buttonPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(10);
-		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, (mock, context) -> {
-			ItemMeta meta = mock(ItemMeta.class);
-			when(mock.getItemMeta()).thenReturn(meta);
-			when(meta.getPersistentDataContainer()).thenReturn(mock(PersistentDataContainer.class));
-		})) {
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
 			listener.onClick(deposit);
 		}
 		assertEquals(110, account.get());
@@ -227,11 +220,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		when(withdraw.getWhoClicked()).thenReturn(player);
 		when(withdraw.getCurrentItem()).thenReturn(button);
 		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[] {null, null});
-		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, (mock, context) -> {
-			ItemMeta meta = mock(ItemMeta.class);
-			when(mock.getItemMeta()).thenReturn(meta);
-			when(meta.getPersistentDataContainer()).thenReturn(mock(PersistentDataContainer.class));
-		})) {
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
 			listener.onClick(withdraw);
 		}
 		assertEquals(100, account.get());
@@ -258,11 +247,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		when(cashPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(10);
 		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[] {cashItem, null});
 
-		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, (mock, context) -> {
-			ItemMeta meta = mock(ItemMeta.class);
-			when(mock.getItemMeta()).thenReturn(meta);
-			when(meta.getPersistentDataContainer()).thenReturn(mock(PersistentDataContainer.class));
-		})) {
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
 			listener.handlePrompt(player, new Atm.Prompt(playerId, Atm.Operation.DEPOSIT, System.currentTimeMillis() + 5_000), "10");
 		}
 		assertEquals(110, account.get());
@@ -295,7 +280,8 @@ class AtmListenerTest extends ConfigBackedTest {
 
 	@Test
 	void atmOwnerAndVaultBankEdgeCases() {
-		when(block.getState()).thenReturn(mock(org.bukkit.block.BlockState.class));
+		org.bukkit.block.BlockState otherState = mock(org.bukkit.block.BlockState.class);
+		when(block.getState()).thenReturn(otherState);
 		assertTrue(listener.atmOwner(block).isEmpty());
 		when(block.getState()).thenReturn(sign);
 		when(signPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn("nope");
@@ -394,6 +380,6 @@ class AtmListenerTest extends ConfigBackedTest {
 		Location location = mock(Location.class);
 		AtmListener.Holder holder = new AtmListener.Holder(location);
 		assertEquals(location, holder.location());
-		assertEquals(null, holder.getInventory());
+		assertThrows(UnsupportedOperationException.class, holder::getInventory);
 	}
 }
