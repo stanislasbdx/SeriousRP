@@ -303,12 +303,8 @@ public final class Cash {
 	static List<Integer> parsePresets(List<Integer> configured) {
 		List<Integer> presets = new ArrayList<>();
 		for (Integer preset : configured) {
-			if (preset != null) {
-				if (preset > 0) {
-					if (!presets.contains(preset)) {
-						presets.add(preset);
-					}
-				}
+			if (preset != null && preset > 0 && !presets.contains(preset)) {
+				presets.add(preset);
 			}
 		}
 		if (presets.isEmpty()) {
