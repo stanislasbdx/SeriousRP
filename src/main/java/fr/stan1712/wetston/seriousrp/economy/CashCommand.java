@@ -21,6 +21,7 @@ import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixSt
 
 public final class CashCommand implements CommandExecutor {
 	private static final String TRANSFORM = "transform";
+	private static final String TARGET_PLACEHOLDER = "%target%";
 
 	private final Cash cash;
 	private final WalletListener walletItems;
@@ -64,7 +65,7 @@ public final class CashCommand implements CommandExecutor {
 		Player target = playerLookup.apply(plan.playerName());
 		if (target == null) {
 			sender.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Transform.UnknownPlayer")
-				.replace("%target%", plan.playerName()));
+				.replace(TARGET_PLACEHOLDER, plan.playerName()));
 			return true;
 		}
 		giveTransformedCash(sender, target, plan);
@@ -74,35 +75,32 @@ public final class CashCommand implements CommandExecutor {
 	void giveTransformedCash(CommandSender sender, Player target, CashTender.TransformPlan plan) {
 		List<Cash.Stack> stacks = CashTender.toInventoryStacks(plan.stacks());
 		int empty = 0;
-		ItemStack[] storage = target.getInventory().getStorageContents();
-		if (storage != null) {
-			for (ItemStack item : storage) {
-				if (item == null || item.getType() == Material.AIR) {
-					empty++;
-				}
+		for (ItemStack item : target.getInventory().getStorageContents()) {
+			if (item == null || item.getType() == Material.AIR) {
+				empty++;
 			}
 		}
 		if (empty < stacks.size()) {
 			sender.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Transform.InventoryFull")
-				.replace("%target%", target.getName()));
+				.replace(TARGET_PLACEHOLDER, target.getName()));
 			return;
 		}
 		if (Main.economy == null || Main.economy.getBalance(target) < plan.vaultDebit()) {
 			sender.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Transform.NotEnough")
-				.replace("%target%", target.getName()));
+				.replace(TARGET_PLACEHOLDER, target.getName()));
 			return;
 		}
 		if (!Main.economy.withdrawPlayer(target, plan.vaultDebit()).transactionSuccess()) {
 			sender.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Transform.NotEnough")
-				.replace("%target%", target.getName()));
+				.replace(TARGET_PLACEHOLDER, target.getName()));
 			return;
 		}
 		for (Cash.Stack stack : stacks) {
 			target.getInventory().addItem(walletItems.createCashItem(stack));
 		}
-		sender.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Transform.Done")
-			.replace("%amount%", Integer.toString(plan.vaultDebit()))
-			.replace("%currency%", cash.currency())
-			.replace("%target%", target.getName()));
+		sender.sendMessage(getShortPrefixString() + cash.applyAmount(
+			getConfigString("Economy.Cash.Transform.Done"),
+			plan.vaultDebit()
+		).replace(TARGET_PLACEHOLDER, target.getName()));
 	}
 }

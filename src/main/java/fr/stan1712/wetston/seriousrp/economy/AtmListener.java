@@ -34,7 +34,6 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
@@ -79,7 +78,7 @@ public final class AtmListener implements Listener {
 			walletItems,
 			vaultBank(),
 			task -> plugin.getServer().getScheduler().runTask(plugin, task),
-			(holder, size, title) -> Bukkit.createInventory(holder, size, title)
+			AtmListener::createInventory
 		);
 	}
 
@@ -101,6 +100,10 @@ public final class AtmListener implements Listener {
 		this.bank = bank;
 		this.mainThread = mainThread;
 		this.inventories = inventories;
+	}
+
+	static Inventory createInventory(InventoryHolder holder, int size, String title) {
+		return Bukkit.createInventory(holder, size, title);
 	}
 
 	static Bank vaultBank() {
@@ -233,18 +236,24 @@ public final class AtmListener implements Listener {
 			if (origin.getWorld() == null) {
 				continue;
 			}
-			for (int dx = -radius; dx <= radius; dx++) {
-				for (int dy = -radius; dy <= radius; dy++) {
-					for (int dz = -radius; dz <= radius; dz++) {
-						Block block = origin.getBlock().getRelative(dx, dy, dz);
-						if (atmOwner(block).isEmpty()) {
-							continue;
-						}
-						int account = (int) Math.floor(bank.balance(player));
-						player.sendSignChange(block.getLocation(), Atm.nearbyLines(cash, account, pocketTotal(player)));
-					}
+			scanRadius(player, origin, radius);
+		}
+	}
+
+	private void scanRadius(Player player, Location origin, int radius) {
+		for (int dx = -radius; dx <= radius; dx++) {
+			for (int dy = -radius; dy <= radius; dy++) {
+				for (int dz = -radius; dz <= radius; dz++) {
+					overlayIfAtm(player, origin.getBlock().getRelative(dx, dy, dz));
 				}
 			}
+		}
+	}
+
+	private void overlayIfAtm(Player player, Block block) {
+		if (atmOwner(block).isPresent()) {
+			int account = (int) Math.floor(bank.balance(player));
+			player.sendSignChange(block.getLocation(), Atm.nearbyLines(cash, account, pocketTotal(player)));
 		}
 	}
 
@@ -287,9 +296,7 @@ public final class AtmListener implements Listener {
 			String key = operation == Atm.Operation.DEPOSIT
 				? "Economy.Cash.AtmGui.Deposited"
 				: "Economy.Cash.AtmGui.Withdrawn";
-			player.sendMessage(getShortPrefixString() + getConfigString(key)
-				.replace("%amount%", Integer.toString(amount.getAsInt()))
-				.replace("%currency%", cash.currency()));
+			player.sendMessage(getShortPrefixString() + cash.applyAmount(getConfigString(key), amount.getAsInt()));
 		}
 		else {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.InventoryFull"));
@@ -328,30 +335,26 @@ public final class AtmListener implements Listener {
 		Inventory inventory = inventories.create(holder, 27, getConfigString("Economy.Cash.AtmGui.Title"));
 		int account = (int) Math.floor(bank.balance(player));
 		int pocket = pocketTotal(player);
-		inventory.setItem(0, infoItem(Material.GOLD_INGOT, getConfigString("Economy.Cash.AtmGui.Account")
-			.replace("%amount%", Integer.toString(account)).replace("%currency%", cash.currency())));
-		inventory.setItem(1, infoItem(Material.SUNFLOWER, getConfigString("Economy.Cash.AtmGui.Pocket")
-			.replace("%amount%", Integer.toString(pocket)).replace("%currency%", cash.currency())));
+		inventory.setItem(0, infoItem(Material.GOLD_INGOT, cash.applyAmount(
+			getConfigString("Economy.Cash.AtmGui.Account"), account)));
+		inventory.setItem(1, infoItem(Material.SUNFLOWER, cash.applyAmount(
+			getConfigString("Economy.Cash.AtmGui.Pocket"), pocket)));
 		int slot = 9;
 		for (int preset : cash.atmPresets()) {
 			inventory.setItem(slot++, button(Atm.Operation.DEPOSIT, preset, false, false,
-				getConfigString("Economy.Cash.AtmGui.Deposit")
-					.replace("%amount%", Integer.toString(preset)).replace("%currency%", cash.currency())));
+				cash.applyAmount(getConfigString("Economy.Cash.AtmGui.Deposit"), preset)));
 		}
 		inventory.setItem(slot++, button(Atm.Operation.DEPOSIT, null, true, false,
-			getConfigString("Economy.Cash.AtmGui.DepositAll")
-				.replace("%amount%", Integer.toString(pocket)).replace("%currency%", cash.currency())));
+			cash.applyAmount(getConfigString("Economy.Cash.AtmGui.DepositAll"), pocket)));
 		inventory.setItem(slot, button(Atm.Operation.DEPOSIT, null, false, true,
 			getConfigString("Economy.Cash.AtmGui.CustomAmount")));
 		slot = 18;
 		for (int preset : cash.atmPresets()) {
 			inventory.setItem(slot++, button(Atm.Operation.WITHDRAW, preset, false, false,
-				getConfigString("Economy.Cash.AtmGui.Withdraw")
-					.replace("%amount%", Integer.toString(preset)).replace("%currency%", cash.currency())));
+				cash.applyAmount(getConfigString("Economy.Cash.AtmGui.Withdraw"), preset)));
 		}
 		inventory.setItem(slot++, button(Atm.Operation.WITHDRAW, null, true, false,
-			getConfigString("Economy.Cash.AtmGui.WithdrawAll")
-				.replace("%amount%", Integer.toString(account)).replace("%currency%", cash.currency())));
+			cash.applyAmount(getConfigString("Economy.Cash.AtmGui.WithdrawAll"), account)));
 		inventory.setItem(slot, button(Atm.Operation.WITHDRAW, null, false, true,
 			getConfigString("Economy.Cash.AtmGui.CustomAmount")));
 		player.openInventory(inventory);
@@ -473,24 +476,13 @@ public final class AtmListener implements Listener {
 	}
 
 	private static ItemStack[] contents(PlayerInventory inventory) {
-		ItemStack[] storage = inventory.getStorageContents();
-		return storage == null ? new ItemStack[0] : storage;
+		return inventory.getStorageContents();
 	}
 
-	static final class Holder implements InventoryHolder {
-		private final Location location;
-
-		Holder(Location location) {
-			this.location = location;
-		}
-
-		Location location() {
-			return location;
-		}
-
+	record Holder(Location location) implements InventoryHolder {
 		@Override
 		public Inventory getInventory() {
-			return null;
+			throw new UnsupportedOperationException("ATM holder is a GUI marker");
 		}
 	}
 }

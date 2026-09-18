@@ -41,33 +41,44 @@ public final class Cash {
 		}
 	}
 
+	public record WalletSettings(
+		int slots,
+		Material material,
+		String displayName,
+		String loreTotal,
+		List<String> recipeShape,
+		Map<Character, Material> recipeIngredients
+	) {
+		public WalletSettings {
+			slots = clampSlots(slots);
+			recipeShape = List.copyOf(recipeShape);
+			recipeIngredients = Map.copyOf(recipeIngredients);
+		}
+	}
+
+	public record AtmSettings(String header, int viewRadius, List<Integer> presets) {
+		public AtmSettings {
+			viewRadius = Math.max(1, viewRadius);
+			presets = List.copyOf(presets);
+		}
+	}
+
+	public static final String AMOUNT_PLACEHOLDER = "%amount%";
+	public static final String CURRENCY_PLACEHOLDER = "%currency%";
+
 	private final boolean enabled;
 	private final String currency;
 	private final List<Denomination> denominations;
 	private final Map<Integer, Denomination> byValue;
-	private final int walletSlots;
-	private final Material walletMaterial;
-	private final String walletDisplayName;
-	private final String walletLoreTotal;
-	private final List<String> recipeShape;
-	private final Map<Character, Material> recipeIngredients;
-	private final String atmHeader;
-	private final int viewRadius;
-	private final List<Integer> atmPresets;
+	private final WalletSettings wallet;
+	private final AtmSettings atm;
 
 	Cash(
 		boolean enabled,
 		String currency,
 		List<Denomination> denominations,
-		int walletSlots,
-		Material walletMaterial,
-		String walletDisplayName,
-		String walletLoreTotal,
-		List<String> recipeShape,
-		Map<Character, Material> recipeIngredients,
-		String atmHeader,
-		int viewRadius,
-		List<Integer> atmPresets
+		WalletSettings wallet,
+		AtmSettings atm
 	) {
 		this.enabled = enabled;
 		this.currency = currency;
@@ -77,15 +88,8 @@ public final class Cash {
 			index.putIfAbsent(denomination.value(), denomination);
 		}
 		this.byValue = Map.copyOf(index);
-		this.walletSlots = clampSlots(walletSlots);
-		this.walletMaterial = walletMaterial;
-		this.walletDisplayName = walletDisplayName;
-		this.walletLoreTotal = walletLoreTotal;
-		this.recipeShape = List.copyOf(recipeShape);
-		this.recipeIngredients = Map.copyOf(recipeIngredients);
-		this.atmHeader = atmHeader;
-		this.viewRadius = Math.max(1, viewRadius);
-		this.atmPresets = List.copyOf(atmPresets);
+		this.wallet = wallet;
+		this.atm = atm;
 	}
 
 	public static Cash fromConfig(FileConfiguration config) {
@@ -124,15 +128,8 @@ public final class Cash {
 			enabled,
 			currency,
 			denoms,
-			slots,
-			walletMaterial,
-			walletName,
-			walletLore,
-			shape,
-			ingredients,
-			header,
-			radius,
-			presets
+			new WalletSettings(slots, walletMaterial, walletName, walletLore, shape, ingredients),
+			new AtmSettings(header, radius, presets)
 		);
 	}
 
@@ -203,49 +200,53 @@ public final class Cash {
 	}
 
 	public int walletSlots() {
-		return walletSlots;
+		return wallet.slots();
 	}
 
 	public Material walletMaterial() {
-		return walletMaterial;
+		return wallet.material();
 	}
 
 	public String walletDisplayName() {
-		return walletDisplayName;
+		return wallet.displayName();
 	}
 
 	public String walletLoreTotal() {
-		return walletLoreTotal;
+		return wallet.loreTotal();
 	}
 
 	public List<String> recipeShape() {
-		return recipeShape;
+		return wallet.recipeShape();
 	}
 
 	public Map<Character, Material> recipeIngredients() {
-		return recipeIngredients;
+		return wallet.recipeIngredients();
 	}
 
 	public String atmHeader() {
-		return atmHeader;
+		return atm.header();
 	}
 
 	public boolean isAtmHeader(String line) {
-		return line != null && atmHeader.equalsIgnoreCase(stripColorCodes(line).trim());
+		return line != null && atm.header().equalsIgnoreCase(stripColorCodes(line).trim());
 	}
 
 	public int viewRadius() {
-		return viewRadius;
+		return atm.viewRadius();
 	}
 
 	public List<Integer> atmPresets() {
-		return atmPresets;
+		return atm.presets();
+	}
+
+	public String applyAmount(String template, int amount) {
+		return template
+			.replace(AMOUNT_PLACEHOLDER, Integer.toString(amount))
+			.replace(CURRENCY_PLACEHOLDER, currency);
 	}
 
 	public String formatTotal(int amount) {
-		return walletLoreTotal
-			.replace("%amount%", Integer.toString(amount))
-			.replace("%currency%", currency);
+		return applyAmount(wallet.loreTotal(), amount);
 	}
 
 	static String stripColorCodes(String line) {
@@ -256,19 +257,13 @@ public final class Cash {
 		List<Denomination> parsed = new ArrayList<>();
 		for (Map<?, ?> row : rows) {
 			int value = toPositiveInt(row.get("value"));
-			if (value <= 0) {
-				continue;
-			}
 			Material material = materialOr(stringOrNull(row.get("material")), null);
-			if (material == null) {
-				continue;
+			boolean unique = parsed.stream().noneMatch(existing -> existing.value() == value);
+			if (value > 0 && material != null && unique) {
+				String name = colorize(nullable(stringOrNull(row.get("name")), value + "€"));
+				Integer model = toNullableInt(row.get("custom-model-data"));
+				parsed.add(new Denomination(value, material, name, model));
 			}
-			if (parsed.stream().anyMatch(existing -> existing.value() == value)) {
-				continue;
-			}
-			String name = colorize(nullable(stringOrNull(row.get("name")), value + "€"));
-			Integer model = toNullableInt(row.get("custom-model-data"));
-			parsed.add(new Denomination(value, material, name, model));
 		}
 		return parsed;
 	}

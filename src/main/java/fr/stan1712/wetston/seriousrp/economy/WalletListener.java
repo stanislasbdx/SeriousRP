@@ -39,6 +39,7 @@ public final class WalletListener implements Listener {
 	static final String SLOT_PERM_27 = "seriousrp.economy.wallet.slots.27";
 	static final String SLOT_PERM_18 = "seriousrp.economy.wallet.slots.18";
 	static final String SLOT_PERM_9 = "seriousrp.economy.wallet.slots.9";
+	static final String NOT_CASH_MESSAGE = "Economy.Cash.Wallet.NotCash";
 
 	private final Cash cash;
 	private final Wallet wallets;
@@ -54,7 +55,7 @@ public final class WalletListener implements Listener {
 	}
 
 	public WalletListener(Plugin plugin, Cash cash, Wallet wallets) {
-		this(plugin, cash, wallets, Bukkit::addRecipe, (holder, size, title) -> Bukkit.createInventory(holder, size, title));
+		this(plugin, cash, wallets, Bukkit::addRecipe, WalletListener::createInventory);
 	}
 
 	WalletListener(
@@ -71,6 +72,10 @@ public final class WalletListener implements Listener {
 		this.recipeKey = new NamespacedKey(plugin, RECIPE_KEY);
 		this.recipeSink = recipeSink;
 		this.inventoryFactory = inventoryFactory;
+	}
+
+	static Inventory createInventory(InventoryHolder holder, int size, String title) {
+		return Bukkit.createInventory(holder, size, title);
 	}
 
 	public void registerRecipe() {
@@ -139,12 +144,12 @@ public final class WalletListener implements Listener {
 		boolean top = event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Holder;
 		if (top && !isEmpty(event.getCursor()) && !isCashItem(event.getCursor())) {
 			event.setCancelled(true);
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
+			player.sendMessage(getShortPrefixString() + getConfigString(NOT_CASH_MESSAGE));
 			return;
 		}
 		if (!top && event.isShiftClick() && !isEmpty(event.getCurrentItem()) && !isCashItem(event.getCurrentItem())) {
 			event.setCancelled(true);
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
+			player.sendMessage(getShortPrefixString() + getConfigString(NOT_CASH_MESSAGE));
 		}
 	}
 
@@ -158,7 +163,7 @@ public final class WalletListener implements Listener {
 		boolean affectsTop = event.getRawSlots().stream().anyMatch(slot -> slot < topSize);
 		if (affectsTop && !isCashItem(event.getOldCursor())) {
 			event.setCancelled(true);
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
+			player.sendMessage(getShortPrefixString() + getConfigString(NOT_CASH_MESSAGE));
 		}
 	}
 
@@ -218,7 +223,7 @@ public final class WalletListener implements Listener {
 
 	@EventHandler
 	public void onPrepareCraft(PrepareItemCraftEvent event) {
-		if (!isWalletRecipe(event.getRecipe()) || event.getView().getPlayer() == null) {
+		if (!isWalletRecipe(event.getRecipe())) {
 			return;
 		}
 		int slots = cash.walletSlots();
@@ -317,11 +322,7 @@ public final class WalletListener implements Listener {
 
 	private List<Cash.Stack> collectCash(Inventory inventory, Player player) {
 		List<Cash.Stack> stacks = new ArrayList<>();
-		ItemStack[] contents = inventory.getContents();
-		if (contents == null) {
-			return stacks;
-		}
-		for (ItemStack item : contents) {
+		for (ItemStack item : inventory.getContents()) {
 			if (isEmpty(item)) {
 				continue;
 			}
