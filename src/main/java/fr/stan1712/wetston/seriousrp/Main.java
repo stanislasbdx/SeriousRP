@@ -9,6 +9,11 @@ import fr.stan1712.wetston.seriousrp.commands.medics.Medinfo;
 import fr.stan1712.wetston.seriousrp.commands.medics.Revive;
 import fr.stan1712.wetston.seriousrp.defaults.EnumModules;
 import fr.stan1712.wetston.seriousrp.defaults.ServerCompatibility;
+import fr.stan1712.wetston.seriousrp.economy.AtmListener;
+import fr.stan1712.wetston.seriousrp.economy.Cash;
+import fr.stan1712.wetston.seriousrp.economy.CashCommand;
+import fr.stan1712.wetston.seriousrp.economy.Wallet;
+import fr.stan1712.wetston.seriousrp.economy.WalletListener;
 import fr.stan1712.wetston.seriousrp.events.Bleeding;
 import fr.stan1712.wetston.seriousrp.events.Cheque;
 import fr.stan1712.wetston.seriousrp.events.Death;
@@ -152,6 +157,20 @@ public final class Main extends JavaPlugin {
 			_log.info("[{}] /cheque commands loaded", logStep);
 
 			pluginManager.registerEvents(new Cheque(this), this);
+
+			Cash cash = Cash.fromConfig(getConfig());
+			if (cash.isEnabled()) {
+				WalletListener walletListener = new WalletListener(this, cash, new Wallet());
+				walletListener.registerRecipe();
+				pluginManager.registerEvents(walletListener, this);
+
+				AtmListener atmListener = new AtmListener(this, cash, walletListener);
+				pluginManager.registerEvents(atmListener, this);
+				getServer().getScheduler().runTaskTimer(this, () -> atmListener.tickProximity(getServer().getOnlinePlayers()), 20L, 20L);
+
+				Objects.requireNonNull(getCommand("cash")).setExecutor(new CashCommand(this, cash, walletListener));
+				_log.info("[{}] Physical cash, wallets and ATM loaded", logStep);
+			}
 		}
 		else _log.info("[{}] Economy > OFF", logStep);
 	}

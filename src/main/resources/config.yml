@@ -22,6 +22,7 @@ Core:
     DMedinfo: "Be able to know the health status of a player"
     DHRPRevive: "Revive and heal you"
     DCheque: "Be able to create a cheque"
+    DCash: "Transform bank money into physical cash"
     DLift: "Carry a player"
   Modules:
     Error: "An error has occured ! Look the config and then, check your config.yml"

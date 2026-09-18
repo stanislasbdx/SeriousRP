@@ -61,6 +61,7 @@ class SeriousrpCommandTest extends ConfigBackedTest {
 		assertTrue(new Seriousrp(plugin).onCommand(sender, command, "seriousrp", new String[] {"help"}));
 		verify(sender).sendMessage(contains("/medinfo"));
 		verify(sender).sendMessage(contains("/cheque"));
+		verify(sender).sendMessage(contains("/cash transform"));
 	}
 
 	@Test
