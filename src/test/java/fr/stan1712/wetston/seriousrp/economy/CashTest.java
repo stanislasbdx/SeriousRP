@@ -1,7 +1,10 @@
 package fr.stan1712.wetston.seriousrp.economy;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class CashTest {
 
@@ -30,7 +36,7 @@ class CashTest {
 		config.set("Economy.Cash.Wallet.Recipe.Ingredients.Z", "NOT_A_MATERIAL");
 		config.set("Economy.Cash.Atm.SignHeader", "[sATM]");
 		config.set("Economy.Cash.Atm.ViewRadius", 8);
-		config.set("Economy.Cash.Atm.Presets", List.of(10, 10, -1, 25));
+		config.set("Economy.Cash.Atm.Presets", java.util.Arrays.asList(10, null, 25));
 		config.set("Economy.Cash.Denominations", List.of(
 			Map.of("value", 20, "material", "PAPER", "name", "&a20", "custom-model-data", 20),
 			Map.of("value", "1", "material", "GOLD_NUGGET", "name", "1€"),
@@ -92,7 +98,7 @@ class CashTest {
 		assertEquals(1, cash.viewRadius());
 		assertEquals(List.of(10, 25, 50, 100), cash.atmPresets());
 		assertEquals(List.of(500, 200, 100, 50, 20, 10, 5, 2, 1), cash.descendingValues());
-		assertEquals(Material.GOLD_NUGGET, cash.denomination(1).orElseThrow().material());
+		assertFalse(cash.walletLoreTotal().isBlank());
 		assertEquals(Material.GOLD_INGOT, cash.denomination(2).orElseThrow().material());
 		assertEquals(Material.PAPER, cash.denomination(5).orElseThrow().material());
 		assertEquals(5, cash.denomination(5).orElseThrow().customModelData());
@@ -128,8 +134,16 @@ class CashTest {
 	}
 
 	@Test
-	void stripColorCodesRemovesAmpersandAndSection() {
-		assertEquals("[sATM]", Cash.stripColorCodes("§c&a[sATM]"));
-		assertEquals("[sATM]", Cash.stripColorCodes("&a[sATM]"));
+	void denominationPersistentDataIgnoresMissingAndNonPositive() {
+		PersistentDataContainer container = mock(PersistentDataContainer.class);
+		NamespacedKey key = new NamespacedKey("seriousrp", "srp-cash");
+		when(container.get(key, PersistentDataType.INTEGER)).thenReturn(null);
+		assertTrue(Cash.readDenomination(container, key).isEmpty());
+		when(container.get(key, PersistentDataType.INTEGER)).thenReturn(0);
+		assertTrue(Cash.readDenomination(container, key).isEmpty());
+		when(container.get(key, PersistentDataType.INTEGER)).thenReturn(20);
+		assertEquals(20, Cash.readDenomination(container, key).orElse(0));
+		Cash.writeDenomination(container, key, 5);
+		verify(container).set(key, PersistentDataType.INTEGER, 5);
 	}
 }

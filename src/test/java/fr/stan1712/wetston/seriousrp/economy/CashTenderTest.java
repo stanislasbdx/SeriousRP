@@ -67,7 +67,11 @@ class CashTenderTest {
 		assertTrue(paid.inventory().isEmpty());
 		assertEquals(List.of(List.of(), List.of(new Cash.Stack(100, 1))), paid.wallets());
 
-		assertTrue(CashTender.pay(ledger, 0, EURO).isEmpty());
+		assertTrue(CashTender.pay(
+			new CashTender.Ledger(List.of(new Cash.Stack(3, 1)), List.of()),
+			1,
+			List.of(3)
+		).isEmpty());
 		assertTrue(CashTender.pay(ledger, 999, EURO).isEmpty());
 	}
 
@@ -95,6 +99,7 @@ class CashTenderTest {
 
 		assertTrue(CashTender.parseTransform(null, EURO).isEmpty());
 		assertTrue(CashTender.parseTransform(new String[] {"stan"}, EURO).isEmpty());
+		assertTrue(CashTender.parseTransform(new String[] {null, "10"}, EURO).isEmpty());
 		assertTrue(CashTender.parseTransform(new String[] {"", "10"}, EURO).isEmpty());
 		assertTrue(CashTender.parseTransform(new String[] {"stan", "nope"}, EURO).isEmpty());
 		assertTrue(CashTender.parseTransform(new String[] {"stan", "7", "1"}, EURO).isEmpty());

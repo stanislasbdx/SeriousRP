@@ -1,8 +1,11 @@
 package fr.stan1712.wetston.seriousrp.economy;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -131,6 +134,18 @@ public final class Cash {
 			radius,
 			presets
 		);
+	}
+
+	public static OptionalInt readDenomination(PersistentDataContainer container, NamespacedKey key) {
+		Integer value = container.get(key, PersistentDataType.INTEGER);
+		if (value == null || value <= 0) {
+			return OptionalInt.empty();
+		}
+		return OptionalInt.of(value);
+	}
+
+	public static void writeDenomination(PersistentDataContainer container, NamespacedKey key, int denomination) {
+		container.set(key, PersistentDataType.INTEGER, denomination);
 	}
 
 	public static int clampSlots(int slots) {
