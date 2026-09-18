@@ -5,8 +5,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -27,6 +31,22 @@ class ConfigFactoryTest extends ConfigBackedTest {
 	void getConfigBooleanReadsModuleFlags() {
 		assertEquals(Boolean.TRUE, Utils.ConfigFactory.getConfigBoolean("Core.Modules.Economy"));
 		assertEquals(Boolean.FALSE, Utils.ConfigFactory.getConfigBoolean("Core.Modules.Medics"));
+	}
+
+	@Test
+	void shippedCashWalletMappingKeepsSettingsAndMessages() {
+		assertEquals("§cOnly cash can go in a wallet", Utils.ConfigFactory.getConfigString("Economy.Cash.Wallet.NotCash"));
+		assertEquals("§cThis wallet is already open", Utils.ConfigFactory.getConfigString("Economy.Cash.Wallet.AlreadyOpen"));
+
+		InputStream stream = Objects.requireNonNull(
+			getClass().getClassLoader().getResourceAsStream("config.yml")
+		);
+		YamlConfiguration loaded = YamlConfiguration.loadConfiguration(
+			new InputStreamReader(stream, StandardCharsets.UTF_8)
+		);
+		assertEquals(18, loaded.getInt("Economy.Cash.Wallet.DefaultSlots"));
+		assertEquals("LEATHER", loaded.getString("Economy.Cash.Wallet.Material"));
+		assertTrue(loaded.contains("Economy.Cash.Wallet.Recipe.Shape"));
 	}
 
 	@Test

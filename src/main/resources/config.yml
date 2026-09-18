@@ -84,6 +84,10 @@ Economy:
         Ingredients:
           L: LEATHER
           P: PAPER
+      OpenDenied: "&cHold the wallet in your main hand"
+      AlreadyOpen: "&cThis wallet is already open"
+      NotCash: "&cOnly cash can go in a wallet"
+      ShiftCraft: "&cCraft wallets one at a time"
     Atm:
       SignHeader: "[sATM]"
       ViewRadius: 5
@@ -153,11 +157,6 @@ Economy:
       Created: "&aATM created"
       DeniedCreate: "&cYou can't create an ATM"
       DeniedBreak: "&cYou can't break this ATM"
-    Wallet:
-      OpenDenied: "&cHold the wallet in your main hand"
-      AlreadyOpen: "&cThis wallet is already open"
-      NotCash: "&cOnly cash can go in a wallet"
-      ShiftCraft: "&cCraft wallets one at a time"
   Cheque:
     Usage: "To create a cheque : /cheque <value : only positive integers>"
     Created: "A %amount%€ cheque has been created"
