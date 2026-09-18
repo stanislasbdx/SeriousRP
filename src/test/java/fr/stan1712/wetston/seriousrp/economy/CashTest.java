@@ -127,6 +127,12 @@ class CashTest {
 	}
 
 	@Test
+	void parsePresetsKeepsUniquePositiveValuesAndSkipsNulls() {
+		assertEquals(List.of(10, 25), Cash.parsePresets(java.util.Arrays.asList(10, null, 25, 10, -5, 0)));
+		assertEquals(List.of(10, 25, 50, 100), Cash.parsePresets(java.util.Arrays.asList(null, -1, 0)));
+	}
+
+	@Test
 	void stackRejectsNonPositiveValuesAndComputesTotal() {
 		assertThrows(IllegalArgumentException.class, () -> new Cash.Stack(0, 1));
 		assertThrows(IllegalArgumentException.class, () -> new Cash.Stack(1, 0));

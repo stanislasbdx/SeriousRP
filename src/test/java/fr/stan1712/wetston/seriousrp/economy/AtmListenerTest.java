@@ -670,6 +670,17 @@ class AtmListenerTest extends ConfigBackedTest {
 	}
 
 	@Test
+	void stacksForWalletFallsBackWhenIndexIsOutOfRange() {
+		CashTender.Ledger empty = new CashTender.Ledger(List.of(), List.of());
+		assertEquals(List.of(), AtmListener.stacksForWallet(empty, 0));
+
+		List<Cash.Stack> wallet = List.of(new Cash.Stack(10, 2));
+		CashTender.Ledger oneWallet = new CashTender.Ledger(List.of(), List.of(wallet));
+		assertEquals(wallet, AtmListener.stacksForWallet(oneWallet, 0));
+		assertEquals(List.of(), AtmListener.stacksForWallet(oneWallet, 1));
+	}
+
+	@Test
 	void holderStoresLocation() {
 		Location location = mock(Location.class);
 		AtmListener.Holder holder = new AtmListener.Holder(location);

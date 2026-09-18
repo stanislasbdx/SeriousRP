@@ -310,11 +310,18 @@ public final class WalletListener implements Listener {
 	}
 
 	Optional<Cash.Stack> readCashItem(ItemStack item) {
-		if (isEmpty(item) || item.getItemMeta() == null) {
+		if (isEmpty(item)) {
 			return Optional.empty();
 		}
-		var denomination = Cash.readDenomination(item.getItemMeta().getPersistentDataContainer(), cashKey);
-		if (denomination.isEmpty() || !cash.isDenomination(denomination.getAsInt())) {
+		ItemMeta meta = item.getItemMeta();
+		if (meta == null) {
+			return Optional.empty();
+		}
+		var denomination = Cash.readDenomination(meta.getPersistentDataContainer(), cashKey);
+		if (denomination.isEmpty()) {
+			return Optional.empty();
+		}
+		if (!cash.isDenomination(denomination.getAsInt())) {
 			return Optional.empty();
 		}
 		return Optional.of(new Cash.Stack(denomination.getAsInt(), item.getAmount()));

@@ -420,6 +420,8 @@ class WalletListenerTest extends ConfigBackedTest {
 		assertTrue(listener.readCashItem(cashStack).isEmpty());
 		when(cashStack.getItemMeta()).thenReturn(cashMeta);
 		when(cashMeta.getPersistentDataContainer()).thenReturn(cashPdc);
+		when(cashPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(null);
+		assertTrue(listener.readCashItem(cashStack).isEmpty());
 		when(cashPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(99);
 		assertTrue(listener.readCashItem(cashStack).isEmpty());
 	}

@@ -434,9 +434,7 @@ public final class AtmListener implements Listener {
 			ItemStack item = contents[slot];
 			Optional<Wallet.Payload> wallet = walletItems.readWalletItem(item);
 			if (wallet.isPresent()) {
-				List<Cash.Stack> stacks = walletIndex < ledger.wallets().size()
-					? ledger.wallets().get(walletIndex)
-					: List.of();
+				List<Cash.Stack> stacks = stacksForWallet(ledger, walletIndex);
 				walletIndex++;
 				inventory.setItem(slot, walletItems.createWalletItem(new Wallet.Payload(
 					wallet.get().id(),
@@ -452,6 +450,13 @@ public final class AtmListener implements Listener {
 		for (Cash.Stack stack : CashTender.toInventoryStacks(ledger.inventory())) {
 			inventory.addItem(walletItems.createCashItem(stack));
 		}
+	}
+
+	static List<Cash.Stack> stacksForWallet(CashTender.Ledger ledger, int walletIndex) {
+		if (walletIndex < ledger.wallets().size()) {
+			return ledger.wallets().get(walletIndex);
+		}
+		return List.of();
 	}
 
 	private boolean canFitLoose(Player player, List<Cash.Stack> loose) {
