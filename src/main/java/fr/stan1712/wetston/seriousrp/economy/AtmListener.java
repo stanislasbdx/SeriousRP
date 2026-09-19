@@ -44,11 +44,13 @@ public final class AtmListener implements Listener {
 	static final String AMOUNT_KEY = "srp-atm-amount";
 	static final String ALL_KEY = "srp-atm-all";
 	static final String CUSTOM_KEY = "srp-atm-custom";
-	static final int GUI_SIZE = 36;
+	static final int GUI_SIZE = 45;
 	static final int ACCOUNT_SLOT = 3;
 	static final int POCKET_SLOT = 5;
 	static final int DEPOSIT_START = 10;
 	static final int WITHDRAW_START = 19;
+	static final int COMPACT_SLOT = 30;
+	static final int BREAK_SLOT = 32;
 
 	interface Bank {
 		double balance(Player player);
@@ -216,6 +218,10 @@ public final class AtmListener implements Listener {
 			return;
 		}
 		Atm.Operation operation = Atm.Operation.valueOf(opRaw);
+		if (operation == Atm.Operation.COMPACT || operation == Atm.Operation.BREAK) {
+			runChange(player, operation);
+			return;
+		}
 		boolean custom = Integer.valueOf(1).equals(pdc.get(customKey, PersistentDataType.INTEGER));
 		if (custom) {
 			prompts.put(player.getUniqueId(), new Atm.Prompt(
@@ -320,6 +326,33 @@ public final class AtmListener implements Listener {
 		}
 	}
 
+	void runChange(Player player, Atm.Operation operation) {
+		CashTender.Ledger ledger = readLedger(player);
+		int total = CashTender.total(ledger.inventory());
+		if (total <= 0) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.NotEnoughCash"));
+			return;
+		}
+		Optional<List<Cash.Stack>> next = operation == Atm.Operation.BREAK
+			? CashTender.breakSmall(total, cash.descendingValues(), cash.breakMaxDenomination(), cash.breakPieceCap())
+			: CashTender.greedy(total, cash.descendingValues());
+		if (next.isEmpty()) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.NotEnoughCash"));
+			return;
+		}
+		if (CashTender.sameStacks(ledger.inventory(), next.get())) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.AlreadyChanged"));
+			return;
+		}
+		if (!walletItems.canFitLoose(player, next.get())) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.InventoryFull"));
+			return;
+		}
+		writeLedger(player, new CashTender.Ledger(next.get(), ledger.wallets()));
+		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.Changed"));
+		refreshOpenGui(player);
+	}
+
 	boolean deposit(Player player, int amount) {
 		Optional<CashTender.Ledger> paid = CashTender.pay(readLedger(player), amount, cash.descendingValues());
 		if (paid.isEmpty() || !canFitLoose(player, paid.get().inventory()) || !bank.deposit(player, amount)) {
@@ -379,6 +412,10 @@ public final class AtmListener implements Listener {
 		placeActionRow(inventory, WITHDRAW_START, Atm.Operation.WITHDRAW, Material.REDSTONE,
 			getConfigString("Economy.Cash.AtmGui.Withdraw"),
 			cash.applyAmount(getConfigString("Economy.Cash.AtmGui.WithdrawAll"), account));
+		inventory.setItem(COMPACT_SLOT, button(Material.PAPER, Atm.Operation.COMPACT, null, false, false,
+			getConfigString("Economy.Cash.AtmGui.Compact")));
+		inventory.setItem(BREAK_SLOT, button(Material.IRON_NUGGET, Atm.Operation.BREAK, null, false, false,
+			getConfigString("Economy.Cash.AtmGui.Break")));
 	}
 
 	private void fillFrame(Inventory inventory) {
@@ -511,15 +548,9 @@ public final class AtmListener implements Listener {
 					wallet.get().slots(),
 					stacks
 				)));
-				continue;
-			}
-			if (walletItems.readCashItem(item).isPresent()) {
-				inventory.setItem(slot, null);
 			}
 		}
-		for (Cash.Stack stack : CashTender.toInventoryStacks(ledger.inventory())) {
-			inventory.addItem(walletItems.createCashItem(stack));
-		}
+		walletItems.replaceLooseCash(player, ledger.inventory());
 	}
 
 	static List<Cash.Stack> stacksForWallet(CashTender.Ledger ledger, int walletIndex) {
@@ -530,14 +561,7 @@ public final class AtmListener implements Listener {
 	}
 
 	private boolean canFitLoose(Player player, List<Cash.Stack> loose) {
-		int needed = CashTender.toInventoryStacks(loose).size();
-		int free = 0;
-		for (ItemStack item : contents(player.getInventory())) {
-			if (item == null || item.getType() == Material.AIR || walletItems.readCashItem(item).isPresent()) {
-				free++;
-			}
-		}
-		return needed <= free;
+		return walletItems.canFitLoose(player, loose);
 	}
 
 	private static int emptySlots(PlayerInventory inventory) {

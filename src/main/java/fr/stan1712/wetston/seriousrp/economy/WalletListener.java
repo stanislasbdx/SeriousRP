@@ -22,6 +22,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -350,6 +351,46 @@ public final class WalletListener implements Listener {
 			return Optional.empty();
 		}
 		return Optional.of(new Cash.Stack(denomination.getAsInt(), item.getAmount()));
+	}
+
+	List<Cash.Stack> readLooseCash(Player player) {
+		List<Cash.Stack> loose = new ArrayList<>();
+		for (ItemStack item : storage(player)) {
+			if (readWalletItem(item).isPresent()) {
+				continue;
+			}
+			readCashItem(item).ifPresent(loose::add);
+		}
+		return loose;
+	}
+
+	boolean canFitLoose(Player player, List<Cash.Stack> loose) {
+		int needed = CashTender.toInventoryStacks(loose).size();
+		int free = 0;
+		for (ItemStack item : storage(player)) {
+			if (item == null || item.getType() == Material.AIR || readCashItem(item).isPresent()) {
+				free++;
+			}
+		}
+		return needed <= free;
+	}
+
+	void replaceLooseCash(Player player, List<Cash.Stack> next) {
+		PlayerInventory inventory = player.getInventory();
+		ItemStack[] contents = storage(player);
+		for (int slot = 0; slot < contents.length; slot++) {
+			if (readCashItem(contents[slot]).isPresent()) {
+				inventory.setItem(slot, null);
+			}
+		}
+		for (Cash.Stack stack : CashTender.toInventoryStacks(next)) {
+			inventory.addItem(createCashItem(stack));
+		}
+	}
+
+	private static ItemStack[] storage(Player player) {
+		ItemStack[] contents = player.getInventory().getStorageContents();
+		return contents == null ? new ItemStack[0] : contents;
 	}
 
 	private List<Cash.Stack> collectCash(Inventory inventory, Player player) {

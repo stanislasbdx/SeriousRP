@@ -30,9 +30,8 @@ commands:
     usage: /cheque <amount>
     aliases: [cq]
   cash:
-    description: Transform bank money into physical cash.
-    permission: seriousrp.economy.cash.transform
-    usage: /cash transform <player> <amount> OR /cash transform <player> <denomination> <quantity>
+    description: Transform bank money into physical cash, or group and break loose cash.
+    usage: /cash transform <player> <amount> OR /cash transform <player> <denomination> <quantity> OR /cash compact OR /cash break
 
   # Medic System
   vitals:
@@ -54,6 +53,9 @@ commands:
 permissions:
   seriousrp.economy.cash.transform:
     description: Transform bank money into physical cash
+    default: op
+  seriousrp.economy.cash.change:
+    description: Group or break loose physical cash
     default: op
   seriousrp.economy.atm.create:
     description: Create an [sATM] sign

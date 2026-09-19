@@ -62,6 +62,7 @@ class SeriousrpCommandTest extends ConfigBackedTest {
 		verify(sender).sendMessage(contains("/medinfo"));
 		verify(sender).sendMessage(contains("/cheque"));
 		verify(sender).sendMessage(contains("/cash transform"));
+		verify(sender).sendMessage(contains("/cash compact"));
 	}
 
 	@Test

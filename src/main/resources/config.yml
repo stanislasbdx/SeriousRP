@@ -23,6 +23,7 @@ Core:
     DHRPRevive: "Revive and heal you"
     DCheque: "Be able to create a cheque"
     DCash: "Transform bank money into physical cash"
+    DCashChange: "Group or break physical cash"
     DLift: "Carry a player"
   Modules:
     Error: "An error has occured ! Look the config and then, check your config.yml"
@@ -142,6 +143,16 @@ Economy:
       NotEnough: "&c%target% doesn't have enough money on their account"
       InventoryFull: "&c%target%'s inventory is full"
       Done: "&aTransformed %amount%%currency% from %target%'s account into cash"
+    Change:
+      BreakPieceCap: 64
+      BreakMaxDenomination: 20
+      Usage: "Usage : /cash compact OR /cash break"
+      PlayerOnly: "&cPlayers only"
+      NoCash: "&cYou don't have any loose cash"
+      Compacted: "&aGrouped your cash into larger bills"
+      Broken: "&aBroke your cash into smaller change"
+      AlreadyChanged: "&eYour cash is already like that"
+      InventoryFull: "&cNot enough inventory space"
     AtmGui:
       Title: "&2ATM"
       Account: "&aAccount : &f%amount%%currency%"
@@ -151,6 +162,11 @@ Economy:
       Withdraw: "&cWithdraw %amount%%currency%"
       WithdrawAll: "&cWithdraw everything (%amount%%currency%)"
       CustomAmount: "&6Custom amount"
+      Compact: "&aGroup into larger bills"
+      Break: "&eBreak into small change"
+      Changed: "&aCash updated"
+      AlreadyChanged: "&eNothing to change"
+      InventoryFull: "&cNot enough inventory space"
       Prompt: "&eType the amount in chat, or 'cancel'"
       PromptCancelled: "&cCancelled"
       InvalidAmount: "&cInvalid amount"

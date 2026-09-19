@@ -12,7 +12,9 @@ public final class Atm {
 
 	public enum Operation {
 		DEPOSIT,
-		WITHDRAW
+		WITHDRAW,
+		COMPACT,
+		BREAK
 	}
 
 	public record Prompt(UUID playerId, Operation operation, long expiresAtMillis) {
@@ -64,7 +66,7 @@ public final class Atm {
 	}
 
 	public static OptionalInt resolveAmount(Operation operation, Integer requested, boolean all, int pocket, int account) {
-		if (operation == null) {
+		if (operation == null || (operation != Operation.DEPOSIT && operation != Operation.WITHDRAW)) {
 			return OptionalInt.empty();
 		}
 		int available = operation == Operation.DEPOSIT ? pocket : account;

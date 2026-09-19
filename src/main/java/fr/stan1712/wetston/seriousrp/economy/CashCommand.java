@@ -20,7 +20,11 @@ import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getConfigString;
 import static fr.stan1712.wetston.seriousrp.Utils.ConfigFactory.getShortPrefixString;
 
 public final class CashCommand implements CommandExecutor {
-	private static final String TRANSFORM = "transform";
+	static final String TRANSFORM = "transform";
+	static final String COMPACT = "compact";
+	static final String BREAK = "break";
+	static final String TRANSFORM_PERM = "seriousrp.economy.cash.transform";
+	static final String CHANGE_PERM = "seriousrp.economy.cash.change";
 	private static final String TARGET_PLACEHOLDER = "%target%";
 
 	private final Cash cash;
@@ -46,13 +50,28 @@ public final class CashCommand implements CommandExecutor {
 			}
 			return true;
 		}
-		if (!sender.hasPermission("seriousrp.economy.cash.transform")) {
+		if (args.length == 0) {
+			sender.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Transform.Usage"));
+			return false;
+		}
+		if (TRANSFORM.equalsIgnoreCase(args[0])) {
+			return transform(sender, args);
+		}
+		if (COMPACT.equalsIgnoreCase(args[0]) || BREAK.equalsIgnoreCase(args[0])) {
+			return change(sender, args);
+		}
+		sender.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Transform.Usage"));
+		return true;
+	}
+
+	private boolean transform(CommandSender sender, String[] args) {
+		if (!sender.hasPermission(TRANSFORM_PERM)) {
 			sender.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
 			return true;
 		}
-		if (args.length < 2 || !TRANSFORM.equalsIgnoreCase(args[0])) {
+		if (args.length < 2) {
 			sender.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Transform.Usage"));
-			return args.length != 0;
+			return true;
 		}
 		String[] transformArgs = new String[args.length - 1];
 		System.arraycopy(args, 1, transformArgs, 0, transformArgs.length);
@@ -69,6 +88,48 @@ public final class CashCommand implements CommandExecutor {
 			return true;
 		}
 		giveTransformedCash(sender, target, plan);
+		return true;
+	}
+
+	private boolean change(CommandSender sender, String[] args) {
+		if (!sender.hasPermission(CHANGE_PERM)) {
+			sender.sendMessage(getShortPrefixString() + getConfigString("Core.NoPerms"));
+			return true;
+		}
+		if (!(sender instanceof Player player)) {
+			sender.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Change.PlayerOnly"));
+			return true;
+		}
+		if (args.length != 1) {
+			sender.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Change.Usage"));
+			return true;
+		}
+		List<Cash.Stack> loose = walletItems.readLooseCash(player);
+		int total = CashTender.total(loose);
+		if (total <= 0) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Change.NoCash"));
+			return true;
+		}
+		boolean breaking = BREAK.equalsIgnoreCase(args[0]);
+		Optional<List<Cash.Stack>> next = breaking
+			? CashTender.breakSmall(total, cash.descendingValues(), cash.breakMaxDenomination(), cash.breakPieceCap())
+			: CashTender.greedy(total, cash.descendingValues());
+		if (next.isEmpty()) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Change.NoCash"));
+			return true;
+		}
+		if (CashTender.sameStacks(loose, next.get())) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Change.AlreadyChanged"));
+			return true;
+		}
+		if (!walletItems.canFitLoose(player, next.get())) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Change.InventoryFull"));
+			return true;
+		}
+		walletItems.replaceLooseCash(player, next.get());
+		player.sendMessage(getShortPrefixString() + getConfigString(
+			breaking ? "Economy.Cash.Change.Broken" : "Economy.Cash.Change.Compacted"
+		));
 		return true;
 	}
 

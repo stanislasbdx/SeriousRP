@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -35,6 +36,35 @@ class CashTenderTest {
 		assertEquals(Integer.MAX_VALUE, CashTender.total(huge));
 		assertEquals(Integer.MAX_VALUE, CashTender.saturatingAdd(Integer.MAX_VALUE, 10));
 		assertEquals(3, CashTender.saturatingAdd(1, 2));
+	}
+
+	@Test
+	void breakSmallFillsMaxDenomThenLeavesLargeBills() {
+		assertEquals(
+			List.of(new Cash.Stack(20, 3), new Cash.Stack(5, 1), new Cash.Stack(2, 1)),
+			CashTender.breakSmall(67, EURO, 20, 64).orElseThrow()
+		);
+		assertEquals(
+			List.of(new Cash.Stack(500, 7), new Cash.Stack(200, 1), new Cash.Stack(20, 65)),
+			CashTender.breakSmall(5000, EURO, 20, 64).orElseThrow()
+		);
+		assertEquals(
+			List.of(new Cash.Stack(100, 1)),
+			CashTender.greedy(CashTender.total(List.of(new Cash.Stack(20, 5))), EURO).orElseThrow()
+		);
+		assertTrue(CashTender.sameStacks(List.of(new Cash.Stack(20, 2), new Cash.Stack(20, 3)), List.of(new Cash.Stack(20, 5))));
+		assertFalse(CashTender.sameStacks(List.of(new Cash.Stack(20, 5)), List.of(new Cash.Stack(100, 1))));
+		assertFalse(CashTender.sameStacks(null, List.of()));
+		assertTrue(CashTender.breakSmall(0, EURO, 20, 64).isEmpty());
+		assertTrue(CashTender.breakSmall(10, EURO, 20, 0).isEmpty());
+		assertTrue(CashTender.breakSmall(10, List.of(), 20, 64).isEmpty());
+		assertTrue(CashTender.breakSmall(10, null, 20, 64).isEmpty());
+		assertTrue(CashTender.breakSmall(10, java.util.Arrays.asList(0, null, -5), 20, 64).isEmpty());
+		assertEquals(
+			List.of(new Cash.Stack(5, 2)),
+			CashTender.breakSmall(10, List.of(10, 5), 3, 64).orElseThrow()
+		);
+		assertTrue(CashTender.breakSmall(12, List.of(10, 5), 3, 64).isEmpty());
 	}
 
 	@Test

@@ -58,6 +58,8 @@ class AtmTest {
 		assertTrue(Atm.resolveAmount(Atm.Operation.WITHDRAW, 50, false, 100, 20).isEmpty());
 		assertTrue(Atm.resolveAmount(null, 10, false, 10, 10).isEmpty());
 		assertTrue(Atm.resolveAmount(Atm.Operation.WITHDRAW, 0, false, 10, 10).isEmpty());
+		assertTrue(Atm.resolveAmount(Atm.Operation.COMPACT, 10, false, 10, 10).isEmpty());
+		assertTrue(Atm.resolveAmount(Atm.Operation.BREAK, null, true, 10, 10).isEmpty());
 	}
 
 	@Test

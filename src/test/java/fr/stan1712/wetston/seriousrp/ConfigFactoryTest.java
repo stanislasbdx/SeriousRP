@@ -63,6 +63,9 @@ class ConfigFactoryTest extends ConfigBackedTest {
 		assertEquals(2, denoms.get(1).get("custom-model-data"));
 		assertEquals(5, denoms.get(2).get("custom-model-data"));
 		assertEquals(500, denoms.get(8).get("custom-model-data"));
+		assertEquals(64, loaded.getInt("Economy.Cash.Change.BreakPieceCap"));
+		assertEquals(20, loaded.getInt("Economy.Cash.Change.BreakMaxDenomination"));
+		assertEquals("&aGroup into larger bills", loaded.getString("Economy.Cash.AtmGui.Compact"));
 	}
 
 	@Test

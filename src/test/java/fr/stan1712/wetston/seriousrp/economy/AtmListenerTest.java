@@ -230,6 +230,8 @@ class AtmListenerTest extends ConfigBackedTest {
 		}
 		verify(event).setCancelled(true);
 		verify(player).openInventory(gui);
+		verify(gui, atLeastOnce()).setItem(eq(AtmListener.COMPACT_SLOT), any());
+		verify(gui, atLeastOnce()).setItem(eq(AtmListener.BREAK_SLOT), any());
 	}
 
 	@Test
@@ -736,6 +738,67 @@ class AtmListenerTest extends ConfigBackedTest {
 		})) {
 			assertThrows(AssertionError.class, () -> listener.onInteract(event));
 		}
+	}
+
+	@Test
+	void compactAndBreakButtonsRewriteLooseCashAndKeepWallets() {
+		YamlConfiguration cfg = new YamlConfiguration();
+		cfg.set("Economy.Cash.Enabled", true);
+		cfg.set("Economy.Cash.Change.BreakPieceCap", 64);
+		cfg.set("Economy.Cash.Change.BreakMaxDenomination", 20);
+		cfg.set("Economy.Cash.Denominations", List.of(
+			Map.of("value", 1, "material", "GOLD_NUGGET"),
+			Map.of("value", 10, "material", "PAPER"),
+			Map.of("value", 100, "material", "PAPER")
+		));
+		Cash localCash = Cash.fromConfig(cfg);
+		WalletListener localItems = new WalletListener(plugin, localCash, new Wallet(), recipe -> {}, (h, s, t) -> gui);
+		AtmListener local = new AtmListener(plugin, localCash, localItems, bank, Runnable::run, (h, s, t) -> gui);
+
+		Location location = mock(Location.class);
+		when(view.getTopInventory()).thenReturn(gui);
+		when(gui.getHolder()).thenReturn(new AtmListener.Holder(location));
+		when(player.getOpenInventory()).thenReturn(view);
+		when(button.getItemMeta()).thenReturn(buttonMeta);
+		when(buttonMeta.getPersistentDataContainer()).thenReturn(buttonPdc);
+
+		ItemStack tens = cashItem(10, 10);
+		ItemStack wallet = walletHolding(50, 1);
+		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[] {tens, wallet, null, null, null, null});
+		when(buttonPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn("COMPACT");
+		when(buttonPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(null);
+		InventoryClickEvent compact = mock(InventoryClickEvent.class);
+		when(compact.getView()).thenReturn(view);
+		when(compact.getWhoClicked()).thenReturn(player);
+		when(compact.getCurrentItem()).thenReturn(button);
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			local.onClick(compact);
+		}
+		verify(player, atLeastOnce()).sendMessage(contains("updated"));
+		verify(playerInventory).setItem(eq(1), any(ItemStack.class));
+
+		ItemStack hundred = cashItem(100, 1);
+		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[] {hundred, wallet, null, null, null, null, null, null, null, null, null});
+		when(buttonPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn("BREAK");
+		InventoryClickEvent brk = mock(InventoryClickEvent.class);
+		when(brk.getView()).thenReturn(view);
+		when(brk.getWhoClicked()).thenReturn(player);
+		when(brk.getCurrentItem()).thenReturn(button);
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			local.onClick(brk);
+		}
+		verify(player, atLeastOnce()).sendMessage(contains("updated"));
+
+		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[] {hundred, wallet});
+		when(buttonPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn("COMPACT");
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			local.onClick(compact);
+		}
+		verify(player).sendMessage(contains("Nothing"));
+
+		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[36]);
+		local.onClick(brk);
+		verify(player).sendMessage(contains("cash"));
 	}
 
 	@Test

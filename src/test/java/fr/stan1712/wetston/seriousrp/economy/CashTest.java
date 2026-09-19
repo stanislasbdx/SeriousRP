@@ -43,6 +43,8 @@ class CashTest {
 		config.set("Economy.Cash.Atm.ViewRadius", 8);
 		config.set("Economy.Cash.Atm.CreateCost", 80);
 		config.set("Economy.Cash.Atm.Presets", java.util.Arrays.asList(10, null, 25, 10, -5, 0));
+		config.set("Economy.Cash.Change.BreakPieceCap", 32);
+		config.set("Economy.Cash.Change.BreakMaxDenomination", 10);
 		config.set("Economy.Cash.Denominations", List.of(
 			Map.of("value", 20, "material", "PAPER", "name", "&a20", "custom-model-data", 20),
 			Map.of("value", "1", "material", "GOLD_NUGGET", "name", "1€"),
@@ -73,6 +75,8 @@ class CashTest {
 		assertEquals(8, cash.viewRadius());
 		assertEquals(80, cash.atmCreateCost());
 		assertEquals(List.of(10, 25), cash.atmPresets());
+		assertEquals(32, cash.breakPieceCap());
+		assertEquals(10, cash.breakMaxDenomination());
 		assertEquals("[sATM]", cash.atmHeader());
 		assertTrue(cash.isAtmHeader("§a[sATM]"));
 		assertTrue(cash.isAtmHeader(" [satm] "));
@@ -118,6 +122,8 @@ class CashTest {
 		assertEquals(5, cash.denomination(5).orElseThrow().customModelData());
 		assertEquals(List.of(" L ", "LPL", " L "), cash.recipeShape());
 		assertEquals(Material.PAPER, cash.recipeIngredients().get('P'));
+		assertEquals(64, cash.breakPieceCap());
+		assertEquals(20, cash.breakMaxDenomination());
 	}
 
 	@Test
@@ -201,6 +207,18 @@ class CashTest {
 		assertEquals(0, Cash.fromConfig(config).atmCreateCost());
 		config.set("Economy.Cash.Atm.CreateCost", 0);
 		assertEquals(0, Cash.fromConfig(config).atmCreateCost());
+	}
+
+	@Test
+	void changeSettingsDefaultAndClampNonPositiveValues() {
+		assertEquals(64, Cash.fromConfig(new YamlConfiguration()).breakPieceCap());
+		assertEquals(20, Cash.fromConfig(new YamlConfiguration()).breakMaxDenomination());
+		YamlConfiguration config = new YamlConfiguration();
+		config.set("Economy.Cash.Change.BreakPieceCap", 0);
+		config.set("Economy.Cash.Change.BreakMaxDenomination", -8);
+		Cash cash = Cash.fromConfig(config);
+		assertEquals(1, cash.breakPieceCap());
+		assertEquals(1, cash.breakMaxDenomination());
 	}
 
 	@Test

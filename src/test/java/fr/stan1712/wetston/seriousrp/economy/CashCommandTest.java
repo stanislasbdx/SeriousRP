@@ -5,12 +5,16 @@ import fr.stan1712.wetston.seriousrp.Main;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
@@ -155,5 +160,78 @@ class CashCommandTest extends ConfigBackedTest {
 	@Test
 	void publicConstructorBindsPlayerLookup() {
 		assertDoesNotThrow(() -> new CashCommand(plugin, cash, walletItems));
+	}
+
+	@Test
+	void compactAndBreakRewriteLooseCashAndHonorPermission() {
+		when(player.hasPermission(CashCommand.CHANGE_PERM)).thenReturn(false);
+		assertTrue(commandExecutor.onCommand(player, command, "cash", new String[] {"compact"}));
+		verify(player).sendMessage(contains("permission"));
+
+		Cash euro = Cash.fromConfig(new YamlConfiguration());
+		WalletListener items = new WalletListener(
+			plugin,
+			euro,
+			new Wallet(),
+			recipe -> {},
+			(h, s, t) -> mock(org.bukkit.inventory.Inventory.class)
+		);
+		CashCommand exec = new CashCommand(euro, items, name -> player);
+		when(player.hasPermission(CashCommand.CHANGE_PERM)).thenReturn(true);
+		when(console.hasPermission(CashCommand.CHANGE_PERM)).thenReturn(true);
+		assertTrue(exec.onCommand(console, command, "cash", new String[] {"compact"}));
+		verify(console).sendMessage(contains("Players"));
+		assertTrue(exec.onCommand(player, command, "cash", new String[] {"break", "extra"}));
+		verify(player).sendMessage(contains("compact"));
+
+		ItemStack twenties = cashItem(20, 5, Material.RESIN_BRICK);
+		when(inventory.getStorageContents()).thenReturn(new ItemStack[] {twenties, null, null});
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			assertTrue(exec.onCommand(player, command, "cash", new String[] {"compact"}));
+		}
+		verify(inventory).setItem(eq(0), eq(null));
+		verify(inventory).addItem(any(ItemStack.class));
+		verify(player).sendMessage(contains("Grouped"));
+
+		ItemStack hundred = cashItem(100, 1, Material.RESIN_BRICK);
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			when(inventory.getStorageContents()).thenReturn(new ItemStack[] {hundred, null, null, null, null, null});
+			assertTrue(exec.onCommand(player, command, "cash", new String[] {"break"}));
+		}
+		verify(player).sendMessage(contains("Broke"));
+
+		when(inventory.getStorageContents()).thenReturn(new ItemStack[] {hundred, null});
+		assertTrue(exec.onCommand(player, command, "cash", new String[] {"compact"}));
+		verify(player).sendMessage(contains("already"));
+
+		ItemStack[] packed = new ItemStack[36];
+		java.util.Arrays.fill(packed, mockStone());
+		packed[0] = cashItem(500, 3, Material.RESIN_BRICK);
+		when(inventory.getStorageContents()).thenReturn(packed);
+		assertTrue(exec.onCommand(player, command, "cash", new String[] {"break"}));
+		verify(player).sendMessage(contains("space"));
+
+		when(inventory.getStorageContents()).thenReturn(new ItemStack[36]);
+		assertTrue(exec.onCommand(player, command, "cash", new String[] {"compact"}));
+		verify(player).sendMessage(contains("loose"));
+	}
+
+	private static ItemStack mockStone() {
+		ItemStack stone = mock(ItemStack.class);
+		when(stone.getType()).thenReturn(Material.STONE);
+		when(stone.getAmount()).thenReturn(1);
+		return stone;
+	}
+
+	private ItemStack cashItem(int denomination, int amount, Material material) {
+		ItemStack item = mock(ItemStack.class);
+		ItemMeta meta = mock(ItemMeta.class);
+		PersistentDataContainer pdc = mock(PersistentDataContainer.class);
+		when(item.getType()).thenReturn(material);
+		when(item.getAmount()).thenReturn(amount);
+		when(item.getItemMeta()).thenReturn(meta);
+		when(meta.getPersistentDataContainer()).thenReturn(pdc);
+		when(pdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(denomination);
+		return item;
 	}
 }

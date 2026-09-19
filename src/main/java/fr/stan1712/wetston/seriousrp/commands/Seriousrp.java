@@ -75,6 +75,7 @@ public class Seriousrp implements CommandExecutor {
 		if (this.pl.getConfig().getBoolean("Core.Modules.Economy")) {
 			sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/cheque <amount>" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DCheque"));
 			sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/cash transform" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DCash"));
+			sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/cash compact" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DCashChange"));
 		}
 		sender.sendMessage("");
 		sender.sendMessage(ChatColor.GRAY + "» " + ChatColor.AQUA + "/seriousrp help" + ChatColor.GRAY + " : " + getConfigString("Core.HelpMsg.DVersion"));

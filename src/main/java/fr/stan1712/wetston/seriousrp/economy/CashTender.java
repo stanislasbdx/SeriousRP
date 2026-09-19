@@ -68,6 +68,69 @@ public final class CashTender {
 		return List.copyOf(split);
 	}
 
+	public static boolean sameStacks(List<Cash.Stack> left, List<Cash.Stack> right) {
+		if (left == null || right == null) {
+			return false;
+		}
+		return compact(left).equals(compact(right));
+	}
+
+	public static Optional<List<Cash.Stack>> breakSmall(
+		int amount,
+		List<Integer> denomsDescending,
+		int maxDenom,
+		int pieceCap
+	) {
+		if (amount <= 0 || pieceCap <= 0 || denomsDescending == null || denomsDescending.isEmpty()) {
+			return Optional.empty();
+		}
+		int smallest = 0;
+		for (Integer denom : denomsDescending) {
+			if (denom == null || denom <= 0) {
+				continue;
+			}
+			if (smallest == 0 || denom < smallest) {
+				smallest = denom;
+			}
+		}
+		if (smallest == 0) {
+			return Optional.empty();
+		}
+		int smallCeiling = maxDenom;
+		boolean anySmall = false;
+		for (Integer denom : denomsDescending) {
+			if (denom != null && denom > 0 && denom <= maxDenom) {
+				anySmall = true;
+				break;
+			}
+		}
+		if (!anySmall) {
+			smallCeiling = smallest;
+		}
+		int remaining = amount;
+		int piecesLeft = pieceCap;
+		List<Cash.Stack> given = new ArrayList<>();
+		for (Integer denom : denomsDescending) {
+			if (denom == null || denom <= 0 || denom > smallCeiling || piecesLeft <= 0) {
+				continue;
+			}
+			int count = (int) Math.min((long) remaining / denom, piecesLeft);
+			if (count > 0) {
+				given.add(new Cash.Stack(denom, count));
+				remaining -= count * denom;
+				piecesLeft -= count;
+			}
+		}
+		if (remaining > 0) {
+			Optional<List<Cash.Stack>> leftover = greedy(remaining, denomsDescending);
+			if (leftover.isEmpty()) {
+				return Optional.empty();
+			}
+			given.addAll(leftover.get());
+		}
+		return Optional.of(compact(given));
+	}
+
 	public static Optional<List<Cash.Stack>> greedy(int amount, List<Integer> denomsDescending) {
 		if (amount < 0 || denomsDescending.isEmpty()) {
 			return Optional.empty();

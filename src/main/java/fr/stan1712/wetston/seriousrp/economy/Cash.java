@@ -26,6 +26,8 @@ public final class Cash {
 	private static final int[] DEFAULT_VALUES = {1, 2, 5, 10, 20, 50, 100, 200, 500};
 	private static final List<Integer> DEFAULT_PRESETS = List.of(10, 25, 50, 100);
 	private static final int DEFAULT_CREATE_COST = 150;
+	private static final int DEFAULT_BREAK_PIECE_CAP = 64;
+	private static final int DEFAULT_BREAK_MAX_DENOMINATION = 20;
 	private static final List<String> DEFAULT_RECIPE_SHAPE = List.of(" L ", "LPL", " L ");
 	private static final Pattern COLOR_CODE = Pattern.compile("§[0-9a-fk-orxA-FK-ORX]");
 
@@ -72,6 +74,13 @@ public final class Cash {
 		}
 	}
 
+	public record ChangeSettings(int breakPieceCap, int breakMaxDenomination) {
+		public ChangeSettings {
+			breakPieceCap = Math.max(1, breakPieceCap);
+			breakMaxDenomination = Math.max(1, breakMaxDenomination);
+		}
+	}
+
 	public static final String AMOUNT_PLACEHOLDER = "%amount%";
 	public static final String CURRENCY_PLACEHOLDER = "%currency%";
 
@@ -81,13 +90,15 @@ public final class Cash {
 	private final Map<Integer, Denomination> byValue;
 	private final WalletSettings wallet;
 	private final AtmSettings atm;
+	private final ChangeSettings change;
 
 	Cash(
 		boolean enabled,
 		String currency,
 		List<Denomination> denominations,
 		WalletSettings wallet,
-		AtmSettings atm
+		AtmSettings atm,
+		ChangeSettings change
 	) {
 		this.enabled = enabled;
 		this.currency = currency;
@@ -99,6 +110,7 @@ public final class Cash {
 		this.byValue = Map.copyOf(index);
 		this.wallet = wallet;
 		this.atm = atm;
+		this.change = change;
 	}
 
 	public static Cash fromConfig(FileConfiguration config) {
@@ -135,13 +147,16 @@ public final class Cash {
 		int radius = config.getInt("Economy.Cash.Atm.ViewRadius", 5);
 		int createCost = config.getInt("Economy.Cash.Atm.CreateCost", DEFAULT_CREATE_COST);
 		List<Integer> presets = parsePresets(config.getIntegerList("Economy.Cash.Atm.Presets"));
+		int pieceCap = config.getInt("Economy.Cash.Change.BreakPieceCap", DEFAULT_BREAK_PIECE_CAP);
+		int maxDenom = config.getInt("Economy.Cash.Change.BreakMaxDenomination", DEFAULT_BREAK_MAX_DENOMINATION);
 
 		return new Cash(
 			enabled,
 			currency,
 			denoms,
 			new WalletSettings(slots, walletMaterial, walletName, walletLore, shape, ingredients, walletCustomModelData),
-			new AtmSettings(header, radius, presets, createCost)
+			new AtmSettings(header, radius, presets, createCost),
+			new ChangeSettings(pieceCap, maxDenom)
 		);
 	}
 
@@ -274,6 +289,14 @@ public final class Cash {
 
 	public int atmCreateCost() {
 		return atm.createCost();
+	}
+
+	public int breakPieceCap() {
+		return change.breakPieceCap();
+	}
+
+	public int breakMaxDenomination() {
+		return change.breakMaxDenomination();
 	}
 
 	public String applyAmount(String template, int amount) {
