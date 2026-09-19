@@ -14,6 +14,8 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,6 +58,11 @@ class ConfigFactoryTest extends ConfigBackedTest {
 		assertEquals(1, loaded.getInt("Economy.Cash.Wallet.CustomModelData"));
 		assertEquals("&7Contenu : &e%amount%%currency%", loaded.getString("Economy.Cash.Wallet.LoreTotal"));
 		assertTrue(loaded.contains("Economy.Cash.Wallet.Recipe.Shape"));
+		List<Map<?, ?>> denoms = loaded.getMapList("Economy.Cash.Denominations");
+		assertEquals(1, denoms.get(0).get("custom-model-data"));
+		assertEquals(2, denoms.get(1).get("custom-model-data"));
+		assertEquals(5, denoms.get(2).get("custom-model-data"));
+		assertEquals(500, denoms.get(8).get("custom-model-data"));
 	}
 
 	@Test

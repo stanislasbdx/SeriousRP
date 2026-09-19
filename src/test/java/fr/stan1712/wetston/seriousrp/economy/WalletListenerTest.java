@@ -445,7 +445,7 @@ class WalletListenerTest extends ConfigBackedTest {
 	}
 
 	@Test
-	void createCashItemWritesModelDataOnlyWhenConfigured() {
+	void createCashItemWritesFaceValueCustomModelData() {
 		ItemMeta meta = mock(ItemMeta.class);
 		PersistentDataContainer pdc = mock(PersistentDataContainer.class);
 		when(meta.getPersistentDataContainer()).thenReturn(pdc);
@@ -454,9 +454,33 @@ class WalletListenerTest extends ConfigBackedTest {
 			listener.createCashItem(new Cash.Stack(1, 1));
 		}
 		verify(meta).setCustomModelData(20);
+		verify(meta).setCustomModelData(1);
 		verify(meta, times(2)).setEnchantmentGlintOverride(true);
-		verify(meta, never()).setCustomModelData(1);
 		assertThrows(java.util.NoSuchElementException.class, () -> listener.createCashItem(new Cash.Stack(50, 1)));
+	}
+
+	@Test
+	void createCashItemSkipsCustomModelDataWhenDisabled() {
+		YamlConfiguration disabled = new YamlConfiguration();
+		disabled.set("Economy.Cash.Enabled", true);
+		disabled.set("Economy.Cash.Denominations", List.of(
+			Map.of("value", 1, "material", "GOLD_NUGGET", "custom-model-data", 0)
+		));
+		WalletListener noModel = new WalletListener(
+			plugin,
+			Cash.fromConfig(disabled),
+			wallets,
+			recipe -> {},
+			(h, s, t) -> topInventory
+		);
+		ItemMeta meta = mock(ItemMeta.class);
+		PersistentDataContainer pdc = mock(PersistentDataContainer.class);
+		when(meta.getPersistentDataContainer()).thenReturn(pdc);
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class,
+			(mock, context) -> when(mock.getItemMeta()).thenReturn(meta))) {
+			noModel.createCashItem(new Cash.Stack(1, 1));
+		}
+		verify(meta, never()).setCustomModelData(anyInt());
 	}
 
 	@Test

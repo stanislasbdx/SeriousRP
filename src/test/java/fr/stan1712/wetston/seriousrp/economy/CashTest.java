@@ -61,6 +61,7 @@ class CashTest {
 		assertEquals("§6Wallet", cash.walletDisplayName());
 		assertEquals(List.of(20, 7, 1), cash.descendingValues());
 		assertEquals(7, cash.denomination(7).orElseThrow().customModelData());
+		assertEquals(1, cash.denomination(1).orElseThrow().customModelData());
 		assertFalse(cash.isDenomination(8));
 		assertTrue(cash.isDenomination(20));
 		assertFalse(cash.isDenomination(50));
@@ -109,6 +110,8 @@ class CashTest {
 		assertEquals(Material.GOLD_NUGGET, cash.denomination(2).orElseThrow().material());
 		assertEquals(Material.RESIN_BRICK, cash.denomination(5).orElseThrow().material());
 		assertEquals(Material.IRON_NUGGET, cash.denomination(1).orElseThrow().material());
+		assertEquals(1, cash.denomination(1).orElseThrow().customModelData());
+		assertEquals(2, cash.denomination(2).orElseThrow().customModelData());
 		assertEquals(5, cash.denomination(5).orElseThrow().customModelData());
 		assertEquals(List.of(" L ", "LPL", " L "), cash.recipeShape());
 		assertEquals(Material.PAPER, cash.recipeIngredients().get('P'));
@@ -134,6 +137,21 @@ class CashTest {
 			0
 		);
 		assertNull(compacted.customModelData());
+	}
+
+	@Test
+	void denominationCustomModelDataDefaultsToFaceValueAndDisablesWhenNonPositive() {
+		YamlConfiguration config = new YamlConfiguration();
+		config.set("Economy.Cash.Denominations", List.of(
+			Map.of("value", 1, "material", "IRON_NUGGET"),
+			Map.of("value", 2, "material", "GOLD_NUGGET", "custom-model-data", 0),
+			Map.of("value", 5, "material", "RESIN_BRICK", "custom-model-data", 99)
+		));
+		Cash cash = Cash.fromConfig(config);
+		assertEquals(1, cash.denomination(1).orElseThrow().customModelData());
+		assertNull(cash.denomination(2).orElseThrow().customModelData());
+		assertEquals(99, cash.denomination(5).orElseThrow().customModelData());
+		assertNull(new Cash.Denomination(10, Material.RESIN_BRICK, "n", 0).customModelData());
 	}
 
 	@Test

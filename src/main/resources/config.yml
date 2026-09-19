@@ -101,9 +101,11 @@ Economy:
     Denominations:
       - value: 1
         material: IRON_NUGGET
+        custom-model-data: 1
         name: "&ePièce de 1€"
       - value: 2
         material: GOLD_NUGGET
+        custom-model-data: 2
         name: "&ePièce de 2€"
       - value: 5
         material: RESIN_BRICK

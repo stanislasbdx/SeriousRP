@@ -29,6 +29,9 @@ public final class Cash {
 	private static final Pattern COLOR_CODE = Pattern.compile("§[0-9a-fk-orxA-FK-ORX]");
 
 	public record Denomination(int value, Material material, String displayName, Integer customModelData) {
+		public Denomination {
+			customModelData = customModelData != null && customModelData > 0 ? customModelData : null;
+		}
 	}
 
 	public record Stack(int denomination, int amount) {
@@ -281,7 +284,7 @@ public final class Cash {
 			boolean unique = parsed.stream().noneMatch(existing -> existing.value() == value);
 			if (value > 0 && material != null && unique) {
 				String name = colorize(nullable(stringOrNull(row.get("name")), value + "€"));
-				Integer model = toNullableInt(row.get("custom-model-data"));
+				Integer model = parseCustomModelData(row.get("custom-model-data"), value);
 				parsed.add(new Denomination(value, material, name, model));
 			}
 		}
@@ -293,8 +296,7 @@ public final class Cash {
 		for (int value : DEFAULT_VALUES) {
 			Material material = defaultMaterial(value);
 			String name = colorize("&e" + value + currency);
-			Integer model = value >= 5 ? value : null;
-			defaults.add(new Denomination(value, material, name, model));
+			defaults.add(new Denomination(value, material, name, value));
 		}
 		defaults.sort(Comparator.comparingInt(Denomination::value).reversed());
 		return defaults;
@@ -308,6 +310,13 @@ public final class Cash {
 			return Material.GOLD_NUGGET;
 		}
 		return Material.RESIN_BRICK;
+	}
+
+	private static Integer parseCustomModelData(Object raw, int fallback) {
+		if (raw == null) {
+			return fallback;
+		}
+		return toNullableInt(raw);
 	}
 
 	private static Map<Character, Material> parseIngredients(ConfigurationSection section) {
