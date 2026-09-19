@@ -2,6 +2,7 @@ name: SeriousRP
 version: '${version}'
 main: fr.stan1712.wetston.seriousrp.Main
 api-version: '1.21'
+load: STARTUP
 
 author: stan1712
 website: https://stan1712.com
@@ -28,6 +29,9 @@ commands:
     permission: seriousrp.economy.cheques
     usage: /cheque <amount>
     aliases: [cq]
+  cash:
+    description: Transform bank money into physical cash, or group and break loose cash.
+    usage: /cash transform <player> <amount> OR /cash transform <player> <denomination> <quantity> OR /cash compact OR /cash break
 
   # Medic System
   vitals:
@@ -45,3 +49,32 @@ commands:
     permission: seriousrp.medics.hrprevive
     usage: /hrprevive
     aliases: [hrprevive]
+
+permissions:
+  seriousrp.economy.cash.transform:
+    description: Transform bank money into physical cash
+    default: op
+  seriousrp.economy.cash.change:
+    description: Group or break loose physical cash
+    default: op
+  seriousrp.economy.atm.create:
+    description: Create an [sATM] sign
+    default: op
+  seriousrp.economy.atm.delete:
+    description: Break your own ATM signs
+    default: op
+  seriousrp.economy.atm.delete.others:
+    description: Break other players' ATM signs
+    default: op
+  seriousrp.economy.atm.use:
+    description: Use an ATM
+    default: true
+  seriousrp.economy.wallet.slots.9:
+    description: Craft 9-slot wallets
+    default: true
+  seriousrp.economy.wallet.slots.18:
+    description: Craft 18-slot wallets
+    default: false
+  seriousrp.economy.wallet.slots.27:
+    description: Craft 27-slot wallets
+    default: false

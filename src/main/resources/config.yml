@@ -22,6 +22,8 @@ Core:
     DMedinfo: "Be able to know the health status of a player"
     DHRPRevive: "Revive and heal you"
     DCheque: "Be able to create a cheque"
+    DCash: "Transform bank money into physical cash"
+    DCashChange: "Group or break physical cash"
     DLift: "Carry a player"
   Modules:
     Error: "An error has occured ! Look the config and then, check your config.yml"
@@ -65,9 +67,118 @@ Medics:
       Distance: "you are %blocks% blocks away"
 
 Economy:
-  Currency: "$"
+  Currency: "€"
   NotEnough: "&cYou don't have enough money !"
   IssuerNotEnough: "&cThe issuer doesn't have enough money !"
+  Cash:
+    Enabled: true
+    Wallet:
+      DefaultSlots: 18
+      Material: BOOK
+      CustomModelData: 1
+      DisplayName: "&6Wallet"
+      LoreTotal: "&7Content : &e%amount%%currency%"
+      Recipe:
+        Shape:
+          - " L "
+          - "LPL"
+          - " L "
+        Ingredients:
+          L: LEATHER
+          P: PAPER
+      OpenDenied: "&cHold the wallet in your main hand"
+      AlreadyOpen: "&cThis wallet is already open"
+      NotCash: "&cOnly cash can go in a wallet"
+      ShiftCraft: "&cCraft wallets one at a time"
+    Atm:
+      SignHeader: "[sATM]"
+      ViewRadius: 5
+      CreateCost: 150
+      Presets:
+        - 10
+        - 25
+        - 50
+        - 100
+    Denominations:
+      - value: 1
+        material: IRON_NUGGET
+        custom-model-data: 1
+        name: "&e1€"
+      - value: 2
+        material: GOLD_NUGGET
+        custom-model-data: 2
+        name: "&e2€"
+      - value: 5
+        material: RESIN_BRICK
+        custom-model-data: 5
+        name: "&a5€"
+      - value: 10
+        material: RESIN_BRICK
+        custom-model-data: 10
+        name: "&410€"
+      - value: 20
+        material: RESIN_BRICK
+        custom-model-data: 20
+        name: "&b20€"
+      - value: 50
+        material: RESIN_BRICK
+        custom-model-data: 50
+        name: "&c50€"
+      - value: 100
+        material: RESIN_BRICK
+        custom-model-data: 100
+        name: "&2100€"
+      - value: 200
+        material: RESIN_BRICK
+        custom-model-data: 200
+        name: "&6200€"
+      - value: 500
+        material: RESIN_BRICK
+        custom-model-data: 500
+        name: "&d500€"
+    Transform:
+      Usage: "Usage : /cash transform <player> <amount> OR /cash transform <player> <denomination> <quantity>"
+      UnknownPlayer: "&c%target% is not online"
+      UnknownDenomination: "&cUnknown denomination"
+      NotEnough: "&c%target% doesn't have enough money on their account"
+      InventoryFull: "&c%target%'s inventory is full"
+      Done: "&aTransformed %amount%%currency% from %target%'s account into cash"
+    Change:
+      BreakPieceCap: 64
+      BreakMaxDenomination: 20
+      Usage: "Usage : /cash compact OR /cash break"
+      PlayerOnly: "&cPlayers only"
+      NoCash: "&cYou don't have any loose cash"
+      Compacted: "&aGrouped your cash into larger bills"
+      Broken: "&aBroke your cash into smaller change"
+      AlreadyChanged: "&eYour cash is already like that"
+      InventoryFull: "&cNot enough inventory space"
+    AtmGui:
+      Title: "&2ATM"
+      Account: "&aAccount : &f%amount%%currency%"
+      Pocket: "&eCash on you : &f%amount%%currency%"
+      Deposit: "&aDeposit %amount%%currency%"
+      DepositAll: "&aDeposit everything (%amount%%currency%)"
+      Withdraw: "&cWithdraw %amount%%currency%"
+      WithdrawAll: "&cWithdraw everything (%amount%%currency%)"
+      CustomAmount: "&6Custom amount"
+      Compact: "&aGroup into larger bills"
+      Break: "&eBreak into small change"
+      Changed: "&aCash updated"
+      AlreadyChanged: "&eNothing to change"
+      InventoryFull: "&cNot enough inventory space"
+      Prompt: "&eType the amount in chat, or 'cancel'"
+      PromptCancelled: "&cCancelled"
+      InvalidAmount: "&cInvalid amount"
+      NotEnoughCash: "&cYou don't have enough cash on you"
+      NotEnoughAccount: "&cYou don't have enough money on your account"
+      Deposited: "&aDeposited %amount%%currency%"
+      Withdrawn: "&aWithdrawn %amount%%currency%"
+      Created: "&aATM created"
+      CreatedPaid: "&aATM created for %amount%%currency%"
+      CreateNotEnough: "&cYou need %amount%%currency% on your account to create an ATM"
+      DeniedCreate: "&cYou can't create an ATM"
+      DeniedBreak: "&cYou can't break this ATM"
   Cheque:
     Usage: "To create a cheque : /cheque <value : only positive integers>"
     Created: "A %amount%€ cheque has been created"

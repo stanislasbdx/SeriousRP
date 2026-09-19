@@ -4,11 +4,22 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.DuplicateKeyException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -27,6 +38,51 @@ class ConfigFactoryTest extends ConfigBackedTest {
 	void getConfigBooleanReadsModuleFlags() {
 		assertEquals(Boolean.TRUE, Utils.ConfigFactory.getConfigBoolean("Core.Modules.Economy"));
 		assertEquals(Boolean.FALSE, Utils.ConfigFactory.getConfigBoolean("Core.Modules.Medics"));
+	}
+
+	@Test
+	void shippedCashWalletMappingKeepsSettingsAndMessages() {
+		assertEquals("§cOnly cash can go in a wallet", Utils.ConfigFactory.getConfigString("Economy.Cash.Wallet.NotCash"));
+		assertEquals("§cThis wallet is already open", Utils.ConfigFactory.getConfigString("Economy.Cash.Wallet.AlreadyOpen"));
+		assertEquals("§cHold the wallet in your main hand", Utils.ConfigFactory.getConfigString("Economy.Cash.Wallet.OpenDenied"));
+		assertEquals("§cCraft wallets one at a time", Utils.ConfigFactory.getConfigString("Economy.Cash.Wallet.ShiftCraft"));
+
+		InputStream stream = Objects.requireNonNull(
+			getClass().getClassLoader().getResourceAsStream("config.yml")
+		);
+		YamlConfiguration loaded = YamlConfiguration.loadConfiguration(
+			new InputStreamReader(stream, StandardCharsets.UTF_8)
+		);
+		assertEquals(18, loaded.getInt("Economy.Cash.Wallet.DefaultSlots"));
+		assertEquals("BOOK", loaded.getString("Economy.Cash.Wallet.Material"));
+		assertEquals(1, loaded.getInt("Economy.Cash.Wallet.CustomModelData"));
+		assertEquals("&7Content : &e%amount%%currency%", loaded.getString("Economy.Cash.Wallet.LoreTotal"));
+		assertTrue(loaded.contains("Economy.Cash.Wallet.Recipe.Shape"));
+		List<Map<?, ?>> denoms = loaded.getMapList("Economy.Cash.Denominations");
+		assertEquals(1, denoms.get(0).get("custom-model-data"));
+		assertEquals(2, denoms.get(1).get("custom-model-data"));
+		assertEquals(5, denoms.get(2).get("custom-model-data"));
+		assertEquals(500, denoms.get(8).get("custom-model-data"));
+		assertEquals(64, loaded.getInt("Economy.Cash.Change.BreakPieceCap"));
+		assertEquals(20, loaded.getInt("Economy.Cash.Change.BreakMaxDenomination"));
+		assertEquals("&aGroup into larger bills", loaded.getString("Economy.Cash.AtmGui.Compact"));
+	}
+
+	@Test
+	void shippedPluginYamlFilesHaveUniqueMappingKeys() throws IOException {
+		assertUniqueMappingKeys("config.yml");
+		assertUniqueMappingKeys("plugin.yml");
+	}
+
+	@Test
+	void yamlLoaderRejectsDuplicateMappingKeys() {
+		Yaml yaml = uniqueKeyYaml();
+		DuplicateKeyException thrown = assertThrows(
+			DuplicateKeyException.class,
+			() -> yaml.load("Wallet: 1\nWallet: 2\n")
+		);
+		assertNotNull(thrown.getMessage());
+		assertTrue(thrown.toString().contains("Wallet"));
 	}
 
 	@Test
@@ -56,6 +112,21 @@ class ConfigFactoryTest extends ConfigBackedTest {
 	void utilityConstructorsAreHidden() throws Exception {
 		assertHiddenUtility(Utils.class);
 		assertHiddenUtility(Utils.ConfigFactory.class);
+	}
+
+	private static void assertUniqueMappingKeys(String resource) throws IOException {
+		try (InputStream stream = Objects.requireNonNull(
+			ConfigFactoryTest.class.getClassLoader().getResourceAsStream(resource),
+			resource
+		)) {
+			uniqueKeyYaml().load(stream);
+		}
+	}
+
+	private static Yaml uniqueKeyYaml() {
+		LoaderOptions options = new LoaderOptions();
+		options.setAllowDuplicateKeys(false);
+		return new Yaml(options);
 	}
 
 	private static void assertHiddenUtility(Class<?> type) throws Exception {
