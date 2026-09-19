@@ -23,80 +23,20 @@ public class Config implements Listener {
 	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - Config");
 	private static final DateTimeFormatter UPGRADE_LOG_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 
-	private final Plugin plugin = JavaPlugin.getPlugin(Main.class);
-
-	String version = this.plugin.getDescription().getVersion();
-	String fileVersion = this.plugin.getConfig().getString(CONFIG_KEY_VERSION);
-
-	private void checkConfigVersion() {
-		plugin.getConfig();
-		final String logStep = "[@ checkConfigVersion] ";
-
-		if(!version.equals(fileVersion)) {
-			final String upgradeFilesDir = plugin.getDataFolder() + "/upgrades/";
-
-			final boolean upgradeDirCreated = new File(upgradeFilesDir).mkdirs();
-			if(upgradeDirCreated) _log.debug("{}{} folder created", logStep, new File(upgradeFilesDir).getPath());
-
-			File upgradeFile = new File(upgradeFilesDir, fileVersion + "_to_" + version + ".yml");
-
-			try {
-				if(!upgradeFile.exists()) {
-					final boolean upgradeFileCreated = upgradeFile.createNewFile();
-					if(upgradeFileCreated) _log.debug("{}.yml file created", upgradeFile.getPath());
-
-					FileConfiguration configReport = YamlConfiguration.loadConfiguration(upgradeFile);
-
-					final ArrayList<String> headerUpgradeStrings = new ArrayList<>();
-					headerUpgradeStrings.add(String.format("SeriousRP Upgrade Log [%s]", UPGRADE_LOG_DATE_FORMAT.format(LocalDateTime.now(ZoneId.systemDefault()))));
-					headerUpgradeStrings.add(String.format("Upgrade from version %s to %s", fileVersion, version));
-					headerUpgradeStrings.add("All those informations can be used and sent to a developer in you have issues with upgrading your plugin");
-					configReport.options().setHeader(headerUpgradeStrings);
-
-					configReport.set("report.serverVersion", plugin.getServer().getVersion());
-
-					new UpdateChecker(this.plugin, SPIGOT_PLUGIN_ID).getVersion(remoteVersion -> {
-						if(!plugin.getDescription().getVersion().equalsIgnoreCase(remoteVersion)) configReport.set("report.versionDiffers", remoteVersion);
-					});
-
-					configReport.set("options.configFix", plugin.getConfig().getBoolean(CONFIG_KEY_FIX));
-
-					configReport.set("plugin.firstRun", plugin.getConfig().getInt(CONFIG_KEY_VERSION) == 0);
-
-					configReport.set("plugin.dependencies.vault", new File("plugins/Vault").exists());
-
-					configReport.set("plugin.modules.CustomRecipes", plugin.getConfig().getBoolean("Core.Modules.CustomRecipes"));
-					configReport.set("plugin.modules.RPDeath", plugin.getConfig().getBoolean("Core.Modules.RPDeath"));
-					configReport.set("plugin.modules.Medics", plugin.getConfig().getBoolean("Core.Modules.Medics"));
-					configReport.set("plugin.modules.Chairs", plugin.getConfig().getBoolean("Core.Modules.Chairs"));
-					configReport.set("plugin.modules.Economy", plugin.getConfig().getBoolean("Core.Modules.Economy"));
-
-					configReport.set("lastConfig", plugin.getConfig().getRoot());
-
-					configReport.save(upgradeFile);
-
-					_log.debug("{}Log created (upgrades/{}_to_{}.yml) !", logStep, fileVersion, version);
-
-					plugin.getConfig().set(CONFIG_KEY_VERSION, version);
-					_log.info("{}config.yml upgraded ({} -> {}) !", logStep, fileVersion, version);
-				}
-				else {
-					_log.warn("{}Log {}_to_{}.yml already exists !", logStep, fileVersion, version);
-				}
-			} catch (IOException e) {
-				_log.error("{}Unable to create the upgrade log !", logStep);
-			}
-
-			plugin.getConfig().set(CONFIG_KEY_FIX, Boolean.TRUE);
-			new Config();
-			plugin.saveConfig();
-		}
-	}
+	private final Plugin plugin;
+	private final String version;
+	private final String fileVersion;
 
 	public Config() {
-		FileConfiguration config = plugin.getConfig();
-		plugin.getConfig();
+		this(JavaPlugin.getPlugin(Main.class));
+	}
 
+	Config(Plugin plugin) {
+		this.plugin = plugin;
+		this.version = plugin.getDescription().getVersion();
+		this.fileVersion = nullableVersion(plugin.getConfig().getString(CONFIG_KEY_VERSION));
+
+		FileConfiguration config = plugin.getConfig();
 		checkConfigVersion();
 
 		final ArrayList<String> headerStrings = new ArrayList<>();
@@ -106,15 +46,77 @@ public class Config implements Listener {
 		headerStrings.add("Material list : https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html (for the Chairs module)");
 		config.options().setHeader(headerStrings);
 
-		if(config.getBoolean(CONFIG_KEY_FIX)) {
+		if (config.getBoolean(CONFIG_KEY_FIX)) {
 			config.options().copyDefaults(true);
 			config.options().parseComments(true);
-
 			config.set(CONFIG_KEY_FIX, Boolean.FALSE);
-
 			_log.debug("Config file 'config.yml' updated !");
 		}
 
 		_log.info("Config file reloaded !");
+	}
+
+	private void checkConfigVersion() {
+		final String logStep = "[@ checkConfigVersion] ";
+		if (version.equals(fileVersion)) {
+			return;
+		}
+
+		writeUpgradeLog(logStep);
+		plugin.getConfig().set(CONFIG_KEY_VERSION, version);
+		plugin.getConfig().set(CONFIG_KEY_FIX, Boolean.TRUE);
+		_log.info("{}config.yml upgraded ({} -> {}) !", logStep, fileVersion, version);
+	}
+
+	private void writeUpgradeLog(String logStep) {
+		final String upgradeFilesDir = plugin.getDataFolder() + "/upgrades/";
+		final boolean upgradeDirCreated = new File(upgradeFilesDir).mkdirs();
+		if (upgradeDirCreated) {
+			_log.debug("{}{} folder created", logStep, new File(upgradeFilesDir).getPath());
+		}
+
+		File upgradeFile = new File(upgradeFilesDir, fileVersion + "_to_" + version + ".yml");
+		if (upgradeFile.exists()) {
+			_log.warn("{}Log {}_to_{}.yml already exists !", logStep, fileVersion, version);
+			return;
+		}
+
+		try {
+			final boolean upgradeFileCreated = upgradeFile.createNewFile();
+			if (upgradeFileCreated) {
+				_log.debug("{}.yml file created", upgradeFile.getPath());
+			}
+
+			FileConfiguration configReport = YamlConfiguration.loadConfiguration(upgradeFile);
+			final ArrayList<String> headerUpgradeStrings = new ArrayList<>();
+			headerUpgradeStrings.add(String.format("SeriousRP Upgrade Log [%s]", UPGRADE_LOG_DATE_FORMAT.format(LocalDateTime.now(ZoneId.systemDefault()))));
+			headerUpgradeStrings.add(String.format("Upgrade from version %s to %s", fileVersion, version));
+			headerUpgradeStrings.add("All those informations can be used and sent to a developer in you have issues with upgrading your plugin");
+			configReport.options().setHeader(headerUpgradeStrings);
+			configReport.set("report.serverVersion", plugin.getServer().getVersion());
+			new UpdateChecker(this.plugin, SPIGOT_PLUGIN_ID).getVersion(remoteVersion -> {
+				if (!plugin.getDescription().getVersion().equalsIgnoreCase(remoteVersion)) {
+					configReport.set("report.versionDiffers", remoteVersion);
+				}
+			});
+			configReport.set("options.configFix", plugin.getConfig().getBoolean(CONFIG_KEY_FIX));
+			configReport.set("plugin.firstRun", "0".equals(fileVersion));
+			configReport.set("plugin.dependencies.vault", new File("plugins/Vault").exists());
+			configReport.set("plugin.modules.CustomRecipes", plugin.getConfig().getBoolean("Core.Modules.CustomRecipes"));
+			configReport.set("plugin.modules.RPDeath", plugin.getConfig().getBoolean("Core.Modules.RPDeath"));
+			configReport.set("plugin.modules.Medics", plugin.getConfig().getBoolean("Core.Modules.Medics"));
+			configReport.set("plugin.modules.Chairs", plugin.getConfig().getBoolean("Core.Modules.Chairs"));
+			configReport.set("plugin.modules.Economy", plugin.getConfig().getBoolean("Core.Modules.Economy"));
+			configReport.set("lastConfig", plugin.getConfig().getRoot());
+			configReport.save(upgradeFile);
+			_log.debug("{}Log created (upgrades/{}_to_{}.yml) !", logStep, fileVersion, version);
+		}
+		catch (IOException e) {
+			_log.error("{}Unable to create the upgrade log !", logStep);
+		}
+	}
+
+	private static String nullableVersion(String raw) {
+		return raw == null || raw.isBlank() ? "0" : raw;
 	}
 }
