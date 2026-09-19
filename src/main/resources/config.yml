@@ -75,8 +75,8 @@ Economy:
       DefaultSlots: 18
       Material: BOOK
       CustomModelData: 1
-      DisplayName: "&6Portefeuille"
-      LoreTotal: "&7Contenu : &e%amount%%currency%"
+      DisplayName: "&6Wallet"
+      LoreTotal: "&7Content : &e%amount%%currency%"
       Recipe:
         Shape:
           - " L "
@@ -102,39 +102,39 @@ Economy:
       - value: 1
         material: IRON_NUGGET
         custom-model-data: 1
-        name: "&ePièce de 1€"
+        name: "&e1€"
       - value: 2
         material: GOLD_NUGGET
         custom-model-data: 2
-        name: "&ePièce de 2€"
+        name: "&e2€"
       - value: 5
         material: RESIN_BRICK
         custom-model-data: 5
-        name: "&aBillet de 5€"
+        name: "&a5€"
       - value: 10
         material: RESIN_BRICK
         custom-model-data: 10
-        name: "&aBillet de 10€"
+        name: "&410€"
       - value: 20
         material: RESIN_BRICK
         custom-model-data: 20
-        name: "&aBillet de 20€"
+        name: "&b20€"
       - value: 50
         material: RESIN_BRICK
         custom-model-data: 50
-        name: "&aBillet de 50€"
+        name: "&c50€"
       - value: 100
         material: RESIN_BRICK
         custom-model-data: 100
-        name: "&aBillet de 100€"
+        name: "&2100€"
       - value: 200
         material: RESIN_BRICK
         custom-model-data: 200
-        name: "&aBillet de 200€"
+        name: "&6200€"
       - value: 500
         material: RESIN_BRICK
         custom-model-data: 500
-        name: "&aBillet de 500€"
+        name: "&d500€"
     Transform:
       Usage: "Usage : /cash transform <player> <amount> OR /cash transform <player> <denomination> <quantity>"
       UnknownPlayer: "&c%target% is not online"
