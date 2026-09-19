@@ -505,16 +505,26 @@ class WalletListenerTest extends ConfigBackedTest {
 
 	@Test
 	void registerRecipePushesConfiguredShape() {
-		AtomicReference<ShapedRecipe> captured = new AtomicReference<>();
-		WalletListener crafting = new WalletListener(plugin, cash, wallets, captured::set, (h, s, t) -> topInventory);
+		AtomicReference<NamespacedKey> removed = new AtomicReference<>();
+		WalletListener crafting = new WalletListener(
+			plugin,
+			cash,
+			wallets,
+			recipe -> {},
+			removed::set,
+			(h, s, t) -> topInventory
+		);
 		try (MockedConstruction<ItemStack> items = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta());
 			MockedConstruction<ShapedRecipe> recipes = mockConstruction(ShapedRecipe.class, (mock, context) -> {
 			})) {
 			crafting.registerRecipe();
 			assertEquals(1, recipes.constructed().size());
+			assertEquals(new NamespacedKey(plugin, WalletListener.RECIPE_KEY), removed.get());
 			verify(recipes.constructed().get(0)).shape(" L ", "LPL", " L ");
 			verify(recipes.constructed().get(0)).setIngredient('L', Material.LEATHER);
 			verify(recipes.constructed().get(0)).setIngredient('P', Material.PAPER);
+			crafting.unregisterRecipe();
+			assertEquals(new NamespacedKey(plugin, WalletListener.RECIPE_KEY), removed.get());
 		}
 	}
 

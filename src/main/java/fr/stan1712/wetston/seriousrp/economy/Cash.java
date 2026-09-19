@@ -5,6 +5,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -148,6 +149,19 @@ public final class Cash {
 		meta.setEnchantmentGlintOverride(true);
 	}
 
+	public static void applyCustomModelData(ItemMeta meta, int value) {
+		if (value <= 0) {
+			return;
+		}
+		meta.setCustomModelData(value);
+		CustomModelDataComponent component = meta.getCustomModelDataComponent();
+		if (component == null) {
+			return;
+		}
+		component.setFloats(List.of((float) value));
+		meta.setCustomModelDataComponent(component);
+	}
+
 	public static OptionalInt readDenomination(PersistentDataContainer container, NamespacedKey key) {
 		Integer value = container.get(key, PersistentDataType.INTEGER);
 		if (value == null || value <= 0) {
@@ -284,7 +298,7 @@ public final class Cash {
 			boolean unique = parsed.stream().noneMatch(existing -> existing.value() == value);
 			if (value > 0 && material != null && unique) {
 				String name = colorize(nullable(stringOrNull(row.get("name")), value + "€"));
-				Integer model = parseCustomModelData(row.get("custom-model-data"), value);
+				Integer model = parseCustomModelData(row, value);
 				parsed.add(new Denomination(value, material, name, model));
 			}
 		}
@@ -312,7 +326,14 @@ public final class Cash {
 		return Material.RESIN_BRICK;
 	}
 
-	private static Integer parseCustomModelData(Object raw, int fallback) {
+	private static Integer parseCustomModelData(Map<?, ?> row, int fallback) {
+		Object raw = row.get("custom-model-data");
+		if (raw == null) {
+			raw = row.get("CustomModelData");
+		}
+		if (raw == null) {
+			raw = row.get("custom_model_data");
+		}
 		if (raw == null) {
 			return fallback;
 		}

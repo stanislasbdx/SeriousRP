@@ -3,6 +3,8 @@ package fr.stan1712.wetston.seriousrp.economy;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -145,13 +148,30 @@ class CashTest {
 		config.set("Economy.Cash.Denominations", List.of(
 			Map.of("value", 1, "material", "IRON_NUGGET"),
 			Map.of("value", 2, "material", "GOLD_NUGGET", "custom-model-data", 0),
-			Map.of("value", 5, "material", "RESIN_BRICK", "custom-model-data", 99)
+			Map.of("value", 5, "material", "RESIN_BRICK", "CustomModelData", 50),
+			Map.of("value", 10, "material", "RESIN_BRICK", "custom_model_data", 10)
 		));
 		Cash cash = Cash.fromConfig(config);
 		assertEquals(1, cash.denomination(1).orElseThrow().customModelData());
 		assertNull(cash.denomination(2).orElseThrow().customModelData());
-		assertEquals(99, cash.denomination(5).orElseThrow().customModelData());
+		assertEquals(50, cash.denomination(5).orElseThrow().customModelData());
+		assertEquals(10, cash.denomination(10).orElseThrow().customModelData());
 		assertNull(new Cash.Denomination(10, Material.RESIN_BRICK, "n", 0).customModelData());
+	}
+
+	@Test
+	void applyCustomModelDataWritesLegacyValueAndFloatComponent() {
+		ItemMeta meta = mock(ItemMeta.class);
+		CustomModelDataComponent component = mock(CustomModelDataComponent.class);
+		when(meta.getCustomModelDataComponent()).thenReturn(component);
+
+		Cash.applyCustomModelData(meta, 20);
+		verify(meta).setCustomModelData(20);
+		verify(component).setFloats(List.of(20f));
+		verify(meta).setCustomModelDataComponent(component);
+
+		Cash.applyCustomModelData(meta, 0);
+		verify(meta, never()).setCustomModelData(0);
 	}
 
 	@Test

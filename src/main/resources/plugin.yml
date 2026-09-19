@@ -2,6 +2,7 @@ name: SeriousRP
 version: '${version}'
 main: fr.stan1712.wetston.seriousrp.Main
 api-version: '1.21'
+load: STARTUP
 
 author: stan1712
 website: https://stan1712.com

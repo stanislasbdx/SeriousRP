@@ -32,6 +32,7 @@ public final class Main extends JavaPlugin {
 	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - Core");
 	public final PluginManager pluginManager = getServer().getPluginManager();
 	public static Economy economy = null;
+	private WalletListener walletListener;
 
 	public static final int SPIGOT_PLUGIN_ID = 31443;
 
@@ -160,7 +161,7 @@ public final class Main extends JavaPlugin {
 
 			Cash cash = Cash.fromConfig(getConfig());
 			if (cash.isEnabled()) {
-				WalletListener walletListener = new WalletListener(this, cash, new Wallet());
+				walletListener = new WalletListener(this, cash, new Wallet());
 				walletListener.registerRecipe();
 				pluginManager.registerEvents(walletListener, this);
 
@@ -230,6 +231,13 @@ public final class Main extends JavaPlugin {
 
 			logNewStep("loadCommands");
 			loadCommands();
+		}
+	}
+
+	@Override
+	public void onDisable() {
+		if (walletListener != null) {
+			walletListener.unregisterRecipe();
 		}
 	}
 }

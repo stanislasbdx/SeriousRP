@@ -48,6 +48,7 @@ public final class WalletListener implements Listener {
 	private final NamespacedKey walletKey;
 	private final NamespacedKey recipeKey;
 	private final Consumer<ShapedRecipe> recipeSink;
+	private final Consumer<NamespacedKey> recipeRemover;
 	private final InventoryFactory inventoryFactory;
 
 	@FunctionalInterface
@@ -56,7 +57,7 @@ public final class WalletListener implements Listener {
 	}
 
 	public WalletListener(Plugin plugin, Cash cash, Wallet wallets) {
-		this(plugin, cash, wallets, Bukkit::addRecipe, WalletListener::createInventory);
+		this(plugin, cash, wallets, Bukkit::addRecipe, Bukkit::removeRecipe, WalletListener::createInventory);
 	}
 
 	WalletListener(
@@ -66,12 +67,24 @@ public final class WalletListener implements Listener {
 		Consumer<ShapedRecipe> recipeSink,
 		InventoryFactory inventoryFactory
 	) {
+		this(plugin, cash, wallets, recipeSink, key -> {}, inventoryFactory);
+	}
+
+	WalletListener(
+		Plugin plugin,
+		Cash cash,
+		Wallet wallets,
+		Consumer<ShapedRecipe> recipeSink,
+		Consumer<NamespacedKey> recipeRemover,
+		InventoryFactory inventoryFactory
+	) {
 		this.cash = cash;
 		this.wallets = wallets;
 		this.cashKey = new NamespacedKey(plugin, Cash.ITEM_PDC_KEY);
 		this.walletKey = new NamespacedKey(plugin, Cash.WALLET_PDC_KEY);
 		this.recipeKey = new NamespacedKey(plugin, RECIPE_KEY);
 		this.recipeSink = recipeSink;
+		this.recipeRemover = recipeRemover;
 		this.inventoryFactory = inventoryFactory;
 	}
 
@@ -80,10 +93,15 @@ public final class WalletListener implements Listener {
 	}
 
 	public void registerRecipe() {
+		unregisterRecipe();
 		ShapedRecipe recipe = new ShapedRecipe(recipeKey, createWalletItem(Wallet.create(cash.walletSlots())));
 		recipe.shape(cash.recipeShape().toArray(String[]::new));
 		cash.recipeIngredients().forEach(recipe::setIngredient);
 		recipeSink.accept(recipe);
+	}
+
+	public void unregisterRecipe() {
+		recipeRemover.accept(recipeKey);
 	}
 
 	static int slotsFor(Player player, Cash cash) {
@@ -275,7 +293,7 @@ public final class WalletListener implements Listener {
 		assert meta != null;
 		meta.setDisplayName(cash.walletDisplayName());
 		meta.setLore(Wallet.lore(payload, cash));
-		cash.walletCustomModelData().ifPresent(meta::setCustomModelData);
+		cash.walletCustomModelData().ifPresent(model -> Cash.applyCustomModelData(meta, model));
 		Cash.applyGlow(meta);
 		Wallet.write(meta.getPersistentDataContainer(), walletKey, payload);
 		item.setItemMeta(meta);
@@ -289,7 +307,7 @@ public final class WalletListener implements Listener {
 		assert meta != null;
 		meta.setDisplayName(denomination.displayName());
 		if (denomination.customModelData() != null) {
-			meta.setCustomModelData(denomination.customModelData());
+			Cash.applyCustomModelData(meta, denomination.customModelData());
 		}
 		Cash.applyGlow(meta);
 		Cash.writeDenomination(meta.getPersistentDataContainer(), cashKey, stack.denomination());
