@@ -53,6 +53,7 @@ class ConfigFactoryTest extends ConfigBackedTest {
 		);
 		assertEquals(18, loaded.getInt("Economy.Cash.Wallet.DefaultSlots"));
 		assertEquals("BOOK", loaded.getString("Economy.Cash.Wallet.Material"));
+		assertEquals(1, loaded.getInt("Economy.Cash.Wallet.CustomModelData"));
 		assertEquals("&7Contenu : &e%amount%%currency%", loaded.getString("Economy.Cash.Wallet.LoreTotal"));
 		assertTrue(loaded.contains("Economy.Cash.Wallet.Recipe.Shape"));
 	}

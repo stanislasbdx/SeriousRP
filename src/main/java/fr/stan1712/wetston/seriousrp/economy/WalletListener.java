@@ -275,6 +275,7 @@ public final class WalletListener implements Listener {
 		assert meta != null;
 		meta.setDisplayName(cash.walletDisplayName());
 		meta.setLore(Wallet.lore(payload, cash));
+		cash.walletCustomModelData().ifPresent(meta::setCustomModelData);
 		Cash.applyGlow(meta);
 		Wallet.write(meta.getPersistentDataContainer(), walletKey, payload);
 		item.setItemMeta(meta);

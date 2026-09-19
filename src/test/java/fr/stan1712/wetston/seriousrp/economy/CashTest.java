@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -34,6 +35,7 @@ class CashTest {
 		config.set("Economy.Cash.Wallet.Recipe.Ingredients.P", "PAPER");
 		config.set("Economy.Cash.Wallet.Recipe.Ingredients.XX", "STONE");
 		config.set("Economy.Cash.Wallet.Recipe.Ingredients.Z", "NOT_A_MATERIAL");
+		config.set("Economy.Cash.Wallet.CustomModelData", 42);
 		config.set("Economy.Cash.Atm.SignHeader", "[sATM]");
 		config.set("Economy.Cash.Atm.ViewRadius", 8);
 		config.set("Economy.Cash.Atm.CreateCost", 80);
@@ -55,6 +57,7 @@ class CashTest {
 		assertEquals("§6€", cash.currency());
 		assertEquals(27, cash.walletSlots());
 		assertEquals(Material.BUNDLE, cash.walletMaterial());
+		assertEquals(42, cash.walletCustomModelData().orElse(0));
 		assertEquals("§6Wallet", cash.walletDisplayName());
 		assertEquals(List.of(20, 7, 1), cash.descendingValues());
 		assertEquals(7, cash.denomination(7).orElseThrow().customModelData());
@@ -96,6 +99,7 @@ class CashTest {
 		assertEquals("€", cash.currency());
 		assertEquals(18, cash.walletSlots());
 		assertEquals(Material.BOOK, cash.walletMaterial());
+		assertEquals(1, cash.walletCustomModelData().orElse(0));
 		assertEquals("§6Portefeuille", cash.walletDisplayName());
 		assertEquals(1, cash.viewRadius());
 		assertEquals(150, cash.atmCreateCost());
@@ -108,6 +112,28 @@ class CashTest {
 		assertEquals(5, cash.denomination(5).orElseThrow().customModelData());
 		assertEquals(List.of(" L ", "LPL", " L "), cash.recipeShape());
 		assertEquals(Material.PAPER, cash.recipeIngredients().get('P'));
+	}
+
+	@Test
+	void walletCustomModelDataDefaultsToOneAndDisablesWhenNonPositive() {
+		assertEquals(1, Cash.fromConfig(new YamlConfiguration()).walletCustomModelData().orElse(0));
+
+		YamlConfiguration disabled = new YamlConfiguration();
+		disabled.set("Economy.Cash.Wallet.CustomModelData", 0);
+		assertTrue(Cash.fromConfig(disabled).walletCustomModelData().isEmpty());
+		disabled.set("Economy.Cash.Wallet.CustomModelData", -4);
+		assertTrue(Cash.fromConfig(disabled).walletCustomModelData().isEmpty());
+
+		Cash.WalletSettings compacted = new Cash.WalletSettings(
+			18,
+			Material.BOOK,
+			"n",
+			"l",
+			List.of(" L ", "LPL", " L "),
+			Map.of('L', Material.LEATHER),
+			0
+		);
+		assertNull(compacted.customModelData());
 	}
 
 	@Test

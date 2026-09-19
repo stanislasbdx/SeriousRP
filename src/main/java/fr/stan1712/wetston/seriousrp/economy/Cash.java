@@ -49,12 +49,14 @@ public final class Cash {
 		String displayName,
 		String loreTotal,
 		List<String> recipeShape,
-		Map<Character, Material> recipeIngredients
+		Map<Character, Material> recipeIngredients,
+		Integer customModelData
 	) {
 		public WalletSettings {
 			slots = clampSlots(slots);
 			recipeShape = List.copyOf(recipeShape);
 			recipeIngredients = Map.copyOf(recipeIngredients);
+			customModelData = customModelData != null && customModelData > 0 ? customModelData : null;
 		}
 	}
 
@@ -122,6 +124,8 @@ public final class Cash {
 		if (ingredients.isEmpty()) {
 			ingredients = Map.of('L', Material.LEATHER, 'P', Material.PAPER);
 		}
+		int walletModel = config.getInt("Economy.Cash.Wallet.CustomModelData", 1);
+		Integer walletCustomModelData = walletModel > 0 ? walletModel : null;
 
 		String header = nullable(config.getString("Economy.Cash.Atm.SignHeader"), "[sATM]");
 		int radius = config.getInt("Economy.Cash.Atm.ViewRadius", 5);
@@ -132,7 +136,7 @@ public final class Cash {
 			enabled,
 			currency,
 			denoms,
-			new WalletSettings(slots, walletMaterial, walletName, walletLore, shape, ingredients),
+			new WalletSettings(slots, walletMaterial, walletName, walletLore, shape, ingredients, walletCustomModelData),
 			new AtmSettings(header, radius, presets, createCost)
 		);
 	}
@@ -213,6 +217,10 @@ public final class Cash {
 
 	public Material walletMaterial() {
 		return wallet.material();
+	}
+
+	public OptionalInt walletCustomModelData() {
+		return wallet.customModelData() == null ? OptionalInt.empty() : OptionalInt.of(wallet.customModelData());
 	}
 
 	public String walletDisplayName() {

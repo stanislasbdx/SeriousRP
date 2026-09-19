@@ -74,6 +74,7 @@ Economy:
     Wallet:
       DefaultSlots: 18
       Material: BOOK
+      CustomModelData: 1
       DisplayName: "&6Portefeuille"
       LoreTotal: "&7Contenu : &e%amount%%currency%"
       Recipe:
