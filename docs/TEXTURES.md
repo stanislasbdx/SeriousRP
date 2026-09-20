@@ -1,6 +1,6 @@
-# Cash item textures
+# Economy item textures
 
-SeriousRP does **not** ship a resource pack. Cash and wallets are vanilla items with `CustomModelData`. The PNGs in this repo are ready to drop into a normal pack or into [Nexo](https://docs.nexomc.com).
+SeriousRP does **not** ship a resource pack. Cash, wallets, and cheques are vanilla items with `CustomModelData`. The PNGs in this repo are ready to drop into a normal pack or into [Nexo](https://docs.nexomc.com).
 
 The plugin already writes the matching model data (legacy integer **and** the 1.21.4+ `custom_model_data` floats component). Change `config.yml` only if you change the IDs in the pack.
 
@@ -13,12 +13,13 @@ The plugin already writes the matching model data (legacy integer **and** the 1.
 
 Item textures must be **square PNG**, transparent background, `minecraft:item/generated` (flat sprite). Bills are front-facing 2D notes; the bottom-right denomination is the `sRP` watermark.
 
-A wallet PNG is not in this folder yet. Add `wallet.png` the same way (64×64, then a 256×256 copy under `hi/` if you keep sources).
+A wallet PNG is not in this folder yet. Add `wallet.png` the same way (64×64, then a 256×256 copy under `hi/` if you keep sources). Cheque is `cheque.png`.
 
 ## What the plugin puts on items
 
 | Item | Material | `CustomModelData` | Texture |
 | :--- | :--- | :--- | :--- |
+| Cheque | `PAPER` | `1` | `cheque.png` |
 | Wallet | `BOOK` | `1` | `wallet.png` |
 | 1 € | `IRON_NUGGET` | `1` | `coin_1.png` |
 | 2 € | `GOLD_NUGGET` | `2` | `coin_2.png` |
@@ -34,6 +35,8 @@ Config keys (all three names work on denominations):
 
 ```yaml
 Economy:
+  Cheque:
+    CustomModelData: 1            # 0 disables the model data
   Cash:
     Wallet:
       Material: BOOK
@@ -48,7 +51,7 @@ Missing denomination keys default to the face value. `0` or a negative value dis
 
 Cash and wallets also get an enchantment glint from the plugin (`enchantment_glint_override`). That is not part of the PNG.
 
-Do **not** `/nexo give` these items as the cash players use. SeriousRP items carry PDC (`srp-cash` / `srp-wallet`). The pack only changes how the vanilla material + model data **look**.
+Do **not** `/nexo give` these items as the cash, wallets, or cheques players use. SeriousRP items carry PDC (`srp-cash` / `srp-wallet` / `srp-cheque`). The pack only changes how the vanilla material + model data **look**.
 
 ---
 
@@ -61,17 +64,20 @@ seriousrp-cash/
 ├── pack.mcmeta
 └── assets/
     ├── minecraft/items/
+    │   ├── paper.json
     │   ├── book.json
     │   ├── iron_nugget.json
     │   ├── gold_nugget.json
     │   └── resin_brick.json
     └── seriousrp/
         ├── models/item/
+        │   ├── cheque.json
         │   ├── wallet.json
         │   ├── coin_1.json
         │   ├── coin_2.json
         │   └── bill_5.json   # plus bill_10 … bill_500
         └── textures/item/
+            ├── cheque.png
             ├── wallet.png    # when you have it
             ├── coin_1.png
             ├── coin_2.png
@@ -146,7 +152,7 @@ Vanilla item definition — several bills share `resin_brick`, so one `range_dis
 }
 ```
 
-Same pattern for `gold_nugget.json` (`threshold` 2 → `seriousrp:item/coin_2`) and `book.json` (`threshold` 1 → `seriousrp:item/wallet`). Always keep the vanilla fallback so normal books / nuggets / resin bricks stay vanilla.
+Same pattern for `gold_nugget.json` (`threshold` 2 → `seriousrp:item/coin_2`), `book.json` (`threshold` 1 → `seriousrp:item/wallet`), and `paper.json` (`threshold` 1 → `seriousrp:item/cheque`). Always keep the vanilla fallback so normal paper / books / nuggets / resin bricks stay vanilla.
 
 Zip the folder (zip **the contents**, so `pack.mcmeta` is at the root of the zip), then either:
 
@@ -173,6 +179,13 @@ Nexo builds and sends the pack. Two ways; pick one.
 2. Add `plugins/Nexo/items/seriousrp_cash.yml` (Nexo merges every file in `items/`). IDs are only so Nexo generates the pack; hide them from the Nexo catalog.
 
 ```yaml
+srp_cheque:
+  material: PAPER
+  excludeFromInventory: true
+  Pack:
+    texture: seriousrp:item/cheque
+    custom_model_data: 1
+
 srp_wallet:
   material: BOOK
   excludeFromInventory: true
@@ -244,7 +257,7 @@ srp_bill_500:
     custom_model_data: 500
 ```
 
-`Pack.custom_model_data` must equal `Economy.Cash` in SeriousRP. Nexo then injects a `custom_model_data` range into the vanilla item model, so a SeriousRP `RESIN_BRICK` with model data `50` shows `bill_50.png`.
+`Pack.custom_model_data` must equal `Economy.Cash` / `Economy.Cheque.CustomModelData` in SeriousRP. Nexo then injects a `custom_model_data` range into the vanilla item model, so a SeriousRP `RESIN_BRICK` with model data `50` shows `bill_50.png`, and a `PAPER` with model data `1` shows `cheque.png`.
 
 3. Reload the pack (`/nexo pack reload` or a restart) and reconnect so the client downloads it.
 
@@ -266,5 +279,5 @@ Nexo merges it into the pack it sends. Skip the YAML in A if you do this, so you
 - Texture path / Nexo `Pack.texture` uses namespace `seriousrp` and the file name without `.png`.
 - Material + `CustomModelData` in the pack match `config.yml`.
 - Vanilla fallback is kept for each overridden item.
-- Players still receive cash from SeriousRP (crafted wallet, ATM, `/cash transform`), not from Nexo give.
-- After a pack change, reconnect (or force the pack to redistribute) and check one coin, one bill, and a wallet.
+- Players still receive cash and cheques from SeriousRP (crafted wallet, ATM, `/cash transform`, `/cheque`), not from Nexo give.
+- After a pack change, reconnect (or force the pack to redistribute) and check one coin, one bill, a wallet, and a cheque.
