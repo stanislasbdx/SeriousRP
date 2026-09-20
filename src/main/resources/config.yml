@@ -180,6 +180,7 @@ Economy:
       DeniedCreate: "&cYou can't create an ATM"
       DeniedBreak: "&cYou can't break this ATM"
   Cheque:
+    CustomModelData: 1
     Usage: "To create a cheque : /cheque <value : only positive integers>"
     Created: "A %amount%€ cheque has been created"
     Already: "&cYou already have a %amount%€ cheque on you !"

@@ -66,6 +66,9 @@ class ConfigFactoryTest extends ConfigBackedTest {
 		assertEquals(64, loaded.getInt("Economy.Cash.Change.BreakPieceCap"));
 		assertEquals(20, loaded.getInt("Economy.Cash.Change.BreakMaxDenomination"));
 		assertEquals("&aGroup into larger bills", loaded.getString("Economy.Cash.AtmGui.Compact"));
+		assertEquals(1, loaded.getInt("Economy.Cheque.CustomModelData"));
+		assertEquals(1, Utils.ConfigFactory.getConfigInt("Economy.Cheque.CustomModelData", 0));
+		assertEquals(7, Utils.ConfigFactory.getConfigInt("Economy.Cheque.MissingKey", 7));
 	}
 
 	@Test

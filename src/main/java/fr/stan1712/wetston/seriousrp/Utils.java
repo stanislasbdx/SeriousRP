@@ -39,6 +39,10 @@ public class Utils {
 			return config().getBoolean(path);
 		}
 
+		public static int getConfigInt(String path, int def) {
+			return config().getInt(path, def);
+		}
+
 		public static String getPrefixString() {
 			return getConfigString("Prefix");
 		}
