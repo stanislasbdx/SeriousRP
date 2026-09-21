@@ -49,7 +49,7 @@ Economy:
 
 Missing denomination keys default to the face value. `0` or a negative value disables model data for that item.
 
-Cash and wallets also get an enchantment glint from the plugin (`enchantment_glint_override`). That is not part of the PNG.
+Wallets get an enchantment glint from the plugin (`enchantment_glint_override`) only when they hold cash (`total > 0`). Coins, bills, and cheques do not glow. That glint is not part of the PNG.
 
 Do **not** `/nexo give` these items as the cash, wallets, or cheques players use. SeriousRP items carry PDC (`srp-cash` / `srp-wallet` / `srp-cheque`). The pack only changes how the vanilla material + model data **look**.
 
