@@ -295,7 +295,9 @@ public final class WalletListener implements Listener {
 		meta.setDisplayName(cash.walletDisplayName());
 		meta.setLore(Wallet.lore(payload, cash));
 		cash.walletCustomModelData().ifPresent(model -> Cash.applyCustomModelData(meta, model));
-		Cash.applyGlow(meta);
+		if (payload.total() > 0) {
+			Cash.applyGlow(meta);
+		}
 		Wallet.write(meta.getPersistentDataContainer(), walletKey, payload);
 		item.setItemMeta(meta);
 		return item;
@@ -310,7 +312,6 @@ public final class WalletListener implements Listener {
 		if (denomination.customModelData() != null) {
 			Cash.applyCustomModelData(meta, denomination.customModelData());
 		}
-		Cash.applyGlow(meta);
 		Cash.writeDenomination(meta.getPersistentDataContainer(), cashKey, stack.denomination());
 		item.setItemMeta(meta);
 		return item;

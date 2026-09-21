@@ -418,6 +418,19 @@ class WalletListenerTest extends ConfigBackedTest {
 			listener.createWalletItem(payload);
 		}
 		verify(meta).setCustomModelData(1);
+		verify(meta, never()).setEnchantmentGlintOverride(true);
+	}
+
+	@Test
+	void createWalletItemGlowsOnlyWhenItHoldsCash() {
+		ItemMeta meta = mock(ItemMeta.class);
+		PersistentDataContainer pdc = mock(PersistentDataContainer.class);
+		when(meta.getPersistentDataContainer()).thenReturn(pdc);
+		Wallet.Payload funded = new Wallet.Payload("wallet-1", 9, List.of(new Cash.Stack(20, 1)));
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class,
+			(mock, context) -> when(mock.getItemMeta()).thenReturn(meta))) {
+			listener.createWalletItem(funded);
+		}
 		verify(meta).setEnchantmentGlintOverride(true);
 	}
 
@@ -455,7 +468,7 @@ class WalletListenerTest extends ConfigBackedTest {
 		}
 		verify(meta).setCustomModelData(20);
 		verify(meta).setCustomModelData(1);
-		verify(meta, times(2)).setEnchantmentGlintOverride(true);
+		verify(meta, never()).setEnchantmentGlintOverride(true);
 		assertThrows(java.util.NoSuchElementException.class, () -> listener.createCashItem(new Cash.Stack(50, 1)));
 	}
 
