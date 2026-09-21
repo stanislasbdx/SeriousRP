@@ -81,37 +81,56 @@ public final class CashTender {
 		int maxDenom,
 		int pieceCap
 	) {
-		if (amount <= 0 || pieceCap <= 0 || denomsDescending == null || denomsDescending.isEmpty()) {
+		if (amount <= 0 || pieceCap <= 0) {
 			return Optional.empty();
 		}
-		int smallest = 0;
+		List<Integer> denoms = positiveDenoms(denomsDescending);
+		if (denoms.isEmpty()) {
+			return Optional.empty();
+		}
+		List<Cash.Stack> given = new ArrayList<>();
+		int remaining = fillCapped(amount, denoms, smallCeiling(denoms, maxDenom), pieceCap, given);
+		return appendGreedyLeftover(given, remaining, denoms).map(CashTender::compact);
+	}
+
+	private static List<Integer> positiveDenoms(List<Integer> denomsDescending) {
+		if (denomsDescending == null || denomsDescending.isEmpty()) {
+			return List.of();
+		}
+		List<Integer> denoms = new ArrayList<>();
 		for (Integer denom : denomsDescending) {
-			if (denom == null || denom <= 0) {
-				continue;
+			if (denom != null && denom > 0) {
+				denoms.add(denom);
 			}
-			if (smallest == 0 || denom < smallest) {
+		}
+		return denoms;
+	}
+
+	private static int smallCeiling(List<Integer> denoms, int maxDenom) {
+		int smallest = denoms.getFirst();
+		boolean anySmall = false;
+		for (int denom : denoms) {
+			if (denom < smallest) {
 				smallest = denom;
 			}
-		}
-		if (smallest == 0) {
-			return Optional.empty();
-		}
-		int smallCeiling = maxDenom;
-		boolean anySmall = false;
-		for (Integer denom : denomsDescending) {
-			if (denom != null && denom > 0 && denom <= maxDenom) {
+			if (denom <= maxDenom) {
 				anySmall = true;
-				break;
 			}
 		}
-		if (!anySmall) {
-			smallCeiling = smallest;
-		}
+		return anySmall ? maxDenom : smallest;
+	}
+
+	private static int fillCapped(
+		int amount,
+		List<Integer> denoms,
+		int ceiling,
+		int pieceCap,
+		List<Cash.Stack> given
+	) {
 		int remaining = amount;
 		int piecesLeft = pieceCap;
-		List<Cash.Stack> given = new ArrayList<>();
-		for (Integer denom : denomsDescending) {
-			if (denom == null || denom <= 0 || denom > smallCeiling || piecesLeft <= 0) {
+		for (int denom : denoms) {
+			if (denom > ceiling || piecesLeft <= 0) {
 				continue;
 			}
 			int count = (int) Math.min((long) remaining / denom, piecesLeft);
@@ -121,14 +140,23 @@ public final class CashTender {
 				piecesLeft -= count;
 			}
 		}
-		if (remaining > 0) {
-			Optional<List<Cash.Stack>> leftover = greedy(remaining, denomsDescending);
-			if (leftover.isEmpty()) {
-				return Optional.empty();
-			}
-			given.addAll(leftover.get());
+		return remaining;
+	}
+
+	private static Optional<List<Cash.Stack>> appendGreedyLeftover(
+		List<Cash.Stack> given,
+		int remaining,
+		List<Integer> denoms
+	) {
+		if (remaining <= 0) {
+			return Optional.of(given);
 		}
-		return Optional.of(compact(given));
+		Optional<List<Cash.Stack>> leftover = greedy(remaining, denoms);
+		if (leftover.isEmpty()) {
+			return Optional.empty();
+		}
+		given.addAll(leftover.get());
+		return Optional.of(given);
 	}
 
 	public static Optional<List<Cash.Stack>> greedy(int amount, List<Integer> denomsDescending) {
