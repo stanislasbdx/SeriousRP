@@ -463,7 +463,6 @@ public final class AtmListener implements Listener {
 		ItemMeta meta = item.getItemMeta();
 		assert meta != null;
 		meta.setDisplayName(name);
-		Cash.applyGlow(meta);
 		item.setItemMeta(meta);
 		return item;
 	}
@@ -480,7 +479,6 @@ public final class AtmListener implements Listener {
 		ItemMeta meta = item.getItemMeta();
 		assert meta != null;
 		meta.setDisplayName(name);
-		Cash.applyGlow(meta);
 		meta.getPersistentDataContainer().set(opKey, PersistentDataType.STRING, operation.name());
 		if (amount != null) {
 			meta.getPersistentDataContainer().set(amountKey, PersistentDataType.INTEGER, amount);
