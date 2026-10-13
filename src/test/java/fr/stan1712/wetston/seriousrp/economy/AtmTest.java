@@ -39,16 +39,37 @@ class AtmTest {
 	void signLinesAndAmountResolution() {
 		Cash cash = Cash.fromConfig(new YamlConfiguration());
 		assertArrayEquals(new String[] {
-			"§2§l[sATM]",
+			"§b§l[sATM]",
 			"§8§m              ",
-			"§aBanque §8· §ecash",
-			"§8» §7Clic droit"
+			"§7Banque §8· §6cash",
+			"§8» §fClic droit"
 		}, Atm.genericLines(cash));
-		assertEquals("§2§l[sATM]", Atm.nearbyLines(cash, 12, 4)[0]);
-		assertTrue(Atm.nearbyLines(cash, 12, 4)[1].contains("12"));
-		assertTrue(Atm.nearbyLines(cash, 12, 4)[2].contains("4"));
-		assertEquals(40, Atm.trimLine("abcdefghijklmnopqrstuvwxyz0123456789XXXXX").length());
+		String[] nearby = Atm.nearbyLines(cash, 12, 4);
+		assertEquals("§b§l[sATM]", nearby[0]);
+		assertEquals("§7Cpt §a12€", nearby[1]);
+		assertEquals("§7Cash §64€", nearby[2]);
+		assertEquals("§8» §fClic droit", nearby[3]);
+
+		String[] rich = Atm.nearbyLines(cash, 996_999_081, 2_650);
+		assertEquals("§7Cpt §a996M€", rich[1]);
+		assertEquals("§7Cash §62650€", rich[2]);
+		assertTrue(Cash.stripColorCodes(rich[1]).length() <= 15);
+		assertTrue(Cash.stripColorCodes(rich[2]).length() <= 15);
+
+		assertEquals("9999", Atm.formatSignAmount(9_999));
+		assertEquals("10k", Atm.formatSignAmount(10_000));
+		assertEquals("12.5k", Atm.formatSignAmount(12_500));
+		assertEquals("150k", Atm.formatSignAmount(150_400));
+		assertEquals("999k", Atm.formatSignAmount(999_999));
+		assertEquals("1M", Atm.formatSignAmount(1_000_000));
+		assertEquals("1.5M", Atm.formatSignAmount(1_500_000));
+		assertEquals("996M", Atm.formatSignAmount(996_999_081));
+		assertEquals("2.1B", Atm.formatSignAmount(Integer.MAX_VALUE));
+		assertEquals("0", Atm.formatSignAmount(-3));
+
+		assertEquals(15, Cash.stripColorCodes(Atm.trimLine("§aabcdefghijklmnopqrstuvwxyz")).length());
 		assertEquals("short", Atm.trimLine("short"));
+		assertEquals("", Atm.trimLine(null));
 
 		assertEquals(10, Atm.resolveAmount(Atm.Operation.DEPOSIT, 10, false, 40, 5).orElse(0));
 		assertTrue(Atm.resolveAmount(Atm.Operation.DEPOSIT, 10, false, 5, 100).isEmpty());

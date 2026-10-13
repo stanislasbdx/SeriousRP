@@ -142,7 +142,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		when(allowed.getBlock()).thenReturn(block);
 		when(player.hasPermission(Atm.CREATE_PERM)).thenReturn(true);
 		listener.onSignChange(allowed);
-		verify(allowed).setLine(0, "§2§l[sATM]");
+		verify(allowed).setLine(0, "§b§l[sATM]");
 		verify(signPdc).set(any(NamespacedKey.class), eq(PersistentDataType.STRING), eq(playerId.toString()));
 		verify(sign).update();
 		assertEquals(100, account.get());
@@ -183,7 +183,7 @@ class AtmListenerTest extends ConfigBackedTest {
 		when(paid.getPlayer()).thenReturn(player);
 		when(paid.getBlock()).thenReturn(block);
 		priced.onSignChange(paid);
-		verify(paid).setLine(0, "§2§l[sATM]");
+		verify(paid).setLine(0, "§b§l[sATM]");
 		verify(player).sendMessage(contains("created for 150"));
 		assertEquals(50, account.get());
 	}
