@@ -22,13 +22,22 @@ public final class Cash {
 	public static final String ITEM_PDC_KEY = "srp-cash";
 	public static final String WALLET_PDC_KEY = "srp-wallet";
 	public static final String ATM_OWNER_PDC_KEY = "srp-atm-owner";
+	public static final String CASSETTE_ITEM_PDC_KEY = "srp-atm-cassette";
+	public static final String ATM_CASSETTES_PDC_KEY = "srp-atm-cassettes";
+	public static final String BANK_OWNER_PDC_KEY = "srp-bank-owner";
+	public static final String BANK_STOCK_PDC_KEY = "srp-bank-stock";
+	public static final String BANK_PIN_PDC_KEY = "srp-bank-pin";
 	public static final int MAX_STACK_SIZE = 64;
 	private static final int[] DEFAULT_VALUES = {1, 2, 5, 10, 20, 50, 100, 200, 500};
 	private static final List<Integer> DEFAULT_PRESETS = List.of(10, 25, 50, 100);
 	private static final int DEFAULT_CREATE_COST = 150;
 	private static final int DEFAULT_BREAK_PIECE_CAP = 64;
 	private static final int DEFAULT_BREAK_MAX_DENOMINATION = 20;
+	private static final int DEFAULT_CASSETTE_SLOTS = 2;
+	private static final int DEFAULT_CASSETTE_CAPACITY = 50_000;
+	private static final int DEFAULT_BANK_CAPACITY = 500_000;
 	private static final List<String> DEFAULT_RECIPE_SHAPE = List.of(" L ", "LPL", " L ");
+	private static final List<String> DEFAULT_CASSETTE_SHAPE = List.of("III", "I I", "III");
 	private static final Pattern COLOR_CODE = Pattern.compile("§[0-9a-fk-orxA-FK-ORX]");
 
 	public record Denomination(int value, Material material, String displayName, Integer customModelData) {
@@ -66,12 +75,47 @@ public final class Cash {
 		}
 	}
 
-	public record AtmSettings(String header, int viewRadius, List<Integer> presets, int createCost) {
+	public record AtmSettings(
+		String header,
+		int viewRadius,
+		List<Integer> presets,
+		int createCost,
+		boolean physicalFloat,
+		int cassetteSlots,
+		int cassetteCapacity
+	) {
 		public AtmSettings {
 			viewRadius = Math.max(1, viewRadius);
 			presets = List.copyOf(presets);
 			createCost = Math.max(0, createCost);
+			cassetteSlots = Math.max(1, cassetteSlots);
+			cassetteCapacity = Math.max(1, cassetteCapacity);
 		}
+	}
+
+	public record CassetteSettings(
+		Material material,
+		String displayName,
+		String loreTotal,
+		List<String> recipeShape,
+		Map<Character, Material> recipeIngredients,
+		Integer customModelData
+	) {
+		public CassetteSettings {
+			recipeShape = List.copyOf(recipeShape);
+			recipeIngredients = Map.copyOf(recipeIngredients);
+			customModelData = customModelData != null && customModelData > 0 ? customModelData : null;
+		}
+	}
+
+	public record BankSettings(String header, String vaultPlayer, int vaultCapacity) {
+		public BankSettings {
+			vaultCapacity = Math.max(1, vaultCapacity);
+			vaultPlayer = vaultPlayer == null || vaultPlayer.isBlank() ? "Banque" : vaultPlayer;
+		}
+	}
+
+	public record PilotSettings(String header) {
 	}
 
 	public record ChangeSettings(int breakPieceCap, int breakMaxDenomination) {
@@ -90,6 +134,9 @@ public final class Cash {
 	private final Map<Integer, Denomination> byValue;
 	private final WalletSettings wallet;
 	private final AtmSettings atm;
+	private final CassetteSettings cassette;
+	private final BankSettings bank;
+	private final PilotSettings pilot;
 	private final ChangeSettings change;
 
 	Cash(
@@ -98,6 +145,9 @@ public final class Cash {
 		List<Denomination> denominations,
 		WalletSettings wallet,
 		AtmSettings atm,
+		CassetteSettings cassette,
+		BankSettings bank,
+		PilotSettings pilot,
 		ChangeSettings change
 	) {
 		this.enabled = enabled;
@@ -110,6 +160,9 @@ public final class Cash {
 		this.byValue = Map.copyOf(index);
 		this.wallet = wallet;
 		this.atm = atm;
+		this.cassette = cassette;
+		this.bank = bank;
+		this.pilot = pilot;
 		this.change = change;
 	}
 
@@ -147,15 +200,52 @@ public final class Cash {
 		int radius = config.getInt("Economy.Cash.Atm.ViewRadius", 5);
 		int createCost = config.getInt("Economy.Cash.Atm.CreateCost", DEFAULT_CREATE_COST);
 		List<Integer> presets = parsePresets(config.getIntegerList("Economy.Cash.Atm.Presets"));
+		boolean physicalFloat = config.getBoolean("Economy.Cash.Atm.PhysicalFloat", false);
+		int cassetteSlots = config.getInt("Economy.Cash.Atm.CassetteSlots", DEFAULT_CASSETTE_SLOTS);
+		int cassetteCapacity = config.getInt("Economy.Cash.Atm.CassetteCapacity", DEFAULT_CASSETTE_CAPACITY);
 		int pieceCap = config.getInt("Economy.Cash.Change.BreakPieceCap", DEFAULT_BREAK_PIECE_CAP);
 		int maxDenom = config.getInt("Economy.Cash.Change.BreakMaxDenomination", DEFAULT_BREAK_MAX_DENOMINATION);
+
+		Material cassetteMaterial = materialOr(config.getString("Economy.Cash.Cassette.Material"), Material.CHEST);
+		String cassetteName = colorize(nullable(config.getString("Economy.Cash.Cassette.DisplayName"), "&8Cassette"));
+		String cassetteLore = colorize(nullable(
+			config.getString("Economy.Cash.Cassette.LoreTotal"),
+			"&7Contenu : &e%amount%%currency%"
+		));
+		List<String> cassetteShape = config.getStringList("Economy.Cash.Cassette.Recipe.Shape");
+		if (cassetteShape.size() != 3) {
+			cassetteShape = DEFAULT_CASSETTE_SHAPE;
+		}
+		Map<Character, Material> cassetteIngredients = parseIngredients(
+			config.getConfigurationSection("Economy.Cash.Cassette.Recipe.Ingredients")
+		);
+		if (cassetteIngredients.isEmpty()) {
+			cassetteIngredients = Map.of('I', Material.IRON_INGOT);
+		}
+		int cassetteModel = config.getInt("Economy.Cash.Cassette.CustomModelData", 1);
+		Integer cassetteCustomModelData = cassetteModel > 0 ? cassetteModel : null;
+
+		String bankHeader = nullable(config.getString("Economy.Cash.Bank.SignHeader"), "[sBank]");
+		String vaultPlayer = nullable(config.getString("Economy.Cash.Bank.VaultPlayer"), "Banque");
+		int bankCapacity = config.getInt("Economy.Cash.Bank.VaultCapacity", DEFAULT_BANK_CAPACITY);
+		String pilotHeader = nullable(config.getString("Economy.Cash.Pilot.SignHeader"), "[sPilot]");
 
 		return new Cash(
 			enabled,
 			currency,
 			denoms,
 			new WalletSettings(slots, walletMaterial, walletName, walletLore, shape, ingredients, walletCustomModelData),
-			new AtmSettings(header, radius, presets, createCost),
+			new AtmSettings(header, radius, presets, createCost, physicalFloat, cassetteSlots, cassetteCapacity),
+			new CassetteSettings(
+				cassetteMaterial,
+				cassetteName,
+				cassetteLore,
+				cassetteShape,
+				cassetteIngredients,
+				cassetteCustomModelData
+			),
+			new BankSettings(bankHeader, vaultPlayer, bankCapacity),
+			new PilotSettings(pilotHeader),
 			new ChangeSettings(pieceCap, maxDenom)
 		);
 	}
@@ -289,6 +379,66 @@ public final class Cash {
 
 	public int atmCreateCost() {
 		return atm.createCost();
+	}
+
+	public boolean physicalFloat() {
+		return atm.physicalFloat();
+	}
+
+	public int cassetteSlots() {
+		return atm.cassetteSlots();
+	}
+
+	public int cassetteCapacity() {
+		return atm.cassetteCapacity();
+	}
+
+	public Material cassetteMaterial() {
+		return cassette.material();
+	}
+
+	public String cassetteDisplayName() {
+		return cassette.displayName();
+	}
+
+	public String cassetteLoreTotal() {
+		return cassette.loreTotal();
+	}
+
+	public List<String> cassetteRecipeShape() {
+		return cassette.recipeShape();
+	}
+
+	public Map<Character, Material> cassetteRecipeIngredients() {
+		return cassette.recipeIngredients();
+	}
+
+	public OptionalInt cassetteCustomModelData() {
+		return cassette.customModelData() == null ? OptionalInt.empty() : OptionalInt.of(cassette.customModelData());
+	}
+
+	public String bankHeader() {
+		return bank.header();
+	}
+
+	public boolean isBankHeader(String line) {
+		return line != null && bank.header().equalsIgnoreCase(stripColorCodes(line).trim());
+	}
+
+	public String bankVaultPlayer() {
+		return bank.vaultPlayer();
+	}
+
+	public int bankVaultCapacity() {
+		return bank.vaultCapacity();
+	}
+
+	public String pilotHeader() {
+		return pilot.header();
+	}
+
+	public boolean isPilotHeader(String line) {
+		return line != null && pilot.header().equalsIgnoreCase(stripColorCodes(line).trim());
 	}
 
 	public int breakPieceCap() {

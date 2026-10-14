@@ -8,7 +8,16 @@ public final class Atm {
 	public static final String DELETE_PERM = "seriousrp.economy.atm.delete";
 	public static final String DELETE_OTHERS_PERM = "seriousrp.economy.atm.delete.others";
 	public static final String USE_PERM = "seriousrp.economy.atm.use";
+	public static final String SERVICE_PERM = "seriousrp.economy.atm.service";
+	public static final String BANK_CREATE_PERM = "seriousrp.economy.bank.create";
+	public static final String BANK_DELETE_PERM = "seriousrp.economy.bank.delete";
+	public static final String BANK_DELETE_OTHERS_PERM = "seriousrp.economy.bank.delete.others";
+	public static final String BANK_ACCESS_PERM = "seriousrp.economy.bank.access";
+	public static final String BANK_BYPASS_PERM = "seriousrp.economy.bank.access.bypass";
+	public static final String PILOT_CREATE_PERM = "seriousrp.economy.atm.pilot.create";
+	public static final String PILOT_OTHERS_PERM = "seriousrp.economy.atm.pilot.others";
 	public static final long PROMPT_TIMEOUT_MILLIS = 20_000L;
+	public static final long BREAK_CONFIRM_MILLIS = 10_000L;
 
 	public enum Operation {
 		DEPOSIT,
