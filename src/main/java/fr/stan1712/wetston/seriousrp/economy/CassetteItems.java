@@ -250,7 +250,10 @@ public final class CassetteItems implements Listener {
 			return;
 		}
 		if (attempt.wiped()) {
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.PinLost"));
+			player.sendMessage(getShortPrefixString() + cash.applyAmount(
+				getConfigString("Economy.Cash.Cassette.PinLost"),
+				payload.get().total()
+			));
 			return;
 		}
 		int left = Cassette.MAX_PIN_ATTEMPTS - attempt.payload().failedAttempts();
@@ -335,6 +338,7 @@ public final class CassetteItems implements Listener {
 			return;
 		}
 		event.setCurrentItem(create(Cassette.empty()));
+		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.Crafted"));
 	}
 
 	private boolean canCraft(Player player) {

@@ -86,7 +86,7 @@ Break once → confirm message; break again within **10 seconds** to destroy. In
 
 ## Cassettes
 
-Craftable by anyone while `AdvancedBank` is on. Recipe defaults to an iron frame (see `Economy.Cash.Cassette.Recipe`). Putting a cassette into an ATM still requires `atm.service`.
+Craftable by anyone while `AdvancedBank` is on. Recipe defaults to an iron frame (see `Economy.Cash.Cassette.Recipe`). A successful craft tells the player to right-click the cassette and lock it. Putting a cassette into an ATM still requires `atm.service`.
 
 ### PIN
 
@@ -94,7 +94,7 @@ Right-click a cassette (not a sign):
 
 1. First time → chat asks for a **4-digit code**. That code is saved on the item.
 2. Later → enter the code to open a read-only view of the bills inside.
-3. Three wrong codes wipe the cash. The item and the code stay. Type `cancel` to abort.
+3. Three wrong codes destroy the cash and say how much was destroyed. The item and the code stay. Type `cancel` to abort.
 
 ### Install / eject (service)
 
