@@ -153,6 +153,8 @@ class CashTest {
 		Cash cash = Cash.fromConfig(config);
 		assertTrue(cash.advancedBank());
 		assertEquals(3, cash.cassetteSlots());
+		config.set("Economy.Cash.Atm.CassetteSlots", 12);
+		assertEquals(Cash.MAX_CASSETTE_SLOTS, Cash.fromConfig(config).cassetteSlots());
 		assertEquals(12_000, cash.cassetteCapacity());
 		assertEquals(Material.IRON_BLOCK, cash.cassetteMaterial());
 		assertEquals(9, cash.cassetteCustomModelData().orElse(0));

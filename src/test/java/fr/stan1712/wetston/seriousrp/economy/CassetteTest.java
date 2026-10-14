@@ -58,6 +58,20 @@ class CassetteTest {
 	}
 
 	@Test
+	void shortIdAndFitKeepTheCode() {
+		assertEquals("f4de5", Cassette.shortId("f4de5abc-1111-2222-3333-444444444444"));
+		Cassette.Payload locked = Cassette.withPin(
+			Cassette.addValue(Cassette.empty(), 80, EURO, 100).orElseThrow(),
+			"1234"
+		);
+		Cassette.Fit fit = Cassette.fit(locked, 50, EURO);
+		assertEquals(50, fit.kept().total());
+		assertEquals("1234", fit.kept().pin());
+		assertEquals(30, CashTender.total(fit.overflow()));
+		assertEquals(80, Cassette.fit(locked, 80, EURO).kept().total());
+	}
+
+	@Test
 	void addAndTakeRespectCapacity() {
 		Cassette.Payload empty = Cassette.empty();
 		assertTrue(Cassette.addValue(empty, 0, EURO, 100).isEmpty());

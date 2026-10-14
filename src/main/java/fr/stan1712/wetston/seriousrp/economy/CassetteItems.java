@@ -9,7 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -25,6 +27,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,6 +49,8 @@ public final class CassetteItems implements Listener {
 	private final Consumer<NamespacedKey> recipeRemover;
 	private final Consumer<Runnable> mainThread;
 	private final Map<UUID, PinPrompt> prompts = new ConcurrentHashMap<>();
+	private WalletListener walletItems;
+	private AtmLogger logger;
 
 	enum PinMode {
 		SET,
@@ -58,11 +63,17 @@ public final class CassetteItems implements Listener {
 		}
 	}
 
-	record ContentsHolder(String id) implements InventoryHolder {
+	record ContentsHolder(String id, String pin, int failedAttempts, int slot, List<Cash.Stack> hidden, int previousTotal)
+		implements InventoryHolder {
 		@Override
 		public Inventory getInventory() {
-			throw new UnsupportedOperationException("Cassette contents are read-only");
+			throw new UnsupportedOperationException("Cassette contents are a GUI marker");
 		}
+	}
+
+	public void use(WalletListener walletItems, AtmLogger logger) {
+		this.walletItems = walletItems;
+		this.logger = logger;
 	}
 
 	public CassetteItems(Plugin plugin, Cash cash) {
@@ -126,7 +137,7 @@ public final class CassetteItems implements Listener {
 		ItemStack item = new ItemStack(cash.cassetteMaterial());
 		ItemMeta meta = item.getItemMeta();
 		assert meta != null;
-		meta.setDisplayName(cash.cassetteDisplayName());
+		meta.setDisplayName(labeled(cash.cassetteDisplayName(), payload.id()));
 		if (payload.pin() == null) {
 			meta.setLore(List.of(cash.applyAmount(cash.cassetteLoreTotal(), payload.total())));
 		}
@@ -208,15 +219,96 @@ public final class CassetteItems implements Listener {
 
 	@EventHandler
 	public void onContentsClick(InventoryClickEvent event) {
-		if (event.getView().getTopInventory().getHolder() instanceof ContentsHolder) {
+		if (!(event.getView().getTopInventory().getHolder() instanceof ContentsHolder holder)
+			|| !(event.getWhoClicked() instanceof Player player)) {
+			return;
+		}
+		if (walletItems == null) {
 			event.setCancelled(true);
+			return;
+		}
+		if (isSourceSlot(event, player, holder.slot()) || event.getHotbarButton() == holder.slot()) {
+			event.setCancelled(true);
+			return;
+		}
+		if (read(event.getCurrentItem()).isPresent() || read(event.getCursor()).isPresent()) {
+			event.setCancelled(true);
+			return;
+		}
+		boolean top = event.getRawSlot() < event.getView().getTopInventory().getSize();
+		if (top && event.getClick() == ClickType.NUMBER_KEY) {
+			ItemStack hotbar = event.getHotbarButton() < 0 ? null : player.getInventory().getItem(event.getHotbarButton());
+			if (!isAir(hotbar) && !walletItems.isCashItem(hotbar)) {
+				event.setCancelled(true);
+				player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
+			}
+			return;
+		}
+		if (top && !isAir(event.getCursor()) && !walletItems.isCashItem(event.getCursor())) {
+			event.setCancelled(true);
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
+			return;
+		}
+		if (!top && event.isShiftClick() && !isAir(event.getCurrentItem()) && !walletItems.isCashItem(event.getCurrentItem())) {
+			event.setCancelled(true);
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
 		}
 	}
 
 	@EventHandler
 	public void onContentsDrag(InventoryDragEvent event) {
-		if (event.getView().getTopInventory().getHolder() instanceof ContentsHolder) {
+		if (!(event.getView().getTopInventory().getHolder() instanceof ContentsHolder)
+			|| !(event.getWhoClicked() instanceof Player player)
+			|| walletItems == null) {
+			if (event.getView().getTopInventory().getHolder() instanceof ContentsHolder) {
+				event.setCancelled(true);
+			}
+			return;
+		}
+		int topSize = event.getView().getTopInventory().getSize();
+		boolean affectsTop = event.getRawSlots().stream().anyMatch(slot -> slot < topSize);
+		if (affectsTop && !walletItems.isCashItem(event.getOldCursor())) {
 			event.setCancelled(true);
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
+		}
+	}
+
+	@EventHandler
+	public void onContentsClose(InventoryCloseEvent event) {
+		if (!(event.getInventory().getHolder() instanceof ContentsHolder holder)
+			|| !(event.getPlayer() instanceof Player player)
+			|| walletItems == null) {
+			return;
+		}
+		List<Cash.Stack> stacks = new ArrayList<>();
+		if (holder.hidden() != null) {
+			stacks.addAll(holder.hidden());
+		}
+		for (ItemStack item : event.getInventory().getContents()) {
+			if (isAir(item)) {
+				continue;
+			}
+			Optional<Cash.Stack> cashStack = walletItems.readCashItem(item);
+			if (cashStack.isPresent()) {
+				stacks.add(cashStack.get());
+			}
+			else {
+				player.getInventory().addItem(item);
+			}
+		}
+		Cassette.Payload draft = new Cassette.Payload(holder.id(), stacks, holder.pin(), holder.failedAttempts());
+		Cassette.Fit fit = Cassette.fit(draft, cash.cassetteCapacity(), cash.descendingValues());
+		if (!fit.overflow().isEmpty()) {
+			for (Cash.Stack stack : CashTender.toInventoryStacks(fit.overflow())) {
+				player.getInventory().addItem(walletItems.createCashItem(stack));
+			}
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.TooMuch"));
+		}
+		replaceCassette(player, holder, fit.kept());
+		if (fit.kept().total() != holder.previousTotal()) {
+			log("CASSETTE_EDIT", player.getName()
+				+ " cassette=#" + Cassette.shortId(holder.id())
+				+ " amount=" + fit.kept().total());
 		}
 	}
 
@@ -239,14 +331,14 @@ public final class CassetteItems implements Listener {
 			Cassette.Payload locked = Cassette.withPin(payload.get(), typed);
 			setHand(player, prompt.hand(), create(locked));
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.PinSaved"));
-			openContents(player, locked);
+			openContents(player, locked, prompt.hand());
 			return;
 		}
 		Cassette.PinAttempt attempt = Cassette.tryPin(payload.get(), typed);
 		setHand(player, prompt.hand(), create(attempt.payload()));
 		if (attempt.unlocked()) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.PinOk"));
-			openContents(player, attempt.payload());
+			openContents(player, attempt.payload(), prompt.hand());
 			return;
 		}
 		if (attempt.wiped()) {
@@ -254,6 +346,9 @@ public final class CassetteItems implements Listener {
 				getConfigString("Economy.Cash.Cassette.PinLost"),
 				payload.get().total()
 			));
+			log("CASSETTE_WIPE", player.getName()
+				+ " cassette=#" + Cassette.shortId(payload.get().id())
+				+ " amount=" + payload.get().total());
 			return;
 		}
 		int left = Cassette.MAX_PIN_ATTEMPTS - attempt.payload().failedAttempts();
@@ -261,23 +356,37 @@ public final class CassetteItems implements Listener {
 			.replace("%tries%", Integer.toString(left)));
 	}
 
-	private void openContents(Player player, Cassette.Payload payload) {
-		Inventory inventory = org.bukkit.Bukkit.createInventory(
-			new ContentsHolder(payload.id()),
-			27,
-			getConfigString("Economy.Cash.Cassette.OpenedTitle")
-		);
-		int slot = 0;
+	private void openContents(Player player, Cassette.Payload payload, EquipmentSlot hand) {
+		List<Cash.Stack> shown = new ArrayList<>();
+		List<Cash.Stack> hidden = new ArrayList<>();
+		int limit = 54;
 		for (Cash.Stack stack : CashTender.toInventoryStacks(payload.stacks())) {
-			if (slot >= inventory.getSize()) {
-				break;
+			if (shown.size() < limit) {
+				shown.add(stack);
 			}
-			inventory.setItem(slot++, displayStack(stack));
+			else {
+				hidden.add(stack);
+			}
+		}
+		int sourceSlot = hand == EquipmentSlot.OFF_HAND ? 40 : player.getInventory().getHeldItemSlot();
+		Inventory inventory = org.bukkit.Bukkit.createInventory(
+			new ContentsHolder(payload.id(), payload.pin(), payload.failedAttempts(), sourceSlot, hidden, payload.total()),
+			limit,
+			labeled(getConfigString("Economy.Cash.Cassette.OpenedTitle"), payload.id())
+		);
+		for (int index = 0; index < shown.size(); index++) {
+			inventory.setItem(index, cashItem(shown.get(index)));
 		}
 		player.openInventory(inventory);
+		if (!hidden.isEmpty()) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.MoreInside"));
+		}
 	}
 
-	private ItemStack displayStack(Cash.Stack stack) {
+	private ItemStack cashItem(Cash.Stack stack) {
+		if (walletItems != null) {
+			return walletItems.createCashItem(stack);
+		}
 		Cash.Denomination denomination = cash.denomination(stack.denomination()).orElse(null);
 		Material material = denomination == null ? Material.PAPER : denomination.material();
 		ItemStack item = new ItemStack(material, Math.min(stack.amount(), Cash.MAX_STACK_SIZE));
@@ -286,9 +395,62 @@ public final class CassetteItems implements Listener {
 			meta.setDisplayName(denomination == null
 				? stack.denomination() + cash.currency()
 				: denomination.displayName());
+			if (denomination != null && denomination.customModelData() != null) {
+				Cash.applyCustomModelData(meta, denomination.customModelData());
+			}
 			item.setItemMeta(meta);
 		}
 		return item;
+	}
+
+	private void replaceCassette(Player player, ContentsHolder holder, Cassette.Payload payload) {
+		ItemStack updated = create(payload);
+		ItemStack current = player.getInventory().getItem(holder.slot());
+		if (matches(current, holder.id())) {
+			player.getInventory().setItem(holder.slot(), updated);
+			return;
+		}
+		ItemStack[] contents = player.getInventory().getStorageContents();
+		if (contents != null) {
+			for (int index = 0; index < contents.length; index++) {
+				if (matches(contents[index], holder.id())) {
+					player.getInventory().setItem(index, updated);
+					return;
+				}
+			}
+		}
+		if (matches(player.getInventory().getItemInOffHand(), holder.id())) {
+			player.getInventory().setItemInOffHand(updated);
+		}
+	}
+
+	private boolean matches(ItemStack item, String id) {
+		return read(item).filter(payload -> payload.id().equals(id)).isPresent();
+	}
+
+	private static boolean isSourceSlot(InventoryClickEvent event, Player player, int slot) {
+		return event.getClickedInventory() != null
+			&& event.getClickedInventory().equals(player.getInventory())
+			&& event.getSlot() == slot;
+	}
+
+	private static boolean isAir(ItemStack item) {
+		return item == null || item.getType() == Material.AIR || item.getAmount() <= 0;
+	}
+
+	static String labeled(String template, String id) {
+		String tag = Cassette.shortId(id);
+		if (template != null && template.contains("%id%")) {
+			return template.replace("%id%", tag);
+		}
+		String base = template == null ? "" : template;
+		return base.isBlank() ? "#" + tag : base + " #" + tag;
+	}
+
+	private void log(String action, String details) {
+		if (logger != null) {
+			logger.log(action, details);
+		}
 	}
 
 	private static ItemStack itemIn(Player player, EquipmentSlot hand) {

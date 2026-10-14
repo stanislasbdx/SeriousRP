@@ -54,7 +54,7 @@ public final class AtmListener implements Listener {
 	static final int WITHDRAW_START = 19;
 	static final int COMPACT_SLOT = 30;
 	static final int BREAK_SLOT = 32;
-	static final int MACHINE_SLOT = 7;
+	static final int MACHINE_SLOT = 44;
 	static final int CASSETTE_START = 36;
 
 	interface Bank {
@@ -497,7 +497,10 @@ public final class AtmListener implements Listener {
 			}
 			writeCassettes(location.getBlock(), next.get());
 			writeLedger(player, paid.get());
-			log("DEPOSIT", player.getName() + " amount=" + amount + " cash=" + AtmCassettes.total(next.get()));
+			log("DEPOSIT", player.getName()
+				+ " amount=" + amount
+				+ " cash=" + AtmCassettes.total(next.get())
+				+ " cassettes=" + cassetteTags(next.get()));
 			return true;
 		}
 		if (!bank.deposit(player, amount)) {
@@ -539,7 +542,10 @@ public final class AtmListener implements Listener {
 			for (Cash.Stack stack : CashTender.toInventoryStacks(stacks.get())) {
 				player.getInventory().addItem(walletItems.createCashItem(stack));
 			}
-			log("WITHDRAW", player.getName() + " amount=" + amount + " cash=" + AtmCassettes.total(next.get()));
+			log("WITHDRAW", player.getName()
+				+ " amount=" + amount
+				+ " cash=" + AtmCassettes.total(next.get())
+				+ " cassettes=" + cassetteTags(next.get()));
 			return true;
 		}
 		if (!bank.withdraw(player, amount)) {
@@ -676,7 +682,7 @@ public final class AtmListener implements Listener {
 	}
 
 	private int shownCassetteSlots() {
-		return Math.min(9, Math.max(1, cash.cassetteSlots()));
+		return Math.min(Cash.MAX_CASSETTE_SLOTS, Math.max(1, cash.cassetteSlots()));
 	}
 
 	private boolean serviceCassetteUi(Player player) {
@@ -729,6 +735,20 @@ public final class AtmListener implements Listener {
 		logCassetteMoves(player, previous, next);
 	}
 
+	private static String cassetteTags(List<Optional<Cassette.Payload>> slots) {
+		StringBuilder tags = new StringBuilder();
+		for (Optional<Cassette.Payload> slot : slots) {
+			if (slot.isEmpty()) {
+				continue;
+			}
+			if (!tags.isEmpty()) {
+				tags.append(',');
+			}
+			tags.append('#').append(Cassette.shortId(slot.get().id()));
+		}
+		return tags.toString();
+	}
+
 	private void logCassetteMoves(
 		Player player,
 		List<Optional<Cassette.Payload>> previous,
@@ -739,10 +759,16 @@ public final class AtmListener implements Listener {
 			Optional<Cassette.Payload> before = index < previous.size() ? previous.get(index) : Optional.empty();
 			Optional<Cassette.Payload> after = index < next.size() ? next.get(index) : Optional.empty();
 			if (before.isEmpty() && after.isPresent()) {
-				log("INSTALL", player.getName() + " slot=" + index + " amount=" + after.get().total());
+				log("INSTALL", player.getName()
+					+ " slot=" + index
+					+ " cassette=#" + Cassette.shortId(after.get().id())
+					+ " amount=" + after.get().total());
 			}
 			else if (before.isPresent() && after.isEmpty()) {
-				log("EJECT", player.getName() + " slot=" + index + " amount=" + before.get().total());
+				log("EJECT", player.getName()
+					+ " slot=" + index
+					+ " cassette=#" + Cassette.shortId(before.get().id())
+					+ " amount=" + before.get().total());
 			}
 		}
 	}

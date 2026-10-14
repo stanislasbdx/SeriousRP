@@ -177,6 +177,7 @@ public final class Main extends JavaPlugin {
 
 				AtmRegistry atmRegistry = new AtmRegistry(this);
 				AtmLogger atmLogger = new AtmLogger(this);
+				cassetteItems.use(walletListener, atmLogger);
 				AtmListener atmListener = new AtmListener(
 					this,
 					cash,

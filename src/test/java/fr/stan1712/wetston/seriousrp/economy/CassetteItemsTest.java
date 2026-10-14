@@ -26,6 +26,7 @@ import org.mockito.quality.Strictness;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
@@ -83,6 +84,12 @@ class CassetteItemsTest extends ConfigBackedTest {
 		}
 		verify(player).sendMessage(contains("destroyed"));
 		verify(player).sendMessage(contains("40"));
+	}
+
+	@Test
+	void labelUsesTheShortId() {
+		assertEquals("§8Cassette #f4de5", CassetteItems.labeled("§8Cassette #%id%", "f4de5abc-0000-0000-0000-000000000000"));
+		assertEquals("Cassette #f4de5", CassetteItems.labeled("Cassette", "F4DE5ABC"));
 	}
 
 	@Test

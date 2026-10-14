@@ -104,6 +104,7 @@ Economy:
       ViewRadius: 5
       CreateCost: 150
       CassetteSlots: 2
+      # 1 to 8. The bottom-right slot of the ATM is the cash total.
       CassetteCapacity: 50000
       Presets:
         - 10
@@ -113,7 +114,7 @@ Economy:
     Cassette:
       Material: CHEST
       CustomModelData: 1
-      DisplayName: "&8Cassette"
+      DisplayName: "&8Cassette #%id%"
       LoreTotal: "&7Content : &e%amount%%currency%"
       Recipe:
         Shape:
@@ -139,7 +140,9 @@ Economy:
       Crafted: "&eRight-click the cassette to lock it with a 4-digit code."
       PinInvalid: "&cEnter exactly 4 digits."
       PinCancel: "&cCancelled."
-      OpenedTitle: "&8Cassette"
+      OpenedTitle: "&8Cassette #%id%"
+      TooMuch: "&cThat cassette cannot hold that much. Extra cash was returned."
+      MoreInside: "&eTake some bills out to reach the rest."
       ShiftCraft: "&cCraft cassettes one at a time"
       DeniedCraft: "&cYou can't craft cassettes"
       BreakConfirm: "&eBreak again to confirm. Installed cassettes will drop."

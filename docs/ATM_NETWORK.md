@@ -96,11 +96,15 @@ Right-click a cassette (not a sign):
 2. Later → enter the code to open a read-only view of the bills inside.
 3. Three wrong codes destroy the cash and say how much was destroyed. The item and the code stay. Type `cancel` to abort.
 
+The item name shows a short id, for example `Cassette #f4de5`. The same id is written in `atm.log` for install, eject, bank moves, edits, and wipes.
+
+After the code is accepted, the cassette opens like a wallet: put cash in, take cash out. Closing it saves the contents, up to `CassetteCapacity`. Bills use the same items as loose cash, so the resource-pack texture applies.
+
 ### Install / eject (service)
 
 Open the ATM GUI with `atm.service`:
 
-- The bottom row is real cassette slots. How many depends on `Atm.CassetteSlots` (up to 9, the whole row).
+- The bottom row is real cassette slots. How many depends on `Atm.CassetteSlots`, capped at 8. The bottom-right slot is the cash total.
 - Drag a cassette from your inventory into an empty slot.
 - Drag it back out to eject it.
 - Anyone without `atm.service` still uses the ATM, but the cassette row stays locked.

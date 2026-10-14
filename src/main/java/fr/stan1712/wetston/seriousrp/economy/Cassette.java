@@ -36,6 +36,27 @@ public final class Cassette {
 	public record PinAttempt(Payload payload, boolean unlocked, boolean wiped) {
 	}
 
+	public record Fit(Payload kept, List<Cash.Stack> overflow) {
+	}
+
+	public static String shortId(String id) {
+		if (id == null || id.isBlank()) {
+			return "";
+		}
+		String compact = id.replace("-", "").toLowerCase();
+		return compact.length() <= 5 ? compact : compact.substring(0, 5);
+	}
+
+	public static Fit fit(Payload payload, int capacity, List<Integer> denoms) {
+		if (payload == null || capacity < 0 || payload.total() <= capacity) {
+			return new Fit(payload, List.of());
+		}
+		int excess = payload.total() - capacity;
+		List<Cash.Stack> kept = CashTender.extract(payload.stacks(), excess, denoms).orElse(payload.stacks());
+		List<Cash.Stack> overflow = CashTender.greedy(excess, denoms).orElse(List.of());
+		return new Fit(copy(payload, kept), overflow);
+	}
+
 	private static final class PayloadJson {
 		private String id;
 		private List<StackJson> stacks;

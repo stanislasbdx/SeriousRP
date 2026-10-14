@@ -33,6 +33,7 @@ public final class Cash {
 	private static final int DEFAULT_CREATE_COST = 150;
 	private static final int DEFAULT_BREAK_PIECE_CAP = 64;
 	private static final int DEFAULT_BREAK_MAX_DENOMINATION = 20;
+	public static final int MAX_CASSETTE_SLOTS = 8;
 	private static final int DEFAULT_CASSETTE_SLOTS = 2;
 	private static final int DEFAULT_CASSETTE_CAPACITY = 50_000;
 	private static final int DEFAULT_BANK_CAPACITY = 500_000;
@@ -93,7 +94,7 @@ public final class Cash {
 			viewRadius = Math.max(1, viewRadius);
 			presets = List.copyOf(presets);
 			createCost = Math.max(0, createCost);
-			cassetteSlots = Math.max(1, cassetteSlots);
+			cassetteSlots = Math.min(MAX_CASSETTE_SLOTS, Math.max(1, cassetteSlots));
 			cassetteCapacity = Math.max(1, cassetteCapacity);
 		}
 	}
