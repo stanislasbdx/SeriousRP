@@ -13,14 +13,13 @@ The plugin already writes the matching model data (legacy integer **and** the 1.
 
 Item textures must be **square PNG**, transparent background, `minecraft:item/generated` (flat sprite). Bills are front-facing 2D notes; the bottom-right denomination is the `sRP` watermark.
 
-A wallet PNG is not in this folder yet. Add `wallet.png` the same way (64×64, then a 256×256 copy under `hi/` if you keep sources). Cheque is `cheque.png`.
-
 ## What the plugin puts on items
 
 | Item | Material | `CustomModelData` | Texture |
 | :--- | :--- | :--- | :--- |
 | Cheque | `PAPER` | `1` | `cheque.png` |
 | Wallet | `BOOK` | `1` | `wallet.png` |
+| Cassette | `CHEST` | `1` | `cassette.png` |
 | 1 € | `IRON_NUGGET` | `1` | `coin_1.png` |
 | 2 € | `GOLD_NUGGET` | `2` | `coin_2.png` |
 | 5 € | `RESIN_BRICK` | `5` | `bill_5.png` |
@@ -40,6 +39,9 @@ Economy:
   Cash:
     Wallet:
       Material: BOOK
+      CustomModelData: 1          # 0 disables the model data
+    Cassette:
+      Material: CHEST
       CustomModelData: 1          # 0 disables the model data
     Denominations:
       - value: 5
