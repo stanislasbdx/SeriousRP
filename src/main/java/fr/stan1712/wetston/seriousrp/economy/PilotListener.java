@@ -47,6 +47,7 @@ public final class PilotListener implements Listener {
 		void run(Runnable task);
 	}
 
+	private final Plugin plugin;
 	private final Cash cash;
 	private final AtmRegistry registry;
 	private final NamespacedKey ownerKey;
@@ -71,6 +72,7 @@ public final class PilotListener implements Listener {
 		MainThread mainThread,
 		InventoryFactory inventories
 	) {
+		this.plugin = plugin;
 		this.cash = cash;
 		this.registry = registry;
 		this.ownerKey = new NamespacedKey(plugin, OWNER_KEY);
@@ -79,12 +81,21 @@ public final class PilotListener implements Listener {
 		this.inventories = inventories;
 	}
 
+	boolean cassetteMode() {
+		return plugin.getConfig().getBoolean("Economy.Cash.Atm.PhysicalFloat", cash.physicalFloat());
+	}
+
 	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
-		if (!cash.isEnabled() || !cash.physicalFloat() || !cash.isPilotHeader(event.getLine(0))) {
+		if (!cash.isEnabled() || !cash.isPilotHeader(event.getLine(0))) {
 			return;
 		}
 		Player player = event.getPlayer();
+		if (!cassetteMode()) {
+			event.setCancelled(true);
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Atm.NeedCassetteMode"));
+			return;
+		}
 		if (!player.hasPermission(Atm.PILOT_CREATE_PERM)) {
 			event.setCancelled(true);
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Pilot.DeniedCreate"));
@@ -119,7 +130,7 @@ public final class PilotListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onInteract(PlayerInteractEvent event) {
-		if (!cash.isEnabled() || !cash.physicalFloat() || event.getAction() != Action.RIGHT_CLICK_BLOCK
+		if (!cash.isEnabled() || !cassetteMode() || event.getAction() != Action.RIGHT_CLICK_BLOCK
 			|| event.getClickedBlock() == null) {
 			return;
 		}

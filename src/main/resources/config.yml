@@ -97,6 +97,7 @@ Economy:
       PhysicalFloat: false
       CassetteSlots: 2
       CassetteCapacity: 50000
+      NeedCassetteMode: "&cEnable Economy.Cash.Atm.PhysicalFloat (cassette mode) first"
       Presets:
         - 10
         - 25

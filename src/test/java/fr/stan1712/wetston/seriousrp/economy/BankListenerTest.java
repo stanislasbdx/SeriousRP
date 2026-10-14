@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -76,6 +77,7 @@ class BankListenerTest extends ConfigBackedTest {
 			Map.of("value", 1, "material", "GOLD_NUGGET"),
 			Map.of("value", 10, "material", "PAPER")
 		));
+		when(plugin.getConfig()).thenReturn(config);
 		cash = Cash.fromConfig(config);
 		walletItems = new WalletListener(plugin, cash, new Wallet(), recipe -> {}, (h, s, t) -> gui);
 		cassetteItems = new CassetteItems(plugin, cash, recipe -> {}, key -> {});
@@ -117,6 +119,18 @@ class BankListenerTest extends ConfigBackedTest {
 		listener.onSignChange(allowed);
 		verify(allowed).setLine(0, "§2§l[sBank]");
 		verify(signPdc).set(any(NamespacedKey.class), eq(PersistentDataType.STRING), eq(playerId.toString()));
+	}
+
+	@Test
+	void createBlockedWhenCassetteModeOff() {
+		plugin.getConfig().set("Economy.Cash.Atm.PhysicalFloat", false);
+		SignChangeEvent event = mock(SignChangeEvent.class);
+		when(event.getLine(0)).thenReturn("[sBank]");
+		when(event.getPlayer()).thenReturn(player);
+		listener.onSignChange(event);
+		verify(event).setCancelled(true);
+		verify(player).sendMessage(contains("PhysicalFloat"));
+		verify(event, never()).setLine(anyInt(), any());
 	}
 
 	@Test

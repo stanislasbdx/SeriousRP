@@ -188,13 +188,11 @@ public final class Main extends JavaPlugin {
 				pluginManager.registerEvents(atmListener, this);
 				getServer().getScheduler().runTaskTimer(this, () -> atmListener.tickProximity(getServer().getOnlinePlayers()), 20L, 20L);
 
-				if (cash.physicalFloat()) {
-					pluginManager.registerEvents(
-						new BankListener(this, cash, cassetteItems, walletListener, atmLogger),
-						this
-					);
-					pluginManager.registerEvents(new PilotListener(this, cash, atmRegistry), this);
-				}
+				pluginManager.registerEvents(
+					new BankListener(this, cash, cassetteItems, walletListener, atmLogger),
+					this
+				);
+				pluginManager.registerEvents(new PilotListener(this, cash, atmRegistry), this);
 
 				Objects.requireNonNull(getCommand("cash")).setExecutor(new CashCommand(this, cash, walletListener));
 				_log.info("[{}] Physical cash, wallets and ATM loaded", logStep);

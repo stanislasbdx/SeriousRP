@@ -54,6 +54,7 @@ class PilotListenerTest extends ConfigBackedTest {
 		config.set("Economy.Cash.Enabled", true);
 		config.set("Economy.Cash.Atm.PhysicalFloat", true);
 		config.set("Economy.Cash.Denominations", List.of(Map.of("value", 1, "material", "GOLD_NUGGET")));
+		when(plugin.getConfig()).thenReturn(config);
 		Cash cash = Cash.fromConfig(config);
 		AtmRegistry registry = new AtmRegistry(tempDir.resolve("atms.yml").toFile());
 		listener = new PilotListener(plugin, cash, registry, Runnable::run, (h, s, t) -> gui);

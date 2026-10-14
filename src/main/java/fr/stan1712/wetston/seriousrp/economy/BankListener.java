@@ -82,6 +82,7 @@ public final class BankListener implements Listener {
 		boolean withdraw(String name, int amount);
 	}
 
+	private final Plugin plugin;
 	private final Cash cash;
 	private final CassetteItems cassetteItems;
 	private final WalletListener walletItems;
@@ -121,6 +122,7 @@ public final class BankListener implements Listener {
 		MainThread mainThread,
 		InventoryFactory inventories
 	) {
+		this.plugin = plugin;
 		this.cash = cash;
 		this.cassetteItems = cassetteItems;
 		this.walletItems = walletItems;
@@ -136,6 +138,10 @@ public final class BankListener implements Listener {
 		this.inventories = inventories;
 	}
 
+	boolean cassetteMode() {
+		return plugin.getConfig().getBoolean("Economy.Cash.Atm.PhysicalFloat", cash.physicalFloat());
+	}
+
 	static NamedVault vaultNamed() {
 		return (name, amount) -> {
 			Economy economy = Main.economy;
@@ -149,10 +155,15 @@ public final class BankListener implements Listener {
 
 	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
-		if (!cash.isEnabled() || !cash.physicalFloat() || !cash.isBankHeader(event.getLine(0))) {
+		if (!cash.isEnabled() || !cash.isBankHeader(event.getLine(0))) {
 			return;
 		}
 		Player player = event.getPlayer();
+		if (!cassetteMode()) {
+			event.setCancelled(true);
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Atm.NeedCassetteMode"));
+			return;
+		}
 		if (!player.hasPermission(Atm.BANK_CREATE_PERM)) {
 			event.setCancelled(true);
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.DeniedCreate"));
@@ -200,7 +211,7 @@ public final class BankListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onInteract(PlayerInteractEvent event) {
-		if (!cash.isEnabled() || !cash.physicalFloat() || event.getAction() != Action.RIGHT_CLICK_BLOCK
+		if (!cash.isEnabled() || !cassetteMode() || event.getAction() != Action.RIGHT_CLICK_BLOCK
 			|| event.getClickedBlock() == null) {
 			return;
 		}

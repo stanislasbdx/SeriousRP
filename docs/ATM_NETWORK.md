@@ -18,7 +18,7 @@ Economy:
       CassetteCapacity: 50000
 ```
 
-With classic mode, ignore cassettes, `[sBank]`, and `[sPilot]` — they stay inactive.
+With classic mode, typing `[sBank]` / `[sPilot]` is cancelled with a message to enable cassette mode first.
 
 ## Quick map
 
