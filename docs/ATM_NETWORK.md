@@ -1,17 +1,13 @@
 # ATM network: sATM, cassettes, sBank, sPilot
 
-Guide for operators and staff. Physical cash float is **optional** and controlled by config.
+Guide for operators and staff. ATMs can run in two modes, switched in config.
 
-## Quick map
+## Modes
 
-| Sign | Role |
-| :--- | :--- |
-| `[sATM]` | Player deposit / withdraw (and cash change) |
-| Cassette item | Removable cash float cartridge for an ATM |
-| `[sBank]` | Staff vault: void / refill cassettes, feed stock |
-| `[sPilot]` | Monitoring board for registered ATMs |
-
-Enable the physical float with:
+| Mode | Config | What players get |
+| :--- | :--- | :--- |
+| Classic (default) | `PhysicalFloat: false` | Deposit/withdraw talk to Vault only; cash appears or vanishes at the machine |
+| Cassettes | `PhysicalFloat: true` | Deposit/withdraw move real cash through removable cassettes inside the ATM |
 
 ```yaml
 Economy:
@@ -22,7 +18,16 @@ Economy:
       CassetteCapacity: 50000
 ```
 
-When `PhysicalFloat` is `false`, ATMs behave as before (Vault +/− and cash spawn/void). `[sBank]` / `[sPilot]` / cassette craft are inactive.
+With classic mode, ignore cassettes, `[sBank]`, and `[sPilot]` — they stay inactive.
+
+## Quick map
+
+| Sign / item | Role |
+| :--- | :--- |
+| `[sATM]` | Player deposit / withdraw (and cash change) |
+| Cassette | Removable cash cartridge installed in an ATM |
+| `[sBank]` | Staff vault: void / refill cassettes, restock the vault |
+| `[sPilot]` | Board listing registered ATMs and how much cash they hold |
 
 ---
 
@@ -53,24 +58,24 @@ When `PhysicalFloat` is `false`, ATMs behave as before (Vault +/− and cash spa
 2. Line 1: `[sATM]` (configurable via `Economy.Cash.Atm.SignHeader`).
 3. Requires `atm.create`. Creation may charge Vault (`Atm.CreateCost`, default `150`).
 
-The plugin rewrites the sign. With float on, the ATM is registered in `plugins/SeriousRP/atms.yml` and starts with **empty cassette slots** (no cash inside).
+The plugin rewrites the sign. In cassette mode the ATM is registered in `plugins/SeriousRP/atms.yml` and starts with **empty cassette slots** (no cash inside).
 
 ### Use (players)
 
 Right-click the sign (`atm.use`):
 
-- **Deposit** — physical cash → Vault balance (and into installed cassettes if float is on).
-- **Withdraw** — Vault → physical cash (from installed cassettes if float is on).
+- **Deposit** — physical cash → Vault balance (and into installed cassettes in cassette mode).
+- **Withdraw** — Vault → physical cash (taken from installed cassettes in cassette mode).
 - **Compact / Break** — regroup or split loose cash (same as `/cash` change helpers).
 
 Nearby players see personalized account / pocket amounts on the sign within `Atm.ViewRadius`.
 
-### Float rules (when `PhysicalFloat: true`)
+### Cassette mode rules (`PhysicalFloat: true`)
 
-- No cassette installed → ATM is out of service for deposit/withdraw.
-- Deposit fills installed cassettes up to `CassetteCapacity` per cassette, then credits the player Vault.
-- Withdraw takes from installed cassettes and debits the player Vault.
-- Full cassettes refuse further deposit; empty float refuses withdraw.
+- No cassette installed → deposit/withdraw refused.
+- Deposit fills installed cassettes up to `CassetteCapacity` each, then credits the player Vault.
+- Withdraw takes cash from installed cassettes and debits the player Vault.
+- Full cassettes refuse further deposit; empty cassettes refuse withdraw.
 
 ### Break
 
@@ -81,7 +86,7 @@ Break once → confirm message; break again within **10 seconds** to destroy. In
 
 ## Cassettes
 
-Craftable only when float is enabled. Recipe defaults to an iron “frame” (see `Economy.Cash.Cassette.Recipe`). Crafting requires `atm.service`.
+Craftable only in cassette mode. Recipe defaults to an iron frame (see `Economy.Cash.Cassette.Recipe`). Crafting requires `atm.service`.
 
 ### Install / eject (service)
 
@@ -97,7 +102,7 @@ Cassettes are not wallet cash; they stay as their own item.
 
 ## sBank
 
-Staff vault for the **physical** float. Only relevant when `PhysicalFloat: true`.
+Staff vault used to service ATM cassettes. Only active in cassette mode.
 
 ### Create
 
@@ -127,7 +132,7 @@ Typical courier loop:
 
 1. Eject cassette(s) from ATM.
 2. At sBank: void full cassettes and/or refill empty ones from stock.
-3. Feed the vault when the bank demat account should seed physical stock.
+3. Feed the vault when the bank Vault account should seed physical stock.
 4. Reinstall cassettes in ATM slots.
 
 ### Break
@@ -138,7 +143,7 @@ Typical courier loop:
 
 ## sPilot
 
-Network board for ATM monitoring. Only when float is enabled.
+Network board for ATM monitoring. Only active in cassette mode.
 
 ### Create
 
@@ -152,7 +157,7 @@ Right-click to open the list:
 - Without `atm.pilot.others` → only ATMs you own.
 - With `atm.pilot.others` → every registered ATM.
 
-Each row shows world / coords and either total float or “no cassette”.
+Each row shows world / coords and either total cash in cassettes or “no cassette”.
 
 ### Break
 
@@ -183,7 +188,7 @@ Economy:
           I: IRON_INGOT
     Bank:
       SignHeader: "[sBank]"
-      VaultPlayer: "Banque"      # Vault offline/player account fed into stock
+      VaultPlayer: "Banque"      # Vault account used when feeding stock
       VaultCapacity: 500000
     Pilot:
       SignHeader: "[sPilot]"
@@ -204,7 +209,7 @@ Cassette contents and sBank stock / PIN live on the sign tile PDC (world data), 
 
 ---
 
-## Suggested staff setup
+## Suggested staff setup (cassette mode)
 
 1. Set `PhysicalFloat: true` and reload / restart.
 2. Ensure the Vault account `Bank.VaultPlayer` exists and holds demat funds for feeding.
@@ -212,4 +217,4 @@ Cassette contents and sBank stock / PIN live on the sign tile PDC (world data), 
 4. Place ATMs → craft/install empty cassettes → feed sBank → fill cassettes → install.
 5. Place an sPilot for ops visibility.
 
-With float off, you only need normal ATM create/use/delete perms; ignore this guide’s cassette / bank / pilot sections.
+In classic mode you only need normal ATM create/use/delete perms.
