@@ -175,10 +175,11 @@ public final class BankListener implements Listener {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.DeniedCreate"));
 			return;
 		}
-		event.setLine(0, Cash.colorize("&2&l[sBank]"));
-		event.setLine(1, Cash.colorize("&8&m              "));
-		event.setLine(2, Cash.colorize("&7Coffre banque"));
-		event.setLine(3, Cash.colorize("&8» &fClic droit"));
+		Cash.PlacedSign sign = cash.bankSign();
+		event.setLine(0, sign.title());
+		event.setLine(1, sign.separator());
+		event.setLine(2, sign.subtitle());
+		event.setLine(3, sign.hint());
 		UUID owner = player.getUniqueId();
 		mainThread.run(() -> stampOwner(event.getBlock(), owner));
 		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.Created"));

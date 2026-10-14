@@ -113,7 +113,7 @@ class CashTest {
 		assertEquals(18, cash.walletSlots());
 		assertEquals(Material.BOOK, cash.walletMaterial());
 		assertEquals(1, cash.walletCustomModelData().orElse(0));
-		assertEquals("§6Portefeuille", cash.walletDisplayName());
+		assertEquals("§6Wallet", cash.walletDisplayName());
 		assertEquals(1, cash.viewRadius());
 		assertEquals(150, cash.atmCreateCost());
 		assertEquals(List.of(10, 25, 50, 100), cash.atmPresets());
@@ -131,7 +131,7 @@ class CashTest {
 		assertEquals(20, cash.breakMaxDenomination());
 		assertFalse(cash.advancedBank());
 		assertEquals(Material.CHEST, cash.cassetteMaterial());
-		assertEquals("Banque", cash.bankVaultPlayer());
+		assertEquals("Bank", cash.bankVaultPlayer());
 		assertTrue(cash.isBankHeader("[sBank]"));
 		assertTrue(cash.isPilotHeader("[sPilot]"));
 	}

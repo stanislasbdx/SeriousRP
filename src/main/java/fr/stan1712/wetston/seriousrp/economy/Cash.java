@@ -75,13 +75,19 @@ public final class Cash {
 		}
 	}
 
+	public record PlacedSign(String title, String separator, String subtitle, String hint) {
+	}
+
 	public record AtmSettings(
 		String header,
 		int viewRadius,
 		List<Integer> presets,
 		int createCost,
 		int cassetteSlots,
-		int cassetteCapacity
+		int cassetteCapacity,
+		PlacedSign sign,
+		String accountPrefix,
+		String pocketPrefix
 	) {
 		public AtmSettings {
 			viewRadius = Math.max(1, viewRadius);
@@ -107,14 +113,14 @@ public final class Cash {
 		}
 	}
 
-	public record BankSettings(String header, String vaultPlayer, int vaultCapacity) {
+	public record BankSettings(String header, String vaultPlayer, int vaultCapacity, PlacedSign sign) {
 		public BankSettings {
 			vaultCapacity = Math.max(1, vaultCapacity);
-			vaultPlayer = vaultPlayer == null || vaultPlayer.isBlank() ? "Banque" : vaultPlayer;
+			vaultPlayer = vaultPlayer == null || vaultPlayer.isBlank() ? "Bank" : vaultPlayer;
 		}
 	}
 
-	public record PilotSettings(String header) {
+	public record PilotSettings(String header, PlacedSign sign) {
 	}
 
 	public record ChangeSettings(int breakPieceCap, int breakMaxDenomination) {
@@ -183,10 +189,10 @@ public final class Cash {
 
 		int slots = config.getInt("Economy.Cash.Wallet.DefaultSlots", 18);
 		Material walletMaterial = materialOr(config.getString("Economy.Cash.Wallet.Material"), Material.BOOK);
-		String walletName = colorize(nullable(config.getString("Economy.Cash.Wallet.DisplayName"), "&6Portefeuille"));
+		String walletName = colorize(nullable(config.getString("Economy.Cash.Wallet.DisplayName"), "&6Wallet"));
 		String walletLore = colorize(nullable(
 			config.getString("Economy.Cash.Wallet.LoreTotal"),
-			"&7Contenu : &e%amount%%currency%"
+			"&7Content : &e%amount%%currency%"
 		));
 
 		List<String> shape = config.getStringList("Economy.Cash.Wallet.Recipe.Shape");
@@ -215,7 +221,7 @@ public final class Cash {
 		String cassetteName = colorize(nullable(config.getString("Economy.Cash.Cassette.DisplayName"), "&8Cassette"));
 		String cassetteLore = colorize(nullable(
 			config.getString("Economy.Cash.Cassette.LoreTotal"),
-			"&7Contenu : &e%amount%%currency%"
+			"&7Content : &e%amount%%currency%"
 		));
 		List<String> cassetteShape = config.getStringList("Economy.Cash.Cassette.Recipe.Shape");
 		if (cassetteShape.size() != 3) {
@@ -231,9 +237,29 @@ public final class Cash {
 		Integer cassetteCustomModelData = cassetteModel > 0 ? cassetteModel : null;
 
 		String bankHeader = nullable(config.getString("Economy.Cash.Bank.SignHeader"), "[sBank]");
-		String vaultPlayer = nullable(config.getString("Economy.Cash.Bank.VaultPlayer"), "Banque");
+		String vaultPlayer = nullable(config.getString("Economy.Cash.Bank.VaultPlayer"), "Bank");
 		int bankCapacity = config.getInt("Economy.Cash.Bank.VaultCapacity", DEFAULT_BANK_CAPACITY);
 		String pilotHeader = nullable(config.getString("Economy.Cash.Pilot.SignHeader"), "[sPilot]");
+		PlacedSign atmSign = readSign(config, "Economy.Cash.Atm.Sign", new PlacedSign(
+			"&b&l[sATM]",
+			"&8&m              ",
+			"&7Bank &8· &6cash",
+			"&8» &fRight click"
+		));
+		String accountPrefix = colorize(nullable(config.getString("Economy.Cash.Atm.Sign.Account"), "&7Acc &a"));
+		String pocketPrefix = colorize(nullable(config.getString("Economy.Cash.Atm.Sign.Pocket"), "&7Cash &6"));
+		PlacedSign bankSign = readSign(config, "Economy.Cash.Bank.Sign", new PlacedSign(
+			"&2&l[sBank]",
+			"&8&m              ",
+			"&7Vault",
+			"&8» &fRight click"
+		));
+		PlacedSign pilotSign = readSign(config, "Economy.Cash.Pilot.Sign", new PlacedSign(
+			"&3&l[sPilot]",
+			"&8&m              ",
+			"&7ATM network",
+			"&8» &fRight click"
+		));
 
 		return new Cash(
 			enabled,
@@ -241,7 +267,7 @@ public final class Cash {
 			currency,
 			denoms,
 			new WalletSettings(slots, walletMaterial, walletName, walletLore, shape, ingredients, walletCustomModelData),
-			new AtmSettings(header, radius, presets, createCost, cassetteSlots, cassetteCapacity),
+			new AtmSettings(header, radius, presets, createCost, cassetteSlots, cassetteCapacity, atmSign, accountPrefix, pocketPrefix),
 			new CassetteSettings(
 				cassetteMaterial,
 				cassetteName,
@@ -250,8 +276,8 @@ public final class Cash {
 				cassetteIngredients,
 				cassetteCustomModelData
 			),
-			new BankSettings(bankHeader, vaultPlayer, bankCapacity),
-			new PilotSettings(pilotHeader),
+			new BankSettings(bankHeader, vaultPlayer, bankCapacity, bankSign),
+			new PilotSettings(pilotHeader, pilotSign),
 			new ChangeSettings(pieceCap, maxDenom)
 		);
 	}
@@ -423,6 +449,26 @@ public final class Cash {
 		return cassette.customModelData() == null ? OptionalInt.empty() : OptionalInt.of(cassette.customModelData());
 	}
 
+	public PlacedSign atmSign() {
+		return atm.sign();
+	}
+
+	public String atmAccountPrefix() {
+		return atm.accountPrefix();
+	}
+
+	public String atmPocketPrefix() {
+		return atm.pocketPrefix();
+	}
+
+	public PlacedSign bankSign() {
+		return bank.sign();
+	}
+
+	public PlacedSign pilotSign() {
+		return pilot.sign();
+	}
+
 	public String bankHeader() {
 		return bank.header();
 	}
@@ -517,6 +563,15 @@ public final class Cash {
 			return fallback;
 		}
 		return toNullableInt(raw);
+	}
+
+	private static PlacedSign readSign(FileConfiguration config, String path, PlacedSign fallback) {
+		return new PlacedSign(
+			colorize(nullable(config.getString(path + ".Title"), fallback.title())),
+			colorize(nullable(config.getString(path + ".Separator"), fallback.separator())),
+			colorize(nullable(config.getString(path + ".Subtitle"), fallback.subtitle())),
+			colorize(nullable(config.getString(path + ".Hint"), fallback.hint()))
+		);
 	}
 
 	private static Map<Character, Material> parseIngredients(ConfigurationSection section) {

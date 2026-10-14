@@ -57,21 +57,18 @@ public final class Atm {
 	}
 
 	public static String[] genericLines(Cash cash) {
-		return new String[] {
-			Cash.colorize("&b&l[sATM]"),
-			Cash.colorize("&8&m              "),
-			Cash.colorize("&7Banque &8· &6cash"),
-			Cash.colorize("&8» &fClic droit")
-		};
+		Cash.PlacedSign sign = cash.atmSign();
+		return new String[] { sign.title(), sign.separator(), sign.subtitle(), sign.hint() };
 	}
 
 	public static String[] nearbyLines(Cash cash, int account, int pocket) {
 		String currency = Cash.stripColorCodes(cash.currency());
+		Cash.PlacedSign sign = cash.atmSign();
 		return new String[] {
-			Cash.colorize("&b&l[sATM]"),
-			trimLine(Cash.colorize("&7Cpt &a") + formatSignAmount(account) + currency),
-			trimLine(Cash.colorize("&7Cash &6") + formatSignAmount(pocket) + currency),
-			Cash.colorize("&8» &fClic droit")
+			sign.title(),
+			trimLine(cash.atmAccountPrefix() + formatSignAmount(account) + currency),
+			trimLine(cash.atmPocketPrefix() + formatSignAmount(pocket) + currency),
+			sign.hint()
 		};
 	}
 

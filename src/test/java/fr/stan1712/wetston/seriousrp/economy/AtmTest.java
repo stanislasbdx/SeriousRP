@@ -41,17 +41,17 @@ class AtmTest {
 		assertArrayEquals(new String[] {
 			"§b§l[sATM]",
 			"§8§m              ",
-			"§7Banque §8· §6cash",
-			"§8» §fClic droit"
+			"§7Bank §8· §6cash",
+			"§8» §fRight click"
 		}, Atm.genericLines(cash));
 		String[] nearby = Atm.nearbyLines(cash, 12, 4);
 		assertEquals("§b§l[sATM]", nearby[0]);
-		assertEquals("§7Cpt §a12€", nearby[1]);
+		assertEquals("§7Acc §a12€", nearby[1]);
 		assertEquals("§7Cash §64€", nearby[2]);
-		assertEquals("§8» §fClic droit", nearby[3]);
+		assertEquals("§8» §fRight click", nearby[3]);
 
 		String[] rich = Atm.nearbyLines(cash, 996_999_081, 2_650);
-		assertEquals("§7Cpt §a996M€", rich[1]);
+		assertEquals("§7Acc §a996M€", rich[1]);
 		assertEquals("§7Cash §62650€", rich[2]);
 		assertTrue(Cash.stripColorCodes(rich[1]).length() <= 15);
 		assertTrue(Cash.stripColorCodes(rich[2]).length() <= 15);

@@ -94,6 +94,13 @@ Economy:
       ShiftCraft: "&cCraft wallets one at a time"
     Atm:
       SignHeader: "[sATM]"
+      Sign:
+        Title: "&b&l[sATM]"
+        Separator: "&8&m              "
+        Subtitle: "&7Bank &8· &6cash"
+        Hint: "&8» &fRight click"
+        Account: "&7Acc &a"
+        Pocket: "&7Cash &6"
       ViewRadius: 5
       CreateCost: 150
       CassetteSlots: 2
@@ -122,9 +129,16 @@ Economy:
       CassetteEmpty: "&cThe ATM cassettes are empty"
       InstalledOk: "&aCassette installed"
       EjectedOk: "&aCassette ejected"
+      ShiftCraft: "&cCraft cassettes one at a time"
+      DeniedCraft: "&cYou can't craft cassettes"
       BreakConfirm: "&eBreak again to confirm. Installed cassettes will drop."
     Bank:
       SignHeader: "[sBank]"
+      Sign:
+        Title: "&2&l[sBank]"
+        Separator: "&8&m              "
+        Subtitle: "&7Vault"
+        Hint: "&8» &fRight click"
       VaultPlayer: "Banque"
       VaultCapacity: 500000
       Title: "&2Bank vault"
@@ -148,6 +162,11 @@ Economy:
       DeniedBreak: "&cYou can't break this bank vault"
     Pilot:
       SignHeader: "[sPilot]"
+      Sign:
+        Title: "&3&l[sPilot]"
+        Separator: "&8&m              "
+        Subtitle: "&7ATM network"
+        Hint: "&8» &fRight click"
       Title: "&2ATM network"
       Line: "&7%world% %x% %y% %z% &8| &f%amount%%currency%"
       EmptyAtm: "&7%world% %x% %y% %z% &8| &cno cassette"
@@ -234,7 +253,7 @@ Economy:
       CreateNotEnough: "&cYou need %amount%%currency% on your account to create an ATM"
       DeniedCreate: "&cYou can't create an ATM"
       DeniedBreak: "&cYou can't break this ATM"
-      Machine: "&bATM float : &f%amount%%currency%"
+      Machine: "&bATM cash : &f%amount%%currency%"
   Cheque:
     CustomModelData: 1
     Usage: "To create a cheque : /cheque <value : only positive integers>"
