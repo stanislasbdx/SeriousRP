@@ -223,36 +223,53 @@ public final class CassetteItems implements Listener {
 			|| !(event.getWhoClicked() instanceof Player player)) {
 			return;
 		}
-		if (walletItems == null) {
+		if (lockedContentsClick(event, player, holder)) {
 			event.setCancelled(true);
 			return;
 		}
-		if (isSourceSlot(event, player, holder.slot()) || event.getHotbarButton() == holder.slot()) {
-			event.setCancelled(true);
+		guardContentsClick(event, player);
+	}
+
+	private boolean lockedContentsClick(InventoryClickEvent event, Player player, ContentsHolder holder) {
+		if (walletItems == null || isSourceSlot(event, player, holder.slot())) {
+			return true;
+		}
+		if (event.getHotbarButton() == holder.slot()) {
+			return true;
+		}
+		return read(event.getCurrentItem()).isPresent() || read(event.getCursor()).isPresent();
+	}
+
+	private void guardContentsClick(InventoryClickEvent event, Player player) {
+		if (event.getRawSlot() < event.getView().getTopInventory().getSize()) {
+			guardTopContents(event, player);
 			return;
 		}
-		if (read(event.getCurrentItem()).isPresent() || read(event.getCursor()).isPresent()) {
-			event.setCancelled(true);
+		guardShiftContents(event, player);
+	}
+
+	private void guardTopContents(InventoryClickEvent event, Player player) {
+		if (event.getClick() == ClickType.NUMBER_KEY) {
+			int hotbar = event.getHotbarButton();
+			ItemStack swapped = hotbar < 0 ? null : player.getInventory().getItem(hotbar);
+			refuseUnlessCash(event, player, swapped);
 			return;
 		}
-		boolean top = event.getRawSlot() < event.getView().getTopInventory().getSize();
-		if (top && event.getClick() == ClickType.NUMBER_KEY) {
-			ItemStack hotbar = event.getHotbarButton() < 0 ? null : player.getInventory().getItem(event.getHotbarButton());
-			if (!isAir(hotbar) && !walletItems.isCashItem(hotbar)) {
-				event.setCancelled(true);
-				player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
-			}
+		refuseUnlessCash(event, player, event.getCursor());
+	}
+
+	private void guardShiftContents(InventoryClickEvent event, Player player) {
+		if (event.isShiftClick()) {
+			refuseUnlessCash(event, player, event.getCurrentItem());
+		}
+	}
+
+	private void refuseUnlessCash(InventoryClickEvent event, Player player, ItemStack item) {
+		if (isAir(item) || walletItems.isCashItem(item)) {
 			return;
 		}
-		if (top && !isAir(event.getCursor()) && !walletItems.isCashItem(event.getCursor())) {
-			event.setCancelled(true);
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
-			return;
-		}
-		if (!top && event.isShiftClick() && !isAir(event.getCurrentItem()) && !walletItems.isCashItem(event.getCurrentItem())) {
-			event.setCancelled(true);
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
-		}
+		event.setCancelled(true);
+		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Wallet.NotCash"));
 	}
 
 	@EventHandler
