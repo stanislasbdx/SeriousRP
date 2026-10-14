@@ -70,7 +70,7 @@ permissions:
     description: Use an ATM
     default: true
   seriousrp.economy.atm.service:
-    description: Craft cassettes and install or eject them on ATMs
+    description: Install or eject cassettes on ATMs
     default: op
   seriousrp.economy.bank.create:
     description: Create a [sBank] vault sign

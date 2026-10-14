@@ -26,7 +26,7 @@ If `AdvancedBank` is off, typing `[sBank]` / `[sPilot]` is cancelled with a shor
 | :--- | :--- |
 | `[sATM]` | Player deposit / withdraw (and cash change) |
 | Cassette | Removable cash cartridge installed in an ATM (`AdvancedBank` only) |
-| `[sBank]` | Staff vault: void / refill cassettes, restock the vault |
+| `[sBank]` | Staff vault: move cash between a cassette and the bank stock |
 | `[sPilot]` | Board listing registered ATMs and how much cash they hold |
 
 ---
@@ -39,7 +39,7 @@ If `AdvancedBank` is off, typing `[sBank]` / `[sPilot]` is cancelled with a shor
 | `seriousrp.economy.atm.delete` | op | Break your own ATM |
 | `seriousrp.economy.atm.delete.others` | op | Break someone else’s ATM |
 | `seriousrp.economy.atm.use` | true | Open / use an ATM |
-| `seriousrp.economy.atm.service` | op | Craft cassettes; install / eject on ATM |
+| `seriousrp.economy.atm.service` | op | Drag cassettes into an ATM |
 | `seriousrp.economy.bank.create` | op | Place an `[sBank]` sign |
 | `seriousrp.economy.bank.delete` | op | Break your own sBank |
 | `seriousrp.economy.bank.delete.others` | op | Break someone else’s sBank |
@@ -86,15 +86,24 @@ Break once → confirm message; break again within **10 seconds** to destroy. In
 
 ## Cassettes
 
-Craftable only when `AdvancedBank` is on. Recipe defaults to an iron frame (see `Economy.Cash.Cassette.Recipe`). Crafting requires `atm.service`.
+Craftable by anyone while `AdvancedBank` is on. Recipe defaults to an iron frame (see `Economy.Cash.Cassette.Recipe`). Putting a cassette into an ATM still requires `atm.service`.
+
+### PIN
+
+Right-click a cassette (not a sign):
+
+1. First time → chat asks for a **4-digit code**. That code is saved on the item.
+2. Later → enter the code to open a read-only view of the bills inside.
+3. Three wrong codes wipe the cash. The item and the code stay. Type `cancel` to abort.
 
 ### Install / eject (service)
 
 Open the ATM GUI with `atm.service`:
 
-- Bottom row shows cassette slots.
-- **Empty slot** + cassette in main hand → click slot → install (consumes one cassette).
-- **Filled slot** → click → eject into inventory (needs a free slot).
+- The bottom row is real cassette slots. How many depends on `Atm.CassetteSlots` (up to 9, the whole row).
+- Drag a cassette from your inventory into an empty slot.
+- Drag it back out to eject it.
+- Anyone without `atm.service` still uses the ATM, but the cassette row stays locked.
 
 Cassettes are not wallet cash; they stay as their own item.
 
@@ -120,20 +129,20 @@ Right-click with `bank.access`:
 
 ### GUI actions
 
-Hold the cassette in the **main hand** for empty/fill.
+One slot in the middle of the vault GUI. Drag a cassette into it, then:
 
 | Action | Effect |
 | :--- | :--- |
-| **Feed** / **Feed all** | Debit the Vault account named `Bank.VaultPlayer` (default `Banque`) and increase vault stock (up to `VaultCapacity`). |
-| **Empty cassette (void)** | Wipe the held cassette’s content. Cash is destroyed (not returned to stock). |
-| **Fill cassette** | Move value from vault stock into the held cassette (up to cassette capacity). |
+| **Empty the cassette into the bank** | Move the cassette cash into the vault stock, up to `VaultCapacity`. |
+| **Move N / Fill the cassette** | Move that much stock into the cassette, up to cassette capacity and available stock. |
+
+Closing the GUI gives the cassette back. Stock is the only cash the vault holds. Buttons glow only when that move is actually possible, and the stock icon glows only when the vault holds cash.
 
 Typical courier loop:
 
-1. Eject cassette(s) from ATM.
-2. At sBank: void full cassettes and/or refill empty ones from stock.
-3. Feed the vault when the bank Vault account should seed physical stock.
-4. Reinstall cassettes in ATM slots.
+1. Drag cassette(s) out of the ATM.
+2. At sBank, drop a cassette in the slot and empty it into the bank, or fill it from the bank.
+3. Drag the cassette back into an ATM slot.
 
 ### Break
 
@@ -213,9 +222,9 @@ Cassette contents and sBank stock / PIN live on the sign tile PDC (world data), 
 ## Suggested staff setup (advanced bank)
 
 1. Set `Economy.Cash.AdvancedBank: true` and reload / restart.
-2. Ensure the Vault account `Bank.VaultPlayer` exists and holds demat funds for feeding.
-3. Grant service roles `atm.service`, `bank.access`, and create perms as needed.
-4. Place ATMs → craft/install empty cassettes → feed sBank → fill cassettes → install.
+2. Grant service roles `atm.service`, `bank.access`, and create perms as needed.
+3. Place ATMs → craft cassettes → drag them into the ATM.
+4. Use sBank to move cash between a cassette and the vault stock.
 5. Place an sPilot for ops visibility.
 
 With `AdvancedBank: false` you only need normal ATM create/use/delete perms.

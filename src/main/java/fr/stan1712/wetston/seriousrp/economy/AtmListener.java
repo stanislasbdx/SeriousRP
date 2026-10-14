@@ -15,7 +15,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -52,7 +55,7 @@ public final class AtmListener implements Listener {
 	static final int COMPACT_SLOT = 30;
 	static final int BREAK_SLOT = 32;
 	static final int MACHINE_SLOT = 7;
-	static final int CASSETTE_START = 37;
+	static final int CASSETTE_START = 36;
 
 	interface Bank {
 		double balance(Player player);
@@ -263,7 +266,7 @@ public final class AtmListener implements Listener {
 		log("OPEN", player.getName()
 			+ " account=" + (int) Math.floor(bank.balance(player))
 			+ " pocket=" + pocketTotal(player)
-			+ " float=" + AtmCassettes.total(readCassettes(event.getClickedBlock())));
+			+ " cash=" + AtmCassettes.total(readCassettes(event.getClickedBlock())));
 		openGui(player, location);
 	}
 
@@ -273,7 +276,13 @@ public final class AtmListener implements Listener {
 			|| !(event.getWhoClicked() instanceof Player player)) {
 			return;
 		}
+		if (handleCassetteClick(event, player)) {
+			return;
+		}
 		event.setCancelled(true);
+		if (event.getRawSlot() >= event.getView().getTopInventory().getSize()) {
+			return;
+		}
 		ItemStack current = event.getCurrentItem();
 		if (current == null || current.getItemMeta() == null) {
 			return;
@@ -281,13 +290,6 @@ public final class AtmListener implements Listener {
 		var pdc = current.getItemMeta().getPersistentDataContainer();
 		String opRaw = pdc.get(opKey, PersistentDataType.STRING);
 		if (opRaw == null) {
-			return;
-		}
-		if ("CASSETTE".equals(opRaw)) {
-			Integer slot = pdc.get(amountKey, PersistentDataType.INTEGER);
-			if (slot != null && event.getView().getTopInventory().getHolder() instanceof Holder holder) {
-				handleCassetteSlot(player, holder.location(), slot);
-			}
 			return;
 		}
 		Atm.Operation operation = Atm.Operation.valueOf(opRaw);
@@ -310,6 +312,41 @@ public final class AtmListener implements Listener {
 		boolean all = Integer.valueOf(1).equals(pdc.get(allKey, PersistentDataType.INTEGER));
 		Integer requested = pdc.get(amountKey, PersistentDataType.INTEGER);
 		runOperation(player, operation, requested, all);
+	}
+
+	@EventHandler
+	public void onDrag(InventoryDragEvent event) {
+		if (!(event.getView().getTopInventory().getHolder() instanceof Holder)
+			|| !(event.getWhoClicked() instanceof Player player)) {
+			return;
+		}
+		int size = event.getView().getTopInventory().getSize();
+		boolean touchesTop = false;
+		for (int raw : event.getRawSlots()) {
+			if (raw >= size) {
+				continue;
+			}
+			touchesTop = true;
+			if (!isCassetteSlot(raw) || !canService(player)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+		if (!touchesTop) {
+			return;
+		}
+		if (cassetteItems == null || cassetteItems.read(event.getOldCursor()).isEmpty()) {
+			event.setCancelled(true);
+			return;
+		}
+		mainThread.run(() -> persistCassettes(player));
+	}
+
+	@EventHandler
+	public void onClose(InventoryCloseEvent event) {
+		if (event.getPlayer() instanceof Player player && event.getInventory().getHolder() instanceof Holder) {
+			persistCassettes(player, event.getInventory());
+		}
 	}
 
 	@EventHandler
@@ -460,7 +497,7 @@ public final class AtmListener implements Listener {
 			}
 			writeCassettes(location.getBlock(), next.get());
 			writeLedger(player, paid.get());
-			log("DEPOSIT", player.getName() + " amount=" + amount + " float=" + AtmCassettes.total(next.get()));
+			log("DEPOSIT", player.getName() + " amount=" + amount + " cash=" + AtmCassettes.total(next.get()));
 			return true;
 		}
 		if (!bank.deposit(player, amount)) {
@@ -502,7 +539,7 @@ public final class AtmListener implements Listener {
 			for (Cash.Stack stack : CashTender.toInventoryStacks(stacks.get())) {
 				player.getInventory().addItem(walletItems.createCashItem(stack));
 			}
-			log("WITHDRAW", player.getName() + " amount=" + amount + " float=" + AtmCassettes.total(next.get()));
+			log("WITHDRAW", player.getName() + " amount=" + amount + " cash=" + AtmCassettes.total(next.get()));
 			return true;
 		}
 		if (!bank.withdraw(player, amount)) {
@@ -540,7 +577,7 @@ public final class AtmListener implements Listener {
 	private void fillGui(Inventory inventory, Player player) {
 		int account = (int) Math.floor(bank.balance(player));
 		int pocket = pocketTotal(player);
-		fillFrame(inventory);
+		fillFrame(inventory, serviceCassetteUi(player));
 		inventory.setItem(ACCOUNT_SLOT, infoItem(Material.GOLD_INGOT, cash.applyAmount(
 			getConfigString("Economy.Cash.AtmGui.Account"), account)));
 		inventory.setItem(POCKET_SLOT, infoItem(Material.SUNFLOWER, cash.applyAmount(
@@ -565,109 +602,157 @@ public final class AtmListener implements Listener {
 			return;
 		}
 		List<Optional<Cassette.Payload>> slots = readCassettes(location.getBlock());
+		int total = AtmCassettes.total(slots);
 		inventory.setItem(MACHINE_SLOT, infoItem(
 			Material.CHEST,
-			cash.applyAmount(getConfigString("Economy.Cash.Cassette.Installed"), AtmCassettes.total(slots))
+			cash.applyAmount(getConfigString("Economy.Cash.Cassette.Installed"), total),
+			total > 0
 		));
-		if (!player.hasPermission(Atm.SERVICE_PERM) || cassetteItems == null) {
+		if (!serviceCassetteUi(player)) {
 			return;
 		}
-		for (int index = 0; index < slots.size(); index++) {
-			inventory.setItem(CASSETTE_START + index, cassetteSlotButton(slots.get(index), index));
+		int shown = Math.min(shownCassetteSlots(), slots.size());
+		for (int index = 0; index < shown; index++) {
+			inventory.setItem(
+				CASSETTE_START + index,
+				slots.get(index).map(cassetteItems::create).orElse(null)
+			);
 		}
 	}
 
-	private ItemStack cassetteSlotButton(Optional<Cassette.Payload> slot, int index) {
-		ItemStack item;
-		String name;
-		if (slot.isEmpty()) {
-			item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-			name = getConfigString("Economy.Cash.Cassette.EmptySlot");
+	private boolean handleCassetteClick(InventoryClickEvent event, Player player) {
+		if (!serviceCassetteUi(player)) {
+			return false;
 		}
-		else {
-			item = cassetteItems.create(slot.get());
-			name = cash.applyAmount(getConfigString("Economy.Cash.Cassette.Installed"), slot.get().total());
+		int raw = event.getRawSlot();
+		int size = event.getView().getTopInventory().getSize();
+		boolean slot = isCassetteSlot(raw);
+		boolean shiftIn = event.isShiftClick() && raw >= size && cassetteItems.read(event.getCurrentItem()).isPresent();
+		if (!slot && !shiftIn) {
+			return false;
 		}
-		ItemMeta meta = item.getItemMeta();
-		assert meta != null;
-		meta.setDisplayName(name);
-		meta.getPersistentDataContainer().set(opKey, PersistentDataType.STRING, "CASSETTE");
-		meta.getPersistentDataContainer().set(amountKey, PersistentDataType.INTEGER, index);
-		item.setItemMeta(meta);
-		return item;
+		if (!cassetteClickAllowed(event, player)) {
+			event.setCancelled(true);
+			return true;
+		}
+		event.setCancelled(false);
+		mainThread.run(() -> persistCassettes(player));
+		return true;
 	}
 
-	void handleCassetteSlot(Player player, Location location, int slot) {
-		if (!cash.advancedBank()
-			|| cassetteItems == null
-			|| location == null
-			|| location.getWorld() == null
-			|| !player.hasPermission(Atm.SERVICE_PERM)) {
-			return;
+	private boolean cassetteClickAllowed(InventoryClickEvent event, Player player) {
+		ClickType click = event.getClick();
+		if (click == ClickType.DOUBLE_CLICK
+			|| click == ClickType.CREATIVE
+			|| click == ClickType.UNKNOWN
+			|| click == ClickType.DROP
+			|| click == ClickType.CONTROL_DROP
+			|| click == ClickType.SWAP_OFFHAND
+			|| click == ClickType.WINDOW_BORDER_LEFT
+			|| click == ClickType.WINDOW_BORDER_RIGHT) {
+			return false;
 		}
-		List<Optional<Cassette.Payload>> slots = readCassettes(location.getBlock());
-		if (slot < 0 || slot >= slots.size()) {
-			return;
+		ItemStack current = event.getCurrentItem();
+		if (click == ClickType.NUMBER_KEY) {
+			int hotbar = event.getHotbarButton();
+			ItemStack swapped = hotbar < 0 ? null : player.getInventory().getItem(hotbar);
+			return cassetteOrAir(current) && cassetteOrAir(swapped);
 		}
-		if (slots.get(slot).isEmpty()) {
-			installCassette(player, location, slots, slot);
+		if (event.isShiftClick()) {
+			return cassetteItems.read(current).isPresent();
 		}
-		else {
-			ejectCassette(player, location, slots, slot);
+		return cassetteOrAir(event.getCursor()) && cassetteOrAir(current);
+	}
+
+	private boolean cassetteOrAir(ItemStack item) {
+		if (item == null || item.getType() == Material.AIR || item.getAmount() <= 0) {
+			return true;
+		}
+		return cassetteItems != null && cassetteItems.read(item).isPresent();
+	}
+
+	private boolean isCassetteSlot(int rawSlot) {
+		return rawSlot >= CASSETTE_START && rawSlot < CASSETTE_START + shownCassetteSlots();
+	}
+
+	private int shownCassetteSlots() {
+		return Math.min(9, Math.max(1, cash.cassetteSlots()));
+	}
+
+	private boolean serviceCassetteUi(Player player) {
+		return cash.advancedBank()
+			&& cassetteItems != null
+			&& player.hasPermission(Atm.SERVICE_PERM);
+	}
+
+	private boolean canService(Player player) {
+		return serviceCassetteUi(player);
+	}
+
+	private void persistCassettes(Player player) {
+		InventoryView view = player.getOpenInventory();
+		if (view != null) {
+			persistCassettes(player, view.getTopInventory());
 		}
 	}
 
-	private void installCassette(
+	private void persistCassettes(Player player, Inventory top) {
+		if (!(top.getHolder() instanceof Holder holder) || !serviceCassetteUi(player)) {
+			return;
+		}
+		Location location = holder.location();
+		if (location == null || location.getWorld() == null) {
+			return;
+		}
+		int count = shownCassetteSlots();
+		List<Optional<Cassette.Payload>> previous = readCassettes(location.getBlock());
+		List<Optional<Cassette.Payload>> next = AtmCassettes.emptySlots(count);
+		for (int index = 0; index < count; index++) {
+			ItemStack item = top.getItem(CASSETTE_START + index);
+			Optional<Cassette.Payload> payload = cassetteItems.read(item);
+			if (payload.isEmpty()) {
+				if (item != null && item.getType() != Material.AIR) {
+					top.setItem(CASSETTE_START + index, null);
+					giveOrDrop(player, location, item);
+				}
+				continue;
+			}
+			if (item.getAmount() > 1) {
+				ItemStack extra = item.clone();
+				extra.setAmount(item.getAmount() - 1);
+				item.setAmount(1);
+				giveOrDrop(player, location, extra);
+			}
+			next.set(index, payload);
+		}
+		writeCassettes(location.getBlock(), next);
+		logCassetteMoves(player, previous, next);
+	}
+
+	private void logCassetteMoves(
 		Player player,
-		Location location,
-		List<Optional<Cassette.Payload>> slots,
-		int slot
+		List<Optional<Cassette.Payload>> previous,
+		List<Optional<Cassette.Payload>> next
 	) {
-		ItemStack hand = player.getInventory().getItemInMainHand();
-		Optional<Cassette.Payload> held = cassetteItems.read(hand);
-		if (held.isEmpty()) {
-			return;
+		int size = Math.max(previous.size(), next.size());
+		for (int index = 0; index < size; index++) {
+			Optional<Cassette.Payload> before = index < previous.size() ? previous.get(index) : Optional.empty();
+			Optional<Cassette.Payload> after = index < next.size() ? next.get(index) : Optional.empty();
+			if (before.isEmpty() && after.isPresent()) {
+				log("INSTALL", player.getName() + " slot=" + index + " amount=" + after.get().total());
+			}
+			else if (before.isPresent() && after.isEmpty()) {
+				log("EJECT", player.getName() + " slot=" + index + " amount=" + before.get().total());
+			}
 		}
-		Optional<List<Optional<Cassette.Payload>>> next = AtmCassettes.install(slots, slot, held.get());
-		if (next.isEmpty()) {
-			return;
-		}
-		writeCassettes(location.getBlock(), next.get());
-		consumeOne(hand, player);
-		log("INSTALL", player.getName() + " slot=" + slot + " amount=" + held.get().total());
-		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.InstalledOk"));
-		refreshOpenGui(player);
 	}
 
-	private void ejectCassette(
-		Player player,
-		Location location,
-		List<Optional<Cassette.Payload>> slots,
-		int slot
-	) {
-		if (emptySlots(player.getInventory()) < 1) {
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cheque.InventoryFull"));
+	private static void giveOrDrop(Player player, Location location, ItemStack item) {
+		Map<Integer, ItemStack> leftover = player.getInventory().addItem(item);
+		if (location.getWorld() == null) {
 			return;
 		}
-		Optional<AtmCassettes.Eject> ejected = AtmCassettes.eject(slots, slot);
-		if (ejected.isEmpty()) {
-			return;
-		}
-		writeCassettes(location.getBlock(), ejected.get().slots());
-		player.getInventory().addItem(cassetteItems.create(ejected.get().cassette()));
-		log("EJECT", player.getName() + " slot=" + slot + " amount=" + ejected.get().cassette().total());
-		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.EjectedOk"));
-		refreshOpenGui(player);
-	}
-
-	private static void consumeOne(ItemStack hand, Player player) {
-		int amount = hand.getAmount();
-		if (amount <= 1) {
-			player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-		}
-		else {
-			hand.setAmount(amount - 1);
-		}
+		leftover.values().forEach(extra -> location.getWorld().dropItemNaturally(location, extra));
 	}
 
 	List<Optional<Cassette.Payload>> readCassettes(Block block) {
@@ -719,11 +804,16 @@ public final class AtmListener implements Listener {
 			+ ";" + location.getBlockZ();
 	}
 
-	private void fillFrame(Inventory inventory) {
+	private void fillFrame(Inventory inventory, boolean openCassetteRow) {
 		ItemStack edge = pane(Material.BLACK_STAINED_GLASS_PANE);
 		ItemStack inner = pane(Material.GRAY_STAINED_GLASS_PANE);
 		int lastRow = inventory.getSize() / 9 - 1;
+		int cassetteCount = openCassetteRow ? shownCassetteSlots() : 0;
 		for (int slot = 0; slot < inventory.getSize(); slot++) {
+			if (cassetteCount > 0 && slot >= CASSETTE_START && slot < CASSETTE_START + cassetteCount) {
+				inventory.setItem(slot, null);
+				continue;
+			}
 			int column = slot % 9;
 			int row = slot / 9;
 			boolean border = row == 0 || row == lastRow || column == 0 || column == 8;
@@ -760,10 +850,17 @@ public final class AtmListener implements Listener {
 	}
 
 	private ItemStack infoItem(Material material, String name) {
+		return infoItem(material, name, false);
+	}
+
+	private ItemStack infoItem(Material material, String name, boolean glow) {
 		ItemStack item = new ItemStack(material);
 		ItemMeta meta = item.getItemMeta();
 		assert meta != null;
 		meta.setDisplayName(name);
+		if (glow) {
+			Cash.applyGlow(meta);
+		}
 		item.setItemMeta(meta);
 		return item;
 	}

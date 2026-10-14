@@ -1,12 +1,8 @@
 package fr.stan1712.wetston.seriousrp.economy;
 
-import fr.stan1712.wetston.seriousrp.Main;
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.TileState;
@@ -16,7 +12,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -26,7 +25,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -42,12 +40,11 @@ public final class BankListener implements Listener {
 	static final String ALL_KEY = "srp-bank-all";
 	static final int GUI_SIZE = 27;
 	static final int STOCK_SLOT = 4;
-	static final int FEED_START = 10;
-	static final int EMPTY_SLOT = 21;
-	static final int FILL_SLOT = 23;
+	static final int CASSETTE_SLOT = 13;
+	static final int EMPTY_SLOT = 15;
+	static final int FILL_START = 19;
 
 	enum Op {
-		FEED,
 		EMPTY,
 		FILL
 	}
@@ -78,10 +75,6 @@ public final class BankListener implements Listener {
 		void run(Runnable task);
 	}
 
-	interface NamedVault {
-		boolean withdraw(String name, int amount);
-	}
-
 	private final Plugin plugin;
 	private final Cash cash;
 	private final CassetteItems cassetteItems;
@@ -93,7 +86,6 @@ public final class BankListener implements Listener {
 	private final NamespacedKey opKey;
 	private final NamespacedKey amountKey;
 	private final NamespacedKey allKey;
-	private final NamedVault namedVault;
 	private final MainThread mainThread;
 	private final InventoryFactory inventories;
 	private final Map<UUID, PinPrompt> prompts = new ConcurrentHashMap<>();
@@ -106,7 +98,6 @@ public final class BankListener implements Listener {
 			cassetteItems,
 			walletItems,
 			logger,
-			vaultNamed(),
 			task -> plugin.getServer().getScheduler().runTask(plugin, task),
 			AtmListener::createInventory
 		);
@@ -118,7 +109,6 @@ public final class BankListener implements Listener {
 		CassetteItems cassetteItems,
 		WalletListener walletItems,
 		AtmLogger logger,
-		NamedVault namedVault,
 		MainThread mainThread,
 		InventoryFactory inventories
 	) {
@@ -133,7 +123,6 @@ public final class BankListener implements Listener {
 		this.opKey = new NamespacedKey(plugin, OP_KEY);
 		this.amountKey = new NamespacedKey(plugin, AMOUNT_KEY);
 		this.allKey = new NamespacedKey(plugin, ALL_KEY);
-		this.namedVault = namedVault;
 		this.mainThread = mainThread;
 		this.inventories = inventories;
 	}
@@ -146,17 +135,6 @@ public final class BankListener implements Listener {
 			return plugin.getConfig().getBoolean("Economy.Cash.Atm.PhysicalFloat");
 		}
 		return cash.advancedBank();
-	}
-
-	static NamedVault vaultNamed() {
-		return (name, amount) -> {
-			Economy economy = Main.economy;
-			if (economy == null || name == null || amount <= 0) {
-				return false;
-			}
-			OfflinePlayer offline = Bukkit.getOfflinePlayer(name);
-			return economy.withdrawPlayer(offline, amount).transactionSuccess();
-		};
 	}
 
 	@EventHandler
@@ -276,7 +254,13 @@ public final class BankListener implements Listener {
 			|| !(event.getWhoClicked() instanceof Player player)) {
 			return;
 		}
+		if (handleCassetteClick(event, player, holder)) {
+			return;
+		}
 		event.setCancelled(true);
+		if (event.getRawSlot() >= event.getView().getTopInventory().getSize()) {
+			return;
+		}
 		ItemStack current = event.getCurrentItem();
 		if (current == null || current.getItemMeta() == null) {
 			return;
@@ -286,22 +270,71 @@ public final class BankListener implements Listener {
 			return;
 		}
 		Op op = Op.valueOf(opRaw);
+		Inventory top = event.getView().getTopInventory();
+		Optional<Cassette.Payload> held = cassetteItems.read(top.getItem(CASSETTE_SLOT));
+		if (held.isEmpty()) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.NoCassette"));
+			return;
+		}
 		if (op == Op.EMPTY) {
-			emptyCassette(player);
-			refresh(player, holder.location());
-			return;
+			emptyIntoBank(player, holder.location(), held.get())
+				.ifPresent(next -> top.setItem(CASSETTE_SLOT, cassetteItems.create(next)));
 		}
-		if (op == Op.FILL) {
-			fillCassette(player, holder.location());
-			refresh(player, holder.location());
-			return;
+		else {
+			boolean all = Integer.valueOf(1).equals(
+				current.getItemMeta().getPersistentDataContainer().get(allKey, PersistentDataType.INTEGER)
+			);
+			Integer amount = current.getItemMeta().getPersistentDataContainer().get(amountKey, PersistentDataType.INTEGER);
+			fillFromBank(player, holder.location(), held.get(), amount, all)
+				.ifPresent(next -> top.setItem(CASSETTE_SLOT, cassetteItems.create(next)));
 		}
-		boolean all = Integer.valueOf(1).equals(
-			current.getItemMeta().getPersistentDataContainer().get(allKey, PersistentDataType.INTEGER)
-		);
-		Integer amount = current.getItemMeta().getPersistentDataContainer().get(amountKey, PersistentDataType.INTEGER);
-		feed(player, holder.location(), amount, all);
 		refresh(player, holder.location());
+	}
+
+	@EventHandler
+	public void onDrag(InventoryDragEvent event) {
+		if (!(event.getView().getTopInventory().getHolder() instanceof Holder)
+			|| !(event.getWhoClicked() instanceof Player player)) {
+			return;
+		}
+		int size = event.getView().getTopInventory().getSize();
+		boolean touchesTop = false;
+		for (int raw : event.getRawSlots()) {
+			if (raw >= size) {
+				continue;
+			}
+			touchesTop = true;
+			if (raw != CASSETTE_SLOT) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+		if (!touchesTop) {
+			return;
+		}
+		if (cassetteItems.read(event.getOldCursor()).isEmpty()) {
+			event.setCancelled(true);
+			return;
+		}
+		Location location = ((Holder) event.getView().getTopInventory().getHolder()).location();
+		mainThread.run(() -> refresh(player, location));
+	}
+
+	@EventHandler
+	public void onClose(InventoryCloseEvent event) {
+		if (!(event.getPlayer() instanceof Player player) || !(event.getInventory().getHolder() instanceof Holder holder)) {
+			return;
+		}
+		ItemStack item = event.getInventory().getItem(CASSETTE_SLOT);
+		if (cassetteItems.read(item).isEmpty()) {
+			return;
+		}
+		event.getInventory().setItem(CASSETTE_SLOT, null);
+		Map<Integer, ItemStack> leftover = player.getInventory().addItem(item);
+		Location location = holder.location();
+		if (location != null && location.getWorld() != null) {
+			leftover.values().forEach(extra -> location.getWorld().dropItemNaturally(location, extra));
+		}
 	}
 
 	void handlePin(Player player, PinPrompt prompt, String message) {
@@ -328,70 +361,119 @@ public final class BankListener implements Listener {
 		log("BANK_OPEN", player.getName() + " pin-ok");
 	}
 
-	void feed(Player player, Location location, Integer requested, boolean all) {
+	Optional<Cassette.Payload> emptyIntoBank(Player player, Location location, Cassette.Payload payload) {
+		if (payload == null || payload.total() <= 0) {
+			return Optional.empty();
+		}
 		int stock = readStock(location.getBlock());
 		int room = cash.bankVaultCapacity() - stock;
-		if (room <= 0) {
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.CassetteFull"));
-			return;
+		int move = Math.min(payload.total(), room);
+		if (move <= 0) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.StockFull"));
+			return Optional.empty();
 		}
-		int amount = all ? room : (requested == null ? 0 : requested);
-		if (amount <= 0 || amount > room) {
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.NoStock"));
-			return;
+		Optional<Cassette.Payload> left = Cassette.takeValue(payload, move, cash.descendingValues());
+		if (left.isEmpty()) {
+			return Optional.empty();
 		}
-		OptionalInt next = BankVault.feed(stock, amount, cash.bankVaultCapacity());
-		if (next.isEmpty() || !namedVault.withdraw(cash.bankVaultPlayer(), amount)) {
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.NoStock"));
-			return;
-		}
-		writeStock(location.getBlock(), next.getAsInt());
-		log("BANK_FEED", player.getName() + " amount=" + amount + " stock=" + next.getAsInt());
-		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.Fed"));
-	}
-
-	void emptyCassette(Player player) {
-		ItemStack hand = player.getInventory().getItemInMainHand();
-		Optional<Cassette.Payload> held = cassetteItems.read(hand);
-		if (held.isEmpty() || held.get().total() <= 0) {
-			return;
-		}
-		replaceHand(player, cassetteItems.create(new Cassette.Payload(held.get().id(), List.of())));
-		log("CASSETTE_VOID", player.getName() + " amount=" + held.get().total());
+		int nextStock = stock + move;
+		writeStock(location.getBlock(), nextStock);
+		log("CASSETTE_EMPTY", player.getName() + " amount=" + move + " stock=" + nextStock);
 		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.Emptied"));
+		return left;
 	}
 
-	void fillCassette(Player player, Location location) {
-		ItemStack hand = player.getInventory().getItemInMainHand();
-		Optional<Cassette.Payload> held = cassetteItems.read(hand);
-		if (held.isEmpty()) {
-			return;
+	Optional<Cassette.Payload> fillFromBank(
+		Player player,
+		Location location,
+		Cassette.Payload payload,
+		Integer requested,
+		boolean all
+	) {
+		if (payload == null) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.NoCassette"));
+			return Optional.empty();
 		}
 		int stock = readStock(location.getBlock());
 		if (stock <= 0) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.NoStock"));
-			return;
+			return Optional.empty();
 		}
-		int room = cash.cassetteCapacity() - held.get().total();
-		int put = Math.min(room, stock);
-		if (put <= 0) {
+		int room = cash.cassetteCapacity() - payload.total();
+		if (room <= 0) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.CassetteFull"));
-			return;
+			return Optional.empty();
+		}
+		int want = all ? room : (requested == null ? 0 : requested);
+		int put = Math.min(want, Math.min(room, stock));
+		if (put <= 0) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.NoStock"));
+			return Optional.empty();
 		}
 		Optional<Cassette.Payload> updated = Cassette.addValue(
-			held.get(),
+			payload,
 			put,
 			cash.descendingValues(),
 			cash.cassetteCapacity()
 		);
 		OptionalInt nextStock = BankVault.take(stock, put);
 		if (updated.isEmpty() || nextStock.isEmpty()) {
-			return;
+			return Optional.empty();
 		}
 		writeStock(location.getBlock(), nextStock.getAsInt());
-		replaceHand(player, cassetteItems.create(updated.get()));
 		log("CASSETTE_FILL", player.getName() + " amount=" + put + " stock=" + nextStock.getAsInt());
 		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.Filled"));
+		return updated;
+	}
+
+	private boolean handleCassetteClick(InventoryClickEvent event, Player player, Holder holder) {
+		int raw = event.getRawSlot();
+		int size = event.getView().getTopInventory().getSize();
+		boolean slot = raw == CASSETTE_SLOT;
+		boolean shiftIn = event.isShiftClick()
+			&& raw >= size
+			&& cassetteItems.read(event.getCurrentItem()).isPresent();
+		if (!slot && !shiftIn) {
+			return false;
+		}
+		if (!cassetteClickAllowed(event, player)) {
+			event.setCancelled(true);
+			return true;
+		}
+		event.setCancelled(false);
+		mainThread.run(() -> refresh(player, holder.location()));
+		return true;
+	}
+
+	private boolean cassetteClickAllowed(InventoryClickEvent event, Player player) {
+		ClickType click = event.getClick();
+		if (click == ClickType.DOUBLE_CLICK
+			|| click == ClickType.CREATIVE
+			|| click == ClickType.UNKNOWN
+			|| click == ClickType.DROP
+			|| click == ClickType.CONTROL_DROP
+			|| click == ClickType.SWAP_OFFHAND
+			|| click == ClickType.WINDOW_BORDER_LEFT
+			|| click == ClickType.WINDOW_BORDER_RIGHT) {
+			return false;
+		}
+		ItemStack current = event.getCurrentItem();
+		if (click == ClickType.NUMBER_KEY) {
+			int hotbar = event.getHotbarButton();
+			ItemStack swapped = hotbar < 0 ? null : player.getInventory().getItem(hotbar);
+			return cassetteOrAir(current) && cassetteOrAir(swapped);
+		}
+		if (event.isShiftClick()) {
+			return cassetteItems.read(current).isPresent();
+		}
+		return cassetteOrAir(event.getCursor()) && cassetteOrAir(current);
+	}
+
+	private boolean cassetteOrAir(ItemStack item) {
+		if (item == null || item.getType() == Material.AIR || item.getAmount() <= 0) {
+			return true;
+		}
+		return cassetteItems.read(item).isPresent();
 	}
 
 	private void openGui(Player player, Location location) {
@@ -409,31 +491,47 @@ public final class BankListener implements Listener {
 
 	private void fillGui(Inventory inventory, Location location) {
 		int stock = readStock(location.getBlock());
+		ItemStack sitting = inventory.getItem(CASSETTE_SLOT);
+		Optional<Cassette.Payload> payload = cassetteItems.read(sitting);
+		if (payload.isEmpty()) {
+			sitting = null;
+		}
 		ItemStack edge = pane(Material.BLACK_STAINED_GLASS_PANE);
 		for (int slot = 0; slot < inventory.getSize(); slot++) {
 			inventory.setItem(slot, edge);
 		}
+		inventory.setItem(CASSETTE_SLOT, sitting);
+		boolean hasCassette = payload.isPresent();
+		boolean hasCash = hasCassette && payload.get().total() > 0;
+		boolean roomInBank = stock < cash.bankVaultCapacity();
+		boolean roomInCassette = hasCassette && payload.get().total() < cash.cassetteCapacity();
 		inventory.setItem(STOCK_SLOT, info(Material.GOLD_BLOCK, cash.applyAmount(
-			getConfigString("Economy.Cash.Bank.Stock"), stock)));
-		int slot = FEED_START;
+			getConfigString("Economy.Cash.Bank.Stock"), stock), stock > 0));
+		inventory.setItem(EMPTY_SLOT, action(Material.HOPPER, Op.EMPTY, null, false, hasCash && roomInBank,
+			getConfigString("Economy.Cash.Bank.EmptyIntoBank")));
+		int slot = FILL_START;
+		boolean canFill = hasCassette && stock > 0 && roomInCassette;
 		for (int preset : cash.atmPresets()) {
-			inventory.setItem(slot++, action(Material.EMERALD, Op.FEED, preset, false,
-				cash.applyAmount(getConfigString("Economy.Cash.Bank.Feed"), preset)));
+			if (slot >= inventory.getSize() - 1) {
+				break;
+			}
+			inventory.setItem(slot++, action(Material.EMERALD, Op.FILL, preset, false, canFill,
+				cash.applyAmount(getConfigString("Economy.Cash.Bank.Fill"), preset)));
 		}
-		inventory.setItem(slot, action(Material.SUNFLOWER, Op.FEED, null, true,
-			getConfigString("Economy.Cash.Bank.FeedAll")));
-		inventory.setItem(EMPTY_SLOT, action(Material.LAVA_BUCKET, Op.EMPTY, null, false,
-			getConfigString("Economy.Cash.Bank.EmptyCassette")));
-		inventory.setItem(FILL_SLOT, action(Material.HOPPER, Op.FILL, null, false,
-			getConfigString("Economy.Cash.Bank.FillCassette")));
+		if (slot < inventory.getSize()) {
+			inventory.setItem(slot, action(Material.SUNFLOWER, Op.FILL, null, true, canFill,
+				getConfigString("Economy.Cash.Bank.FillAll")));
+		}
 	}
 
-	private ItemStack action(Material material, Op op, Integer amount, boolean all, String name) {
+	private ItemStack action(Material material, Op op, Integer amount, boolean all, boolean glow, String name) {
 		ItemStack item = new ItemStack(material);
 		ItemMeta meta = item.getItemMeta();
 		assert meta != null;
 		meta.setDisplayName(name);
-		Cash.applyGlow(meta);
+		if (glow) {
+			Cash.applyGlow(meta);
+		}
 		meta.getPersistentDataContainer().set(opKey, PersistentDataType.STRING, op.name());
 		if (amount != null) {
 			meta.getPersistentDataContainer().set(amountKey, PersistentDataType.INTEGER, amount);
@@ -445,12 +543,14 @@ public final class BankListener implements Listener {
 		return item;
 	}
 
-	private ItemStack info(Material material, String name) {
+	private ItemStack info(Material material, String name, boolean glow) {
 		ItemStack item = new ItemStack(material);
 		ItemMeta meta = item.getItemMeta();
 		assert meta != null;
 		meta.setDisplayName(name);
-		Cash.applyGlow(meta);
+		if (glow) {
+			Cash.applyGlow(meta);
+		}
 		item.setItemMeta(meta);
 		return item;
 	}
@@ -531,10 +631,6 @@ public final class BankListener implements Listener {
 				location.getWorld().dropItemNaturally(location, walletItems.createCashItem(stack));
 			}
 		});
-	}
-
-	private static void replaceHand(Player player, ItemStack item) {
-		player.getInventory().setItemInMainHand(item);
 	}
 
 	private void log(String action, String details) {

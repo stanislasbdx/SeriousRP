@@ -2,7 +2,6 @@ package fr.stan1712.wetston.seriousrp.economy;
 
 import fr.stan1712.wetston.seriousrp.ConfigBackedTest;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -14,7 +13,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
@@ -29,8 +27,8 @@ import org.mockito.quality.Strictness;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,7 +58,6 @@ class BankListenerTest extends ConfigBackedTest {
 	private WalletListener walletItems;
 	private BankListener listener;
 	private final UUID playerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
-	private final AtomicInteger vault = new AtomicInteger(10_000);
 
 	@BeforeEach
 	void setUp() {
@@ -87,13 +84,6 @@ class BankListenerTest extends ConfigBackedTest {
 			cassetteItems,
 			walletItems,
 			null,
-			(name, amount) -> {
-				if (vault.get() < amount) {
-					return false;
-				}
-				vault.addAndGet(-amount);
-				return true;
-			},
 			Runnable::run,
 			(h, s, t) -> gui
 		);
@@ -186,37 +176,32 @@ class BankListenerTest extends ConfigBackedTest {
 	}
 
 	@Test
-	void feedEmptyAndFillCassette() {
+	void emptyCassetteIntoBankThenFillFromStock() {
 		Location location = mock(Location.class);
 		when(location.getBlock()).thenReturn(block);
 		when(signPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(0);
 
-		listener.feed(player, location, 100, false);
-		assertEquals(9_900, vault.get());
-		verify(signPdc).set(any(NamespacedKey.class), eq(PersistentDataType.INTEGER), eq(100));
-
-		ItemStack hand = mock(ItemStack.class);
-		ItemMeta meta = mock(ItemMeta.class);
-		PersistentDataContainer pdc = mock(PersistentDataContainer.class);
-		when(playerInventory.getItemInMainHand()).thenReturn(hand);
-		when(hand.getType()).thenReturn(Material.CHEST);
-		when(hand.getItemMeta()).thenReturn(meta);
-		when(meta.getPersistentDataContainer()).thenReturn(pdc);
-		Cassette.Payload empty = Cassette.empty();
-		when(pdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(Cassette.toJson(empty));
-
-		when(signPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(100);
-		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
-			listener.fillCassette(player, location);
-		}
-		verify(player).sendMessage(contains("filled"));
-		verify(signPdc).set(any(NamespacedKey.class), eq(PersistentDataType.INTEGER), eq(0));
-
-		Cassette.Payload filled = Cassette.addValue(empty, 50, cash.descendingValues(), 1000).orElseThrow();
-		when(pdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(Cassette.toJson(filled));
-		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
-			listener.emptyCassette(player);
-		}
+		Cassette.Payload filled = Cassette.withPin(
+			Cassette.addValue(Cassette.empty(), 50, cash.descendingValues(), 1000).orElseThrow(),
+			"1234"
+		);
+		Optional<Cassette.Payload> emptied = listener.emptyIntoBank(player, location, filled);
+		assertEquals(0, emptied.orElseThrow().total());
+		assertEquals("1234", emptied.orElseThrow().pin());
+		verify(signPdc).set(any(NamespacedKey.class), eq(PersistentDataType.INTEGER), eq(50));
 		verify(player).sendMessage(contains("emptied"));
+
+		when(signPdc.get(any(NamespacedKey.class), eq(PersistentDataType.INTEGER))).thenReturn(50);
+		Optional<Cassette.Payload> refilled = listener.fillFromBank(
+			player,
+			location,
+			Cassette.withPin(Cassette.empty(), "1234"),
+			10,
+			false
+		);
+		assertEquals(10, refilled.orElseThrow().total());
+		assertEquals("1234", refilled.orElseThrow().pin());
+		verify(signPdc).set(any(NamespacedKey.class), eq(PersistentDataType.INTEGER), eq(40));
+		verify(player).sendMessage(contains("filled"));
 	}
 }

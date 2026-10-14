@@ -24,6 +24,37 @@ class CassetteTest {
 		assertFalse(Cassette.isPin("12a4"));
 		assertFalse(Cassette.isPin("123"));
 		assertFalse(Cassette.isPin(null));
+		Cassette.Payload locked = Cassette.withPin(original, "1234");
+		Cassette.Payload kept = Cassette.fromJson(Cassette.toJson(locked)).orElseThrow();
+		assertEquals("1234", kept.pin());
+		assertEquals(60, Cassette.takeValue(kept, 10, EURO).orElseThrow().total());
+		assertEquals("1234", Cassette.takeValue(kept, 10, EURO).orElseThrow().pin());
+	}
+
+	@Test
+	void threeWrongPinsWipeContentsAndKeepTheCode() {
+		Cassette.Payload locked = Cassette.withPin(
+			Cassette.addValue(Cassette.empty(), 40, EURO, 100).orElseThrow(),
+			"9999"
+		);
+		Cassette.PinAttempt first = Cassette.tryPin(locked, "0000");
+		assertFalse(first.unlocked());
+		assertFalse(first.wiped());
+		assertEquals(1, first.payload().failedAttempts());
+		assertEquals(40, first.payload().total());
+
+		Cassette.PinAttempt second = Cassette.tryPin(first.payload(), "1111");
+		assertEquals(2, second.payload().failedAttempts());
+
+		Cassette.PinAttempt third = Cassette.tryPin(second.payload(), "2222");
+		assertTrue(third.wiped());
+		assertEquals(0, third.payload().total());
+		assertEquals("9999", third.payload().pin());
+		assertEquals(0, third.payload().failedAttempts());
+
+		Cassette.PinAttempt opened = Cassette.tryPin(third.payload(), "9999");
+		assertTrue(opened.unlocked());
+		assertEquals(0, opened.payload().failedAttempts());
 	}
 
 	@Test
