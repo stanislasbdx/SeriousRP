@@ -10,6 +10,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,6 +47,14 @@ class AtmTest {
 		}, Atm.genericLines(cash));
 		String[] nearby = Atm.nearbyLines(cash, 12, 4);
 		assertEquals("§b§l[sATM]", nearby[0]);
+		assertEquals("Square", Atm.nearbyLines(cash, 12, 4, "Square")[0]);
+		assertEquals("Square", Atm.genericLines(cash, "Square")[0]);
+		assertNull(Atm.cleanAtmName("   "));
+		assertNull(Atm.cleanAtmName("this name is way too long"));
+		assertEquals("Square", Atm.cleanAtmName(" &cSquare "));
+		assertTrue(Atm.canRename(OWNER, OWNER, false));
+		assertFalse(Atm.canRename(OWNER, UUID.randomUUID(), false));
+		assertTrue(Atm.canRename(OWNER, UUID.randomUUID(), true));
 		assertEquals("§7Acc §a12€", nearby[1]);
 		assertEquals("§7Cash §64€", nearby[2]);
 		assertEquals("§8» §fRight click", nearby[3]);

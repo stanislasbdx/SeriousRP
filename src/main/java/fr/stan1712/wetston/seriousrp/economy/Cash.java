@@ -22,6 +22,7 @@ public final class Cash {
 	public static final String ITEM_PDC_KEY = "srp-cash";
 	public static final String WALLET_PDC_KEY = "srp-wallet";
 	public static final String ATM_OWNER_PDC_KEY = "srp-atm-owner";
+	public static final String ATM_NAME_PDC_KEY = "srp-atm-name";
 	public static final String CASSETTE_ITEM_PDC_KEY = "srp-atm-cassette";
 	public static final String ATM_CASSETTES_PDC_KEY = "srp-atm-cassettes";
 	public static final String BANK_OWNER_PDC_KEY = "srp-bank-owner";

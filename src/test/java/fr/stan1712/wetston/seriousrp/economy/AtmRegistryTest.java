@@ -42,6 +42,8 @@ class AtmRegistryTest {
 			assertEquals(owner, registry.ownedBy(owner).get(0).owner());
 			assertTrue(registry.ownedBy(owner).get(0).location().isPresent());
 
+			registry.rename(second, "Square");
+			assertEquals("Square", registry.ownedBy(other).get(0).name());
 			registry.unregister(location);
 			assertEquals(1, registry.all().size());
 			assertTrue(registry.ownedBy(owner).isEmpty());
@@ -50,5 +52,6 @@ class AtmRegistryTest {
 		AtmRegistry reloaded = new AtmRegistry(file);
 		assertEquals(1, reloaded.all().size());
 		assertEquals(other, reloaded.all().get(0).owner());
+		assertEquals("Square", reloaded.all().get(0).name());
 	}
 }

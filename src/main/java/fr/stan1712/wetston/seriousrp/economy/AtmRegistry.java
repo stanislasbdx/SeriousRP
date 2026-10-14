@@ -15,7 +15,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 public final class AtmRegistry {
-	public record Entry(String world, int x, int y, int z, UUID owner) {
+	public record Entry(String world, int x, int y, int z, UUID owner, String name) {
+		public Entry {
+			name = name == null || name.isBlank() ? null : name;
+		}
+
+		public Entry(String world, int x, int y, int z, UUID owner) {
+			this(world, x, y, z, owner, null);
+		}
 		public Optional<Location> location() {
 			World loaded = Bukkit.getWorld(world);
 			if (loaded == null) {
@@ -60,6 +67,21 @@ public final class AtmRegistry {
 		save();
 	}
 
+	public void rename(Location location, String name) {
+		if (location == null || location.getWorld() == null || name == null || name.isBlank()) {
+			return;
+		}
+		String key = location.getWorld().getName()
+			+ ";" + location.getBlockX()
+			+ ";" + location.getBlockY()
+			+ ";" + location.getBlockZ();
+		if (!data.contains(key)) {
+			return;
+		}
+		data.set(key + ".name", name);
+		save();
+	}
+
 	public void unregister(Location location) {
 		if (location == null || location.getWorld() == null) {
 			return;
@@ -96,7 +118,8 @@ public final class AtmRegistry {
 				data.getInt(key + ".x"),
 				data.getInt(key + ".y"),
 				data.getInt(key + ".z"),
-				UUID.fromString(ownerRaw)
+				UUID.fromString(ownerRaw),
+				data.getString(key + ".name")
 			));
 		}
 		catch (IllegalArgumentException exception) {

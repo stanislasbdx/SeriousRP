@@ -72,6 +72,9 @@ permissions:
   seriousrp.economy.atm.service:
     description: Install or eject cassettes on ATMs
     default: op
+  seriousrp.economy.atm.rename:
+    description: Rename any ATM
+    default: op
   seriousrp.economy.bank.create:
     description: Create a [sBank] vault sign
     default: op

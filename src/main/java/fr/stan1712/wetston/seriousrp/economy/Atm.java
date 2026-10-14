@@ -16,6 +16,8 @@ public final class Atm {
 	public static final String BANK_BYPASS_PERM = "seriousrp.economy.bank.access.bypass";
 	public static final String PILOT_CREATE_PERM = "seriousrp.economy.atm.pilot.create";
 	public static final String PILOT_OTHERS_PERM = "seriousrp.economy.atm.pilot.others";
+	public static final String RENAME_PERM = "seriousrp.economy.atm.rename";
+	public static final int NAME_LIMIT = 15;
 	public static final long PROMPT_TIMEOUT_MILLIS = 20_000L;
 	public static final long BREAK_CONFIRM_MILLIS = 10_000L;
 
@@ -23,7 +25,8 @@ public final class Atm {
 		DEPOSIT,
 		WITHDRAW,
 		COMPACT,
-		BREAK
+		BREAK,
+		RENAME
 	}
 
 	public record Prompt(UUID playerId, Operation operation, long expiresAtMillis) {
@@ -56,16 +59,44 @@ public final class Atm {
 		return deleteOthers;
 	}
 
+	public static boolean canRename(UUID ownerId, UUID playerId, boolean staff) {
+		if (ownerId == null || playerId == null) {
+			return false;
+		}
+		return staff || ownerId.equals(playerId);
+	}
+
+	public static String cleanAtmName(String raw) {
+		if (raw == null) {
+			return null;
+		}
+		String stripped = Cash.stripColorCodes(raw.replace('&', '§')).trim();
+		if (stripped.isEmpty() || stripped.length() > NAME_LIMIT) {
+			return null;
+		}
+		return stripped;
+	}
+
 	public static String[] genericLines(Cash cash) {
+		return genericLines(cash, null);
+	}
+
+	public static String[] genericLines(Cash cash, String name) {
 		Cash.PlacedSign sign = cash.atmSign();
-		return new String[] { sign.title(), sign.separator(), sign.subtitle(), sign.hint() };
+		String title = name == null || name.isBlank() ? sign.title() : trimLine(name);
+		return new String[] { title, sign.separator(), sign.subtitle(), sign.hint() };
 	}
 
 	public static String[] nearbyLines(Cash cash, int account, int pocket) {
+		return nearbyLines(cash, account, pocket, null);
+	}
+
+	public static String[] nearbyLines(Cash cash, int account, int pocket, String name) {
 		String currency = Cash.stripColorCodes(cash.currency());
 		Cash.PlacedSign sign = cash.atmSign();
+		String title = name == null || name.isBlank() ? sign.title() : trimLine(name);
 		return new String[] {
-			sign.title(),
+			title,
 			trimLine(cash.atmAccountPrefix() + formatSignAmount(account) + currency),
 			trimLine(cash.atmPocketPrefix() + formatSignAmount(pocket) + currency),
 			sign.hint()

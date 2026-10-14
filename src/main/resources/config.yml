@@ -182,8 +182,8 @@ Economy:
         Subtitle: "&7ATM network"
         Hint: "&8» &fRight click"
       Title: "&2ATM network"
-      Line: "&7%world% %x% %y% %z% &8| &f%amount%%currency%"
-      EmptyAtm: "&7%world% %x% %y% %z% &8| &cno cassette"
+      Line: "&7%name% &8| &f%amount%%currency%"
+      EmptyAtm: "&7%name% &8| &cno cassette"
       Created: "&aATM pilot created"
       DeniedCreate: "&cYou can't create an ATM pilot"
       DeniedBreak: "&cYou can't break this ATM pilot"
@@ -267,6 +267,11 @@ Economy:
       CreateNotEnough: "&cYou need %amount%%currency% on your account to create an ATM"
       DeniedCreate: "&cYou can't create an ATM"
       DeniedBreak: "&cYou can't break this ATM"
+      Rename: "&6Rename this ATM"
+      RenamePrompt: "&eType a name (15 characters max), or 'cancel'"
+      Renamed: "&aATM renamed to &f%name%"
+      RenameInvalid: "&cName must be 1 to 15 characters"
+      RenameDenied: "&cYou can't rename this ATM"
       Machine: "&bATM cash : &f%amount%%currency%"
   Cheque:
     CustomModelData: 1

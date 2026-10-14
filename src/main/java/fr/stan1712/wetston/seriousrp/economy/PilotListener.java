@@ -177,7 +177,14 @@ public final class PilotListener implements Listener {
 		String template = hasCassette
 			? getConfigString("Economy.Cash.Pilot.Line")
 			: getConfigString("Economy.Cash.Pilot.EmptyAtm");
+		String label = entry.name() == null
+			? entry.world() + " " + entry.x() + " " + entry.y() + " " + entry.z()
+			: entry.name();
+		if (entry.name() != null && !template.contains("%name%")) {
+			template = "%name% &8| " + template;
+		}
 		String name = template
+			.replace("%name%", label)
 			.replace("%world%", entry.world())
 			.replace("%x%", Integer.toString(entry.x()))
 			.replace("%y%", Integer.toString(entry.y()))

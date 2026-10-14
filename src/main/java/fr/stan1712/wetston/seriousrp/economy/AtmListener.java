@@ -54,6 +54,7 @@ public final class AtmListener implements Listener {
 	static final int WITHDRAW_START = 19;
 	static final int COMPACT_SLOT = 30;
 	static final int BREAK_SLOT = 32;
+	static final int RENAME_SLOT = 34;
 	static final int MACHINE_SLOT = 44;
 	static final int CASSETTE_START = 36;
 
@@ -77,6 +78,7 @@ public final class AtmListener implements Listener {
 	private final AtmRegistry registry;
 	private final AtmLogger logger;
 	private final NamespacedKey ownerKey;
+	private final NamespacedKey nameKey;
 	private final NamespacedKey cassettesKey;
 	private final NamespacedKey opKey;
 	private final NamespacedKey amountKey;
@@ -142,6 +144,7 @@ public final class AtmListener implements Listener {
 		this.registry = registry;
 		this.logger = logger;
 		this.ownerKey = new NamespacedKey(plugin, Cash.ATM_OWNER_PDC_KEY);
+		this.nameKey = new NamespacedKey(plugin, Cash.ATM_NAME_PDC_KEY);
 		this.cassettesKey = new NamespacedKey(plugin, Cash.ATM_CASSETTES_PDC_KEY);
 		this.opKey = new NamespacedKey(plugin, OP_KEY);
 		this.amountKey = new NamespacedKey(plugin, AMOUNT_KEY);
@@ -293,6 +296,10 @@ public final class AtmListener implements Listener {
 			return;
 		}
 		Atm.Operation operation = Atm.Operation.valueOf(opRaw);
+		if (operation == Atm.Operation.RENAME) {
+			startRename(player, (Holder) event.getView().getTopInventory().getHolder());
+			return;
+		}
 		if (operation == Atm.Operation.COMPACT || operation == Atm.Operation.BREAK) {
 			runChange(player, operation);
 			return;
@@ -385,11 +392,20 @@ public final class AtmListener implements Listener {
 	private void overlayIfAtm(Player player, Block block) {
 		if (atmOwner(block).isPresent()) {
 			int account = (int) Math.floor(bank.balance(player));
-			player.sendSignChange(block.getLocation(), Atm.nearbyLines(cash, account, pocketTotal(player)));
+			player.sendSignChange(block.getLocation(), Atm.nearbyLines(
+				cash,
+				account,
+				pocketTotal(player),
+				readName(block)
+			));
 		}
 	}
 
 	void handlePrompt(Player player, Atm.Prompt prompt, String message) {
+		if (prompt.operation() == Atm.Operation.RENAME) {
+			handleRename(player, prompt, message);
+			return;
+		}
 		if (prompt.isExpired(System.currentTimeMillis())) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.PromptCancelled"));
 			return;
@@ -562,9 +578,63 @@ public final class AtmListener implements Listener {
 		return readLedger(player).total();
 	}
 
+	private void startRename(Player player, Holder holder) {
+		if (holder == null || !canRename(player, holder.location())) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.RenameDenied"));
+			return;
+		}
+		prompts.put(player.getUniqueId(), new Atm.Prompt(
+			player.getUniqueId(),
+			Atm.Operation.RENAME,
+			System.currentTimeMillis() + Atm.PROMPT_TIMEOUT_MILLIS
+		));
+		lastAtm.put(player.getUniqueId(), holder.location());
+		player.closeInventory();
+		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.RenamePrompt"));
+	}
+
+	void handleRename(Player player, Atm.Prompt prompt, String message) {
+		if (prompt.isExpired(System.currentTimeMillis()) || Atm.isCancelPrompt(message)) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.PromptCancelled"));
+			return;
+		}
+		String name = Atm.cleanAtmName(message);
+		if (name == null) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.RenameInvalid"));
+			return;
+		}
+		Location location = lastAtm.get(player.getUniqueId());
+		if (location == null || !canRename(player, location)) {
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.RenameDenied"));
+			return;
+		}
+		writeName(location.getBlock(), name);
+		log("RENAME", player.getName() + " " + blockKey(location) + " name=" + name);
+		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.AtmGui.Renamed").replace("%name%", name));
+		if (atmOwner(location.getBlock()).isPresent()) {
+			openGui(player, location);
+		}
+	}
+
+	private boolean canRename(Player player, Location location) {
+		if (location == null || location.getBlock() == null) {
+			return false;
+		}
+		Optional<UUID> owner = atmOwner(location.getBlock());
+		return owner.isPresent() && Atm.canRename(
+			owner.get(),
+			player.getUniqueId(),
+			player.hasPermission(Atm.RENAME_PERM)
+		);
+	}
+
 	private void openGui(Player player, Location location) {
 		Holder holder = new Holder(location);
-		Inventory inventory = inventories.create(holder, GUI_SIZE, getConfigString("Economy.Cash.AtmGui.Title"));
+		String title = location == null ? null : readName(location.getBlock());
+		if (title == null || title.isBlank()) {
+			title = getConfigString("Economy.Cash.AtmGui.Title");
+		}
+		Inventory inventory = inventories.create(holder, GUI_SIZE, title);
 		fillGui(inventory, player);
 		player.openInventory(inventory);
 	}
@@ -598,6 +668,10 @@ public final class AtmListener implements Listener {
 			getConfigString("Economy.Cash.AtmGui.Compact")));
 		inventory.setItem(BREAK_SLOT, button(Material.IRON_NUGGET, Atm.Operation.BREAK, null, false, false,
 			getConfigString("Economy.Cash.AtmGui.Break")));
+		if (inventory.getHolder() instanceof Holder holder && canRename(player, holder.location())) {
+			inventory.setItem(RENAME_SLOT, button(Material.NAME_TAG, Atm.Operation.RENAME, null, false, false,
+				getConfigString("Economy.Cash.AtmGui.Rename")));
+		}
 		if (inventory.getHolder() instanceof Holder holder) {
 			fillCassetteSlots(inventory, player, holder.location());
 		}
@@ -928,6 +1002,29 @@ public final class AtmListener implements Listener {
 			AtmCassettes.toJson(AtmCassettes.emptySlots(cash.cassetteSlots()))
 		);
 		state.update();
+	}
+
+	String readName(Block block) {
+		if (block == null || !(block.getState() instanceof TileState state)) {
+			return null;
+		}
+		String stored = state.getPersistentDataContainer().get(nameKey, PersistentDataType.STRING);
+		return stored == null || stored.isBlank() ? null : stored;
+	}
+
+	void writeName(Block block, String name) {
+		if (!(block.getState() instanceof Sign sign)) {
+			return;
+		}
+		sign.getPersistentDataContainer().set(nameKey, PersistentDataType.STRING, name);
+		String[] lines = Atm.genericLines(cash, name);
+		for (int index = 0; index < lines.length; index++) {
+			sign.setLine(index, lines[index]);
+		}
+		sign.update();
+		if (registry != null) {
+			registry.rename(block.getLocation(), name);
+		}
 	}
 
 	Optional<UUID> atmOwner(Block block) {

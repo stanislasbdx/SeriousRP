@@ -40,6 +40,7 @@ If `AdvancedBank` is off, typing `[sBank]` / `[sPilot]` is cancelled with a shor
 | `seriousrp.economy.atm.delete.others` | op | Break someone else’s ATM |
 | `seriousrp.economy.atm.use` | true | Open / use an ATM |
 | `seriousrp.economy.atm.service` | op | Drag cassettes into an ATM |
+| `seriousrp.economy.atm.rename` | op | Rename any ATM. The owner can rename their own without this |
 | `seriousrp.economy.bank.create` | op | Place an `[sBank]` sign |
 | `seriousrp.economy.bank.delete` | op | Break your own sBank |
 | `seriousrp.economy.bank.delete.others` | op | Break someone else’s sBank |
@@ -69,6 +70,10 @@ Right-click the sign (`atm.use`):
 - **Compact / Break** — regroup or split loose cash.
 
 Nearby players see personalized account / pocket amounts on the sign within `Atm.ViewRadius`.
+
+### Rename
+
+The owner, or anyone with `atm.rename`, sees **Rename this ATM** in the ATM menu. The name is typed in chat (15 characters, `cancel` aborts). It replaces the sign title, the ATM window title, and the sPilot row. Unnamed ATMs stay listed by world and coordinates.
 
 ### Advanced bank rules (`AdvancedBank: true`)
 
