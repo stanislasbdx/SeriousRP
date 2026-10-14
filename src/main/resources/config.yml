@@ -94,11 +94,65 @@ Economy:
       SignHeader: "[sATM]"
       ViewRadius: 5
       CreateCost: 150
+      PhysicalFloat: false
+      CassetteSlots: 2
+      CassetteCapacity: 50000
       Presets:
         - 10
         - 25
         - 50
         - 100
+    Cassette:
+      Material: CHEST
+      CustomModelData: 1
+      DisplayName: "&8Cassette"
+      LoreTotal: "&7Content : &e%amount%%currency%"
+      Recipe:
+        Shape:
+          - "III"
+          - "I I"
+          - "III"
+        Ingredients:
+          I: IRON_INGOT
+      EmptySlot: "&8Empty cassette slot"
+      Installed: "&aCassette : &f%amount%%currency%"
+      NoCassette: "&cThis ATM has no cassette"
+      CassetteFull: "&cThe ATM cassettes are full"
+      CassetteEmpty: "&cThe ATM cassettes are empty"
+      InstalledOk: "&aCassette installed"
+      EjectedOk: "&aCassette ejected"
+      BreakConfirm: "&eBreak again to confirm. Installed cassettes will drop."
+    Bank:
+      SignHeader: "[sBank]"
+      VaultPlayer: "Banque"
+      VaultCapacity: 500000
+      Title: "&2Bank vault"
+      Stock: "&eVault stock : &f%amount%%currency%"
+      Feed: "&aFeed vault %amount%%currency%"
+      FeedAll: "&aFeed everything"
+      EmptyCassette: "&cEmpty cassette (void)"
+      FillCassette: "&aFill cassette from vault"
+      DeniedAccess: "&cYou cannot access this vault"
+      PinSet: "&ePlease choose a 4-digit code."
+      PinAsk: "&ePlease enter the vault code."
+      PinInvalid: "&cInvalid code."
+      PinCancel: "&cCancelled."
+      Emptied: "&aCassette emptied."
+      Filled: "&aCassette filled."
+      Fed: "&aVault fed."
+      NoStock: "&cThe vault has no cash."
+      BreakConfirm: "&eBreak again to confirm. Vault stock will drop."
+      Created: "&aBank vault created"
+      DeniedCreate: "&cYou can't create a bank vault"
+      DeniedBreak: "&cYou can't break this bank vault"
+    Pilot:
+      SignHeader: "[sPilot]"
+      Title: "&2ATM network"
+      Line: "&7%world% %x% %y% %z% &8| &f%amount%%currency%"
+      EmptyAtm: "&7%world% %x% %y% %z% &8| &cno cassette"
+      Created: "&aATM pilot created"
+      DeniedCreate: "&cYou can't create an ATM pilot"
+      DeniedBreak: "&cYou can't break this ATM pilot"
     Denominations:
       - value: 1
         material: IRON_NUGGET
@@ -179,6 +233,7 @@ Economy:
       CreateNotEnough: "&cYou need %amount%%currency% on your account to create an ATM"
       DeniedCreate: "&cYou can't create an ATM"
       DeniedBreak: "&cYou can't break this ATM"
+      Machine: "&bATM float : &f%amount%%currency%"
   Cheque:
     CustomModelData: 1
     Usage: "To create a cheque : /cheque <value : only positive integers>"

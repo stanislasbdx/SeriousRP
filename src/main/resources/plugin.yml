@@ -69,6 +69,30 @@ permissions:
   seriousrp.economy.atm.use:
     description: Use an ATM
     default: true
+  seriousrp.economy.atm.service:
+    description: Craft cassettes and install or eject them on ATMs
+    default: op
+  seriousrp.economy.bank.create:
+    description: Create a [sBank] vault sign
+    default: op
+  seriousrp.economy.bank.delete:
+    description: Break your own bank vault signs
+    default: op
+  seriousrp.economy.bank.delete.others:
+    description: Break other players' bank vault signs
+    default: op
+  seriousrp.economy.bank.access:
+    description: Open a bank vault after PIN
+    default: op
+  seriousrp.economy.bank.access.bypass:
+    description: Open a bank vault without PIN
+    default: op
+  seriousrp.economy.atm.pilot.create:
+    description: Create a [sPilot] ATM network sign
+    default: op
+  seriousrp.economy.atm.pilot.others:
+    description: See every ATM on the pilot board
+    default: op
   seriousrp.economy.wallet.slots.9:
     description: Craft 9-slot wallets
     default: true
