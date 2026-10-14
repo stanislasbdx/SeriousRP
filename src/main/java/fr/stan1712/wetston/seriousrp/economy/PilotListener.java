@@ -81,8 +81,14 @@ public final class PilotListener implements Listener {
 		this.inventories = inventories;
 	}
 
-	boolean cassetteMode() {
-		return plugin.getConfig().getBoolean("Economy.Cash.Atm.PhysicalFloat", cash.physicalFloat());
+	boolean advancedBank() {
+		if (plugin.getConfig().contains("Economy.Cash.AdvancedBank")) {
+			return plugin.getConfig().getBoolean("Economy.Cash.AdvancedBank");
+		}
+		if (plugin.getConfig().contains("Economy.Cash.Atm.PhysicalFloat")) {
+			return plugin.getConfig().getBoolean("Economy.Cash.Atm.PhysicalFloat");
+		}
+		return cash.advancedBank();
 	}
 
 	@EventHandler
@@ -91,9 +97,9 @@ public final class PilotListener implements Listener {
 			return;
 		}
 		Player player = event.getPlayer();
-		if (!cassetteMode()) {
+		if (!advancedBank()) {
 			event.setCancelled(true);
-			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Atm.NeedCassetteMode"));
+			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.NeedAdvancedBank"));
 			return;
 		}
 		if (!player.hasPermission(Atm.PILOT_CREATE_PERM)) {
@@ -130,7 +136,7 @@ public final class PilotListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onInteract(PlayerInteractEvent event) {
-		if (!cash.isEnabled() || !cassetteMode() || event.getAction() != Action.RIGHT_CLICK_BLOCK
+		if (!cash.isEnabled() || !advancedBank() || event.getAction() != Action.RIGHT_CLICK_BLOCK
 			|| event.getClickedBlock() == null) {
 			return;
 		}

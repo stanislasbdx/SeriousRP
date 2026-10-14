@@ -838,18 +838,18 @@ class AtmListenerTest extends ConfigBackedTest {
 	}
 
 	@Test
-	void physicalFloatDepositWithdrawThroughCassettes() {
-		YamlConfiguration floatConfig = new YamlConfiguration();
-		floatConfig.set("Economy.Cash.Enabled", true);
-		floatConfig.set("Economy.Cash.Atm.PhysicalFloat", true);
-		floatConfig.set("Economy.Cash.Atm.CassetteSlots", 2);
-		floatConfig.set("Economy.Cash.Atm.CassetteCapacity", 100);
-		floatConfig.set("Economy.Cash.Atm.CreateCost", 0);
-		floatConfig.set("Economy.Cash.Denominations", List.of(
+	void advancedBankDepositWithdrawThroughCassettes() {
+		YamlConfiguration advConfig = new YamlConfiguration();
+		advConfig.set("Economy.Cash.Enabled", true);
+		advConfig.set("Economy.Cash.AdvancedBank", true);
+		advConfig.set("Economy.Cash.Atm.CassetteSlots", 2);
+		advConfig.set("Economy.Cash.Atm.CassetteCapacity", 100);
+		advConfig.set("Economy.Cash.Atm.CreateCost", 0);
+		advConfig.set("Economy.Cash.Denominations", List.of(
 			Map.of("value", 1, "material", "GOLD_NUGGET"),
 			Map.of("value", 10, "material", "PAPER")
 		));
-		Cash floatCash = Cash.fromConfig(floatConfig);
+		Cash floatCash = Cash.fromConfig(advConfig);
 		CassetteItems items = new CassetteItems(plugin, floatCash, recipe -> {}, key -> {});
 		AtmListener floatListener = new AtmListener(
 			plugin,

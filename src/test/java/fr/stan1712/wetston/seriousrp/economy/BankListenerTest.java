@@ -69,7 +69,7 @@ class BankListenerTest extends ConfigBackedTest {
 		when(player.getInventory()).thenReturn(playerInventory);
 		YamlConfiguration config = new YamlConfiguration();
 		config.set("Economy.Cash.Enabled", true);
-		config.set("Economy.Cash.Atm.PhysicalFloat", true);
+		config.set("Economy.Cash.AdvancedBank", true);
 		config.set("Economy.Cash.Atm.CassetteCapacity", 1000);
 		config.set("Economy.Cash.Bank.VaultCapacity", 5000);
 		config.set("Economy.Cash.Bank.VaultPlayer", "Banque");
@@ -122,14 +122,14 @@ class BankListenerTest extends ConfigBackedTest {
 	}
 
 	@Test
-	void createBlockedWhenCassetteModeOff() {
-		plugin.getConfig().set("Economy.Cash.Atm.PhysicalFloat", false);
+	void createBlockedWhenAdvancedBankOff() {
+		plugin.getConfig().set("Economy.Cash.AdvancedBank", false);
 		SignChangeEvent event = mock(SignChangeEvent.class);
 		when(event.getLine(0)).thenReturn("[sBank]");
 		when(event.getPlayer()).thenReturn(player);
 		listener.onSignChange(event);
 		verify(event).setCancelled(true);
-		verify(player).sendMessage(contains("PhysicalFloat"));
+		verify(player).sendMessage(contains("AdvancedBank"));
 		verify(event, never()).setLine(anyInt(), any());
 	}
 

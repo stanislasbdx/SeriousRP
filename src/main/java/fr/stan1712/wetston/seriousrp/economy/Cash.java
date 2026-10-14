@@ -80,7 +80,6 @@ public final class Cash {
 		int viewRadius,
 		List<Integer> presets,
 		int createCost,
-		boolean physicalFloat,
 		int cassetteSlots,
 		int cassetteCapacity
 	) {
@@ -129,6 +128,7 @@ public final class Cash {
 	public static final String CURRENCY_PLACEHOLDER = "%currency%";
 
 	private final boolean enabled;
+	private final boolean advancedBank;
 	private final String currency;
 	private final List<Denomination> denominations;
 	private final Map<Integer, Denomination> byValue;
@@ -141,6 +141,7 @@ public final class Cash {
 
 	Cash(
 		boolean enabled,
+		boolean advancedBank,
 		String currency,
 		List<Denomination> denominations,
 		WalletSettings wallet,
@@ -151,6 +152,7 @@ public final class Cash {
 		ChangeSettings change
 	) {
 		this.enabled = enabled;
+		this.advancedBank = advancedBank;
 		this.currency = currency;
 		this.denominations = List.copyOf(denominations);
 		Map<Integer, Denomination> index = new LinkedHashMap<>();
@@ -168,6 +170,10 @@ public final class Cash {
 
 	public static Cash fromConfig(FileConfiguration config) {
 		boolean enabled = config.getBoolean("Economy.Cash.Enabled", true);
+		boolean advancedBank = config.getBoolean(
+			"Economy.Cash.AdvancedBank",
+			config.getBoolean("Economy.Cash.Atm.PhysicalFloat", false)
+		);
 		String currency = colorize(nullable(config.getString("Economy.Currency"), "€"));
 		List<Denomination> denoms = parseDenominations(config.getMapList("Economy.Cash.Denominations"));
 		if (denoms.isEmpty()) {
@@ -200,7 +206,6 @@ public final class Cash {
 		int radius = config.getInt("Economy.Cash.Atm.ViewRadius", 5);
 		int createCost = config.getInt("Economy.Cash.Atm.CreateCost", DEFAULT_CREATE_COST);
 		List<Integer> presets = parsePresets(config.getIntegerList("Economy.Cash.Atm.Presets"));
-		boolean physicalFloat = config.getBoolean("Economy.Cash.Atm.PhysicalFloat", false);
 		int cassetteSlots = config.getInt("Economy.Cash.Atm.CassetteSlots", DEFAULT_CASSETTE_SLOTS);
 		int cassetteCapacity = config.getInt("Economy.Cash.Atm.CassetteCapacity", DEFAULT_CASSETTE_CAPACITY);
 		int pieceCap = config.getInt("Economy.Cash.Change.BreakPieceCap", DEFAULT_BREAK_PIECE_CAP);
@@ -232,10 +237,11 @@ public final class Cash {
 
 		return new Cash(
 			enabled,
+			advancedBank,
 			currency,
 			denoms,
 			new WalletSettings(slots, walletMaterial, walletName, walletLore, shape, ingredients, walletCustomModelData),
-			new AtmSettings(header, radius, presets, createCost, physicalFloat, cassetteSlots, cassetteCapacity),
+			new AtmSettings(header, radius, presets, createCost, cassetteSlots, cassetteCapacity),
 			new CassetteSettings(
 				cassetteMaterial,
 				cassetteName,
@@ -381,8 +387,8 @@ public final class Cash {
 		return atm.createCost();
 	}
 
-	public boolean physicalFloat() {
-		return atm.physicalFloat();
+	public boolean advancedBank() {
+		return advancedBank;
 	}
 
 	public int cassetteSlots() {

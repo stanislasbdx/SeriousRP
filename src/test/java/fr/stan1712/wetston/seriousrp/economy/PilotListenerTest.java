@@ -52,7 +52,7 @@ class PilotListenerTest extends ConfigBackedTest {
 		when(player.getUniqueId()).thenReturn(playerId);
 		YamlConfiguration config = new YamlConfiguration();
 		config.set("Economy.Cash.Enabled", true);
-		config.set("Economy.Cash.Atm.PhysicalFloat", true);
+		config.set("Economy.Cash.AdvancedBank", true);
 		config.set("Economy.Cash.Denominations", List.of(Map.of("value", 1, "material", "GOLD_NUGGET")));
 		when(plugin.getConfig()).thenReturn(config);
 		Cash cash = Cash.fromConfig(config);

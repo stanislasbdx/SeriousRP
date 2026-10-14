@@ -72,6 +72,8 @@ Economy:
   IssuerNotEnough: "&cThe issuer doesn't have enough money !"
   Cash:
     Enabled: true
+    AdvancedBank: false
+    NeedAdvancedBank: "&cEnable Economy.Cash.AdvancedBank first"
     Wallet:
       DefaultSlots: 18
       Material: BOOK
@@ -94,10 +96,8 @@ Economy:
       SignHeader: "[sATM]"
       ViewRadius: 5
       CreateCost: 150
-      PhysicalFloat: false
       CassetteSlots: 2
       CassetteCapacity: 50000
-      NeedCassetteMode: "&cEnable Economy.Cash.Atm.PhysicalFloat (cassette mode) first"
       Presets:
         - 10
         - 25

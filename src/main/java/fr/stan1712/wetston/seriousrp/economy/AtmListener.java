@@ -395,13 +395,13 @@ public final class AtmListener implements Listener {
 			player.sendMessage(getShortPrefixString() + cash.applyAmount(getConfigString(key), amount.getAsInt()));
 			refreshOpenGui(player);
 		}
-		else if (cash.physicalFloat() && location != null && !AtmCassettes.hasCassette(readCassettes(location.getBlock()))) {
+		else if (cash.advancedBank() && location != null && !AtmCassettes.hasCassette(readCassettes(location.getBlock()))) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.NoCassette"));
 		}
-		else if (cash.physicalFloat() && operation == Atm.Operation.DEPOSIT) {
+		else if (cash.advancedBank() && operation == Atm.Operation.DEPOSIT) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.CassetteFull"));
 		}
-		else if (cash.physicalFloat() && operation == Atm.Operation.WITHDRAW) {
+		else if (cash.advancedBank() && operation == Atm.Operation.WITHDRAW) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Cassette.CassetteEmpty"));
 		}
 		else {
@@ -445,7 +445,7 @@ public final class AtmListener implements Listener {
 		if (paid.isEmpty() || !canFitLoose(player, paid.get().inventory())) {
 			return false;
 		}
-		if (cash.physicalFloat()) {
+		if (cash.advancedBank()) {
 			if (location == null || location.getWorld() == null) {
 				return false;
 			}
@@ -481,7 +481,7 @@ public final class AtmListener implements Listener {
 			return false;
 		}
 		List<Optional<Cassette.Payload>> previous = List.of();
-		if (cash.physicalFloat()) {
+		if (cash.advancedBank()) {
 			if (location == null || location.getWorld() == null) {
 				return false;
 			}
@@ -561,7 +561,7 @@ public final class AtmListener implements Listener {
 	}
 
 	private void fillCassetteSlots(Inventory inventory, Player player, Location location) {
-		if (!cash.physicalFloat() || location == null || location.getWorld() == null) {
+		if (!cash.advancedBank() || location == null || location.getWorld() == null) {
 			return;
 		}
 		List<Optional<Cassette.Payload>> slots = readCassettes(location.getBlock());
@@ -598,7 +598,7 @@ public final class AtmListener implements Listener {
 	}
 
 	void handleCassetteSlot(Player player, Location location, int slot) {
-		if (!cash.physicalFloat()
+		if (!cash.advancedBank()
 			|| cassetteItems == null
 			|| location == null
 			|| location.getWorld() == null

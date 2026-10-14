@@ -47,7 +47,7 @@ public final class CassetteItems implements Listener {
 
 	public void registerRecipe() {
 		unregisterRecipe();
-		if (!cash.physicalFloat()) {
+		if (!cash.advancedBank()) {
 			return;
 		}
 		ShapedRecipe recipe = new ShapedRecipe(recipeKey, create(Cassette.empty()));
@@ -89,7 +89,7 @@ public final class CassetteItems implements Listener {
 
 	@EventHandler
 	public void onPrepareCraft(PrepareItemCraftEvent event) {
-		if (!cash.physicalFloat() || !isCassetteRecipe(event.getRecipe())) {
+		if (!cash.advancedBank() || !isCassetteRecipe(event.getRecipe())) {
 			return;
 		}
 		if (!(event.getView().getPlayer() instanceof Player player) || !player.hasPermission(Atm.SERVICE_PERM)) {
@@ -99,7 +99,7 @@ public final class CassetteItems implements Listener {
 
 	@EventHandler
 	public void onCraft(CraftItemEvent event) {
-		if (!cash.physicalFloat() || !isCassetteRecipe(event.getRecipe())) {
+		if (!cash.advancedBank() || !isCassetteRecipe(event.getRecipe())) {
 			return;
 		}
 		if (!(event.getWhoClicked() instanceof Player player) || !player.hasPermission(Atm.SERVICE_PERM)) {

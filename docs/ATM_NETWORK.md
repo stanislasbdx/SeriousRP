@@ -1,31 +1,31 @@
 # ATM network: sATM, cassettes, sBank, sPilot
 
-Guide for operators and staff. ATMs can run in two modes, switched in config.
+Guide for operators and staff.
 
 ## Modes
 
-| Mode | Config | What players get |
+With `Economy.Cash.Enabled: true`, classic ATMs always work.
+
+| Mode | Config | What you get |
 | :--- | :--- | :--- |
-| Classic (default) | `PhysicalFloat: false` | Deposit/withdraw talk to Vault only; cash appears or vanishes at the machine |
-| Cassettes | `PhysicalFloat: true` | Deposit/withdraw move real cash through removable cassettes inside the ATM |
+| Classic (default) | `AdvancedBank: false` | `[sATM]` deposit/withdraw via Vault; cash appears or vanishes at the machine |
+| Advanced bank | `AdvancedBank: true` | Cassettes inside ATMs + `[sBank]` + `[sPilot]` |
 
 ```yaml
 Economy:
   Cash:
-    Atm:
-      PhysicalFloat: true   # false = classic ATM (default)
-      CassetteSlots: 2
-      CassetteCapacity: 50000
+    Enabled: true
+    AdvancedBank: false   # true = cassettes, sBank, sPilot
 ```
 
-With classic mode, typing `[sBank]` / `[sPilot]` is cancelled with a message to enable cassette mode first.
+If `AdvancedBank` is off, typing `[sBank]` / `[sPilot]` is cancelled with a short message.
 
 ## Quick map
 
 | Sign / item | Role |
 | :--- | :--- |
 | `[sATM]` | Player deposit / withdraw (and cash change) |
-| Cassette | Removable cash cartridge installed in an ATM |
+| Cassette | Removable cash cartridge installed in an ATM (`AdvancedBank` only) |
 | `[sBank]` | Staff vault: void / refill cassettes, restock the vault |
 | `[sPilot]` | Board listing registered ATMs and how much cash they hold |
 
@@ -58,19 +58,19 @@ With classic mode, typing `[sBank]` / `[sPilot]` is cancelled with a message to 
 2. Line 1: `[sATM]` (configurable via `Economy.Cash.Atm.SignHeader`).
 3. Requires `atm.create`. Creation may charge Vault (`Atm.CreateCost`, default `150`).
 
-The plugin rewrites the sign. In cassette mode the ATM is registered in `plugins/SeriousRP/atms.yml` and starts with **empty cassette slots** (no cash inside).
+The plugin rewrites the sign. With `AdvancedBank: true` the ATM is registered in `plugins/SeriousRP/atms.yml` and starts with **empty cassette slots**.
 
 ### Use (players)
 
 Right-click the sign (`atm.use`):
 
-- **Deposit** — physical cash → Vault balance (and into installed cassettes in cassette mode).
-- **Withdraw** — Vault → physical cash (taken from installed cassettes in cassette mode).
-- **Compact / Break** — regroup or split loose cash (same as `/cash` change helpers).
+- **Deposit** — physical cash → Vault balance (and into installed cassettes if advanced bank is on).
+- **Withdraw** — Vault → physical cash (from installed cassettes if advanced bank is on).
+- **Compact / Break** — regroup or split loose cash.
 
 Nearby players see personalized account / pocket amounts on the sign within `Atm.ViewRadius`.
 
-### Cassette mode rules (`PhysicalFloat: true`)
+### Advanced bank rules (`AdvancedBank: true`)
 
 - No cassette installed → deposit/withdraw refused.
 - Deposit fills installed cassettes up to `CassetteCapacity` each, then credits the player Vault.
@@ -86,7 +86,7 @@ Break once → confirm message; break again within **10 seconds** to destroy. In
 
 ## Cassettes
 
-Craftable only in cassette mode. Recipe defaults to an iron frame (see `Economy.Cash.Cassette.Recipe`). Crafting requires `atm.service`.
+Craftable only when `AdvancedBank` is on. Recipe defaults to an iron frame (see `Economy.Cash.Cassette.Recipe`). Crafting requires `atm.service`.
 
 ### Install / eject (service)
 
@@ -102,7 +102,7 @@ Cassettes are not wallet cash; they stay as their own item.
 
 ## sBank
 
-Staff vault used to service ATM cassettes. Only active in cassette mode.
+Staff vault used to service ATM cassettes. Only when `AdvancedBank: true`.
 
 ### Create
 
@@ -143,7 +143,7 @@ Typical courier loop:
 
 ## sPilot
 
-Network board for ATM monitoring. Only active in cassette mode.
+Network board for ATM monitoring. Only when `AdvancedBank: true`.
 
 ### Create
 
@@ -170,11 +170,12 @@ Owner needs `atm.pilot.create`; others need `atm.pilot.others`.
 ```yaml
 Economy:
   Cash:
+    Enabled: true
+    AdvancedBank: false
     Atm:
       SignHeader: "[sATM]"
       ViewRadius: 5
       CreateCost: 150
-      PhysicalFloat: false
       CassetteSlots: 2
       CassetteCapacity: 50000
       Presets: [10, 25, 50, 100]
@@ -188,7 +189,7 @@ Economy:
           I: IRON_INGOT
     Bank:
       SignHeader: "[sBank]"
-      VaultPlayer: "Banque"      # Vault account used when feeding stock
+      VaultPlayer: "Banque"
       VaultCapacity: 500000
     Pilot:
       SignHeader: "[sPilot]"
@@ -209,12 +210,12 @@ Cassette contents and sBank stock / PIN live on the sign tile PDC (world data), 
 
 ---
 
-## Suggested staff setup (cassette mode)
+## Suggested staff setup (advanced bank)
 
-1. Set `PhysicalFloat: true` and reload / restart.
+1. Set `Economy.Cash.AdvancedBank: true` and reload / restart.
 2. Ensure the Vault account `Bank.VaultPlayer` exists and holds demat funds for feeding.
 3. Grant service roles `atm.service`, `bank.access`, and create perms as needed.
 4. Place ATMs → craft/install empty cassettes → feed sBank → fill cassettes → install.
 5. Place an sPilot for ops visibility.
 
-In classic mode you only need normal ATM create/use/delete perms.
+With `AdvancedBank: false` you only need normal ATM create/use/delete perms.

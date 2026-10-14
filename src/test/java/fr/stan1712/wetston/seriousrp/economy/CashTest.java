@@ -78,7 +78,7 @@ class CashTest {
 		assertEquals(32, cash.breakPieceCap());
 		assertEquals(10, cash.breakMaxDenomination());
 		assertEquals("[sATM]", cash.atmHeader());
-		assertFalse(cash.physicalFloat());
+		assertFalse(cash.advancedBank());
 		assertEquals(2, cash.cassetteSlots());
 		assertEquals(50_000, cash.cassetteCapacity());
 		assertEquals("[sBank]", cash.bankHeader());
@@ -129,7 +129,7 @@ class CashTest {
 		assertEquals(Material.PAPER, cash.recipeIngredients().get('P'));
 		assertEquals(64, cash.breakPieceCap());
 		assertEquals(20, cash.breakMaxDenomination());
-		assertFalse(cash.physicalFloat());
+		assertFalse(cash.advancedBank());
 		assertEquals(Material.CHEST, cash.cassetteMaterial());
 		assertEquals("Banque", cash.bankVaultPlayer());
 		assertTrue(cash.isBankHeader("[sBank]"));
@@ -137,9 +137,9 @@ class CashTest {
 	}
 
 	@Test
-	void fromConfigReadsPhysicalFloatCassetteAndBank() {
+	void fromConfigReadsAdvancedBankCassetteAndBank() {
 		YamlConfiguration config = new YamlConfiguration();
-		config.set("Economy.Cash.Atm.PhysicalFloat", true);
+		config.set("Economy.Cash.AdvancedBank", true);
 		config.set("Economy.Cash.Atm.CassetteSlots", 3);
 		config.set("Economy.Cash.Atm.CassetteCapacity", 12_000);
 		config.set("Economy.Cash.Cassette.Material", "IRON_BLOCK");
@@ -151,7 +151,7 @@ class CashTest {
 		config.set("Economy.Cash.Denominations", List.of(Map.of("value", 1, "material", "GOLD_NUGGET")));
 
 		Cash cash = Cash.fromConfig(config);
-		assertTrue(cash.physicalFloat());
+		assertTrue(cash.advancedBank());
 		assertEquals(3, cash.cassetteSlots());
 		assertEquals(12_000, cash.cassetteCapacity());
 		assertEquals(Material.IRON_BLOCK, cash.cassetteMaterial());
