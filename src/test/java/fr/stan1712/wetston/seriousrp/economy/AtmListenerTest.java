@@ -42,6 +42,7 @@ import org.mockito.quality.Strictness;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -199,6 +200,15 @@ class AtmListenerTest extends ConfigBackedTest {
 	@Test
 	void breakRequiresOwnerPermissions() {
 		when(signPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING))).thenReturn(playerId.toString());
+		Location location = mock(Location.class);
+		org.bukkit.World world = mock(org.bukkit.World.class);
+		when(block.getLocation()).thenReturn(location);
+		when(location.getWorld()).thenReturn(world);
+		when(world.getName()).thenReturn("world");
+		when(location.getBlockX()).thenReturn(1);
+		when(location.getBlockY()).thenReturn(2);
+		when(location.getBlockZ()).thenReturn(3);
+
 		BlockBreakEvent event = mock(BlockBreakEvent.class);
 		when(event.getBlock()).thenReturn(block);
 		when(event.getPlayer()).thenReturn(player);
@@ -208,11 +218,17 @@ class AtmListenerTest extends ConfigBackedTest {
 		verify(event).setCancelled(true);
 
 		when(player.hasPermission(Atm.DELETE_PERM)).thenReturn(true);
-		BlockBreakEvent allowed = mock(BlockBreakEvent.class);
-		when(allowed.getBlock()).thenReturn(block);
-		when(allowed.getPlayer()).thenReturn(player);
-		listener.onBreak(allowed);
-		verify(allowed, never()).setCancelled(true);
+		BlockBreakEvent first = mock(BlockBreakEvent.class);
+		when(first.getBlock()).thenReturn(block);
+		when(first.getPlayer()).thenReturn(player);
+		listener.onBreak(first);
+		verify(first).setCancelled(true);
+
+		BlockBreakEvent confirmed = mock(BlockBreakEvent.class);
+		when(confirmed.getBlock()).thenReturn(block);
+		when(confirmed.getPlayer()).thenReturn(player);
+		listener.onBreak(confirmed);
+		verify(confirmed, never()).setCancelled(true);
 	}
 
 	@Test
@@ -396,7 +412,8 @@ class AtmListenerTest extends ConfigBackedTest {
 			invocation.getArgument(1, Runnable.class).run();
 			return mock(BukkitTask.class);
 		});
-		AtmListener live = new AtmListener(plugin, cash, walletItems);
+		when(plugin.getDataFolder()).thenReturn(new java.io.File("build/tmp-atm-test"));
+		AtmListener live = new AtmListener(plugin, cash, walletItems, new CassetteItems(plugin, cash, recipe -> {}, key -> {}));
 		when(player.hasPermission(Atm.CREATE_PERM)).thenReturn(true);
 		BlockState plain = mock(BlockState.class);
 		Block notTile = mock(Block.class);
@@ -818,6 +835,73 @@ class AtmListenerTest extends ConfigBackedTest {
 		AtmListener.Holder holder = new AtmListener.Holder(location);
 		assertEquals(location, holder.location());
 		assertThrows(UnsupportedOperationException.class, holder::getInventory);
+	}
+
+	@Test
+	void physicalFloatDepositWithdrawThroughCassettes() {
+		YamlConfiguration floatConfig = new YamlConfiguration();
+		floatConfig.set("Economy.Cash.Enabled", true);
+		floatConfig.set("Economy.Cash.Atm.PhysicalFloat", true);
+		floatConfig.set("Economy.Cash.Atm.CassetteSlots", 2);
+		floatConfig.set("Economy.Cash.Atm.CassetteCapacity", 100);
+		floatConfig.set("Economy.Cash.Atm.CreateCost", 0);
+		floatConfig.set("Economy.Cash.Denominations", List.of(
+			Map.of("value", 1, "material", "GOLD_NUGGET"),
+			Map.of("value", 10, "material", "PAPER")
+		));
+		Cash floatCash = Cash.fromConfig(floatConfig);
+		CassetteItems items = new CassetteItems(plugin, floatCash, recipe -> {}, key -> {});
+		AtmListener floatListener = new AtmListener(
+			plugin,
+			floatCash,
+			walletItems,
+			items,
+			null,
+			null,
+			bank,
+			Runnable::run,
+			(h, s, t) -> gui
+		);
+		org.bukkit.World world = mock(org.bukkit.World.class);
+		Location location = mock(Location.class);
+		when(location.getWorld()).thenReturn(world);
+		when(location.getBlock()).thenReturn(block);
+		when(world.getName()).thenReturn("world");
+
+		List<Optional<Cassette.Payload>> installed = AtmCassettes.install(
+			AtmCassettes.emptySlots(2),
+			0,
+			Cassette.empty()
+		).orElseThrow();
+		when(signPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING)))
+			.thenReturn(AtmCassettes.toJson(installed));
+
+		ItemStack cashTen = cashItem(10, 5);
+		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[] {cashTen, null, null});
+		account.set(0);
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			assertTrue(floatListener.deposit(player, 40, location));
+		}
+		assertEquals(40, account.get());
+		verify(signPdc).set(any(NamespacedKey.class), eq(PersistentDataType.STRING), contains("\""));
+
+		when(signPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING)))
+			.thenReturn(AtmCassettes.toJson(
+				AtmCassettes.deposit(installed, 40, floatCash.descendingValues(), 100).orElseThrow()
+			));
+		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[] {null, null, null});
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			assertTrue(floatListener.withdraw(player, 10, location));
+		}
+		assertEquals(30, account.get());
+
+		when(signPdc.get(any(NamespacedKey.class), eq(PersistentDataType.STRING)))
+			.thenReturn(AtmCassettes.toJson(AtmCassettes.emptySlots(2)));
+		ItemStack leftover = cashItem(10, 1);
+		when(playerInventory.getStorageContents()).thenReturn(new ItemStack[] {leftover, null, null});
+		try (MockedConstruction<ItemStack> ignored = mockConstruction(ItemStack.class, ItemStackMetaStubs.persistentMeta())) {
+			assertFalse(floatListener.deposit(player, 10, location));
+		}
 	}
 
 	private ItemStack cashItem(int denomination, int amount) {
