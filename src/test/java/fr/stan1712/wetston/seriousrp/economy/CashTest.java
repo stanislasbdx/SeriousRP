@@ -78,6 +78,11 @@ class CashTest {
 		assertEquals(32, cash.breakPieceCap());
 		assertEquals(10, cash.breakMaxDenomination());
 		assertEquals("[sATM]", cash.atmHeader());
+		assertFalse(cash.physicalFloat());
+		assertEquals(2, cash.cassetteSlots());
+		assertEquals(50_000, cash.cassetteCapacity());
+		assertEquals("[sBank]", cash.bankHeader());
+		assertEquals("[sPilot]", cash.pilotHeader());
 		assertTrue(cash.isAtmHeader("§a[sATM]"));
 		assertTrue(cash.isAtmHeader(" [satm] "));
 		assertFalse(cash.isAtmHeader("[ATM]"));
@@ -124,6 +129,37 @@ class CashTest {
 		assertEquals(Material.PAPER, cash.recipeIngredients().get('P'));
 		assertEquals(64, cash.breakPieceCap());
 		assertEquals(20, cash.breakMaxDenomination());
+		assertFalse(cash.physicalFloat());
+		assertEquals(Material.CHEST, cash.cassetteMaterial());
+		assertEquals("Banque", cash.bankVaultPlayer());
+		assertTrue(cash.isBankHeader("[sBank]"));
+		assertTrue(cash.isPilotHeader("[sPilot]"));
+	}
+
+	@Test
+	void fromConfigReadsPhysicalFloatCassetteAndBank() {
+		YamlConfiguration config = new YamlConfiguration();
+		config.set("Economy.Cash.Atm.PhysicalFloat", true);
+		config.set("Economy.Cash.Atm.CassetteSlots", 3);
+		config.set("Economy.Cash.Atm.CassetteCapacity", 12_000);
+		config.set("Economy.Cash.Cassette.Material", "IRON_BLOCK");
+		config.set("Economy.Cash.Cassette.CustomModelData", 9);
+		config.set("Economy.Cash.Bank.SignHeader", "[Vault]");
+		config.set("Economy.Cash.Bank.VaultPlayer", "Central");
+		config.set("Economy.Cash.Bank.VaultCapacity", 99);
+		config.set("Economy.Cash.Pilot.SignHeader", "[Net]");
+		config.set("Economy.Cash.Denominations", List.of(Map.of("value", 1, "material", "GOLD_NUGGET")));
+
+		Cash cash = Cash.fromConfig(config);
+		assertTrue(cash.physicalFloat());
+		assertEquals(3, cash.cassetteSlots());
+		assertEquals(12_000, cash.cassetteCapacity());
+		assertEquals(Material.IRON_BLOCK, cash.cassetteMaterial());
+		assertEquals(9, cash.cassetteCustomModelData().orElse(0));
+		assertTrue(cash.isBankHeader("[Vault]"));
+		assertEquals("Central", cash.bankVaultPlayer());
+		assertEquals(99, cash.bankVaultCapacity());
+		assertTrue(cash.isPilotHeader("[Net]"));
 	}
 
 	@Test
