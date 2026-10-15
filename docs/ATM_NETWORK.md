@@ -1,239 +1,90 @@
-# ATM network: sATM, cassettes, sBank, sPilot
+# ATMs, cassettes, and the bank
 
-Guide for operators and staff.
+Practical guide. Permissions and commands live on their own page.
 
-## Modes
+Cash has to be enabled. There are two ways to run the machines.
 
-With `Economy.Cash.Enabled: true`, classic ATMs always work.
+**Classic.** Players use an ATM like a normal one. Deposit turns the bills in their pocket into account money. Withdraw does the opposite. Nothing has to sit inside the machine.
 
-| Mode | Config | What you get |
-| :--- | :--- | :--- |
-| Classic (default) | `AdvancedBank: false` | `[sATM]` deposit/withdraw via Vault; cash appears or vanishes at the machine |
-| Advanced bank | `AdvancedBank: true` | Cassettes inside ATMs + `[sBank]` + `[sPilot]` |
+**Advanced bank.** Turn on `Economy.Cash.AdvancedBank`. The ATM only moves money that is physically inside a cassette. Staff fill and empty those cassettes at a bank vault, and a pilot board shows the network.
 
-```yaml
-Economy:
-  Cash:
-    Enabled: true
-    AdvancedBank: false   # true = cassettes, sBank, sPilot
-```
+If advanced bank is off, `[sBank]` and `[sPilot]` signs do nothing.
 
-If `AdvancedBank` is off, typing `[sBank]` / `[sPilot]` is cancelled with a short message.
+## Place an ATM
 
-## Quick map
+Put a sign and write `[sATM]` on the first line. The plugin rewrites the sign.
 
-| Sign / item | Role |
-| :--- | :--- |
-| `[sATM]` | Player deposit / withdraw (and cash change) |
-| Cassette | Removable cash cartridge installed in an ATM (`AdvancedBank` only) |
-| `[sBank]` | Staff vault: move cash between a cassette and the bank stock |
-| `[sPilot]` | Board listing registered ATMs and how much cash they hold |
+Creating one can cost account money. The price is `CreateCost` in the config (150 by default). Set it to 0 to make them free.
 
----
+Players standing nearby see their own account and the cash in their pocket on the sign.
 
-## Permissions
+## Use an ATM
 
-| Permission | Default | Use |
-| :--- | :---: | :--- |
-| `seriousrp.economy.atm.create` | op | Place an `[sATM]` sign |
-| `seriousrp.economy.atm.delete` | op | Break your own ATM |
-| `seriousrp.economy.atm.delete.others` | op | Break someone else’s ATM |
-| `seriousrp.economy.atm.use` | true | Open / use an ATM |
-| `seriousrp.economy.atm.service` | op | Drag cassettes into an ATM |
-| `seriousrp.economy.atm.rename` | op | Rename any ATM. The owner can rename their own without this |
-| `seriousrp.economy.bank.create` | op | Place an `[sBank]` sign |
-| `seriousrp.economy.bank.delete` | op | Break your own sBank |
-| `seriousrp.economy.bank.delete.others` | op | Break someone else’s sBank |
-| `seriousrp.economy.bank.access` | op | Open an sBank (after PIN) |
-| `seriousrp.economy.bank.access.bypass` | op | Open sBank without PIN |
-| `seriousrp.economy.atm.pilot.create` | op | Place an `[sPilot]` sign |
-| `seriousrp.economy.atm.pilot.others` | op | See every ATM on the pilot board |
+Right-click the sign.
 
----
+- **Deposit** moves cash from your pocket to your account.
+- **Withdraw** does the reverse and gives you bills.
+- **Group** and **Break** only change the bills you are already holding: larger notes, or smaller change.
 
-## sATM
-
-### Create
-
-1. Place a sign.
-2. Line 1: `[sATM]` (configurable via `Economy.Cash.Atm.SignHeader`).
-3. Requires `atm.create`. Creation may charge Vault (`Atm.CreateCost`, default `150`).
-
-The plugin rewrites the sign. With `AdvancedBank: true` the ATM is registered in `plugins/SeriousRP/atms.yml` and starts with **empty cassette slots**.
-
-### Use (players)
-
-Right-click the sign (`atm.use`):
-
-- **Deposit** — physical cash → Vault balance (and into installed cassettes if advanced bank is on).
-- **Withdraw** — Vault → physical cash (from installed cassettes if advanced bank is on).
-- **Compact / Break** — regroup or split loose cash.
-
-Nearby players see personalized account / pocket amounts on the sign within `Atm.ViewRadius`.
+Amounts are the presets, everything you can move, or a custom number typed in chat. `cancel` aborts that prompt.
 
 ### Rename
 
-The owner, or anyone with `atm.rename`, sees **Rename this ATM** in the ATM menu. The name is typed in chat (15 characters, `cancel` aborts). It replaces the sign title, the ATM window title, and the sPilot row. Unnamed ATMs stay listed by world and coordinates.
+The owner sees **Rename this ATM** in the menu. Staff who are allowed to rename any machine see it too. Type a name of up to 15 characters. It shows on the sign, in the ATM window, and on the pilot board. An ATM with no name is listed by its place in the world.
 
-### Advanced bank rules (`AdvancedBank: true`)
+### Remove
 
-- No cassette installed → deposit/withdraw refused.
-- Deposit fills installed cassettes up to `CassetteCapacity` each, then credits the player Vault.
-- Withdraw takes cash from installed cassettes and debits the player Vault.
-- Full cassettes refuse further deposit; empty cassettes refuse withdraw.
-
-### Break
-
-Requires `atm.delete` (own) or `atm.delete.others`.  
-Break once → confirm message; break again within **10 seconds** to destroy. Installed cassettes drop as items.
-
----
+Break the sign once and you get a confirm message. Break it again within 10 seconds. If cassettes were installed, they drop.
 
 ## Cassettes
 
-Craftable by anyone while `AdvancedBank` is on. Recipe defaults to an iron frame (see `Economy.Cash.Cassette.Recipe`). A successful craft tells the player to right-click the cassette and lock it. Putting a cassette into an ATM still requires `atm.service`.
+Only with advanced bank on. Anyone can craft one: an iron frame, empty in the middle. The craft message tells you to lock it.
 
-### PIN
+The item is named like `Cassette #f4de5`. That short id is the one written in the ATM log, so you can follow a cassette when it is installed, removed, filled, emptied, or wiped.
 
-Right-click a cassette (not a sign):
+### Lock and open
 
-1. First time → chat asks for a **4-digit code**. That code is saved on the item.
-2. Later → enter the code to open a read-only view of the bills inside.
-3. Three wrong codes destroy the cash and say how much was destroyed. The item and the code stay. Type `cancel` to abort.
+Right-click the cassette in the air, not on a sign.
 
-The item name shows a short id, for example `Cassette #f4de5`. The same id is written in `atm.log` for install, eject, bank moves, edits, and wipes.
+The first time, chat asks for a 4-digit code. Later, the same code opens it. `cancel` aborts.
 
-After the code is accepted, the cassette opens like a wallet: put cash in, take cash out. Closing it saves the contents, up to `CassetteCapacity`. Bills use the same items as loose cash, so the resource-pack texture applies.
+Inside, it works like a wallet. Put bills in, take bills out, close it to save. It cannot hold more than its capacity. If it is very full, take some bills out and open it again to reach the rest.
 
-### Install / eject (service)
+Three wrong codes destroy the money inside. Chat says how much was lost. The cassette and its code stay, empty.
 
-Open the ATM GUI with `atm.service`:
+A cassette glows only when it actually holds cash.
 
-- The bottom row is real cassette slots. How many depends on `Atm.CassetteSlots`, capped at 8. The bottom-right slot is the cash total.
-- Drag a cassette from your inventory into an empty slot.
-- Drag it back out to eject it.
-- Anyone without `atm.service` still uses the ATM, but the cassette row stays locked.
+### Load an ATM
 
-Cassettes are not wallet cash; they stay as their own item.
+Open the ATM as someone allowed to service it. The bottom row is the cassette slots (up to 8, set by `CassetteSlots`). The bottom-right slot is only a total, not a slot.
 
----
+Drag a cassette from your inventory into an empty slot. Drag it back out to take it. Other players still use the ATM, they just cannot touch that row.
 
-## sBank
+Without a cassette, deposit and withdraw are refused. A deposit fills the cassettes, then credits the player. A withdraw takes cash out of the cassettes, then debits the player. A full machine refuses more deposits. An empty one refuses withdrawals.
 
-Staff vault used to service ATM cassettes. Only when `AdvancedBank: true`.
+## Bank vault
 
-### Create
+Sign, first line `[sBank]`. Only with advanced bank on.
 
-1. Sign line 1: `[sBank]`.
-2. Requires `bank.create`.
+The first person to open it chooses a 4-digit code for that vault. Everyone else types the code. `cancel` aborts. Staff who are allowed to skip the code walk straight in.
 
-### Access + PIN
+One slot in the middle. Drop a cassette there, then either:
 
-Right-click with `bank.access`:
+- empty it into the bank, or
+- fill it from the bank, for a chosen amount or until the cassette is full.
 
-1. First open → chat asks for a **4-digit PIN** (set).
-2. Later opens → enter that PIN.
-3. Type `cancel` to abort.
-4. `bank.access.bypass` skips the PIN and opens the GUI immediately.
+Closing the vault gives the cassette back. The stock you see is the only cash the vault holds. A button glows when that move can actually happen.
 
-### GUI actions
+Break works like an ATM: confirm within 10 seconds. Whatever is still in the vault drops as bills.
 
-One slot in the middle of the vault GUI. Drag a cassette into it, then:
+A usual run: pull the cassette out of the ATM, empty or fill it at the bank, put it back.
 
-| Action | Effect |
-| :--- | :--- |
-| **Empty the cassette into the bank** | Move the cassette cash into the vault stock, up to `VaultCapacity`. |
-| **Move N / Fill the cassette** | Move that much stock into the cassette, up to cassette capacity and available stock. |
+## Pilot board
 
-Closing the GUI gives the cassette back. Stock is the only cash the vault holds. Buttons glow only when that move is actually possible, and the stock icon glows only when the vault holds cash.
+Sign, first line `[sPilot]`. Right-click for the list of ATMs.
 
-Typical courier loop:
+You see the machines you own. Staff who can see the whole network see every ATM. Each line is the ATM name, or its place in the world, and how much cash is in its cassettes. A machine with no cassette is marked as empty.
 
-1. Drag cassette(s) out of the ATM.
-2. At sBank, drop a cassette in the slot and empty it into the bank, or fill it from the bank.
-3. Drag the cassette back into an ATM slot.
+## Turn the advanced bank on
 
-### Break
-
-`bank.delete` / `bank.delete.others` + confirm within 10 seconds. Remaining stock drops as physical cash.
-
----
-
-## sPilot
-
-Network board for ATM monitoring. Only when `AdvancedBank: true`.
-
-### Create
-
-1. Sign line 1: `[sPilot]`.
-2. Requires `atm.pilot.create`.
-
-### Use
-
-Right-click to open the list:
-
-- Without `atm.pilot.others` → only ATMs you own.
-- With `atm.pilot.others` → every registered ATM.
-
-Each row shows world / coords and either total cash in cassettes or “no cassette”.
-
-### Break
-
-Owner needs `atm.pilot.create`; others need `atm.pilot.others`.
-
----
-
-## Config reference
-
-```yaml
-Economy:
-  Cash:
-    Enabled: true
-    AdvancedBank: false
-    Atm:
-      SignHeader: "[sATM]"
-      ViewRadius: 5
-      CreateCost: 150
-      CassetteSlots: 2
-      CassetteCapacity: 50000
-      Presets: [10, 25, 50, 100]
-    Cassette:
-      Material: CHEST
-      CustomModelData: 1
-      DisplayName: "&8Cassette"
-      Recipe:
-        Shape: ["III", "I I", "III"]
-        Ingredients:
-          I: IRON_INGOT
-    Bank:
-      SignHeader: "[sBank]"
-      VaultPlayer: "Banque"
-      VaultCapacity: 500000
-    Pilot:
-      SignHeader: "[sPilot]"
-```
-
-Messages under `Economy.Cash.Cassette.*`, `Bank.*`, and `Pilot.*` are editable in `config.yml`.
-
----
-
-## Persistence & logs
-
-| File | Content |
-| :--- | :--- |
-| `plugins/SeriousRP/atms.yml` | Registered ATM locations + owners (for sPilot) |
-| `plugins/SeriousRP/logs/atm.log` | Append-only ops: OPEN, DEPOSIT, WITHDRAW, INSTALL, EJECT, BANK_*, BREAK_* |
-
-Cassette contents and sBank stock / PIN live on the sign tile PDC (world data), not in those YAML files.
-
----
-
-## Suggested staff setup (advanced bank)
-
-1. Set `Economy.Cash.AdvancedBank: true` and reload / restart.
-2. Grant service roles `atm.service`, `bank.access`, and create perms as needed.
-3. Place ATMs → craft cassettes → drag them into the ATM.
-4. Use sBank to move cash between a cassette and the vault stock.
-5. Place an sPilot for ops visibility.
-
-With `AdvancedBank: false` you only need normal ATM create/use/delete perms.
+Set `Economy.Cash.AdvancedBank` to `true`, then reload or restart. Place the ATMs, craft and lock cassettes, drag them into the machines, and use a bank vault when they need cash. A pilot board is optional. It is only there so staff can see the network.
