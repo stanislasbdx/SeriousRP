@@ -1,10 +1,22 @@
-# ATMs, cassettes, and the bank
+# Cash, ATMs, and the bank
 
 Practical guide. Permissions and commands live on their own page.
 
-Cash has to be enabled. There are two ways to run the machines.
+There are two kinds of money. The **account** is the Vault balance: what the player has at the bank, with no item in their inventory. **Cash** is physical. It sits in the inventory as coins and bills, and it can be stolen, dropped, or lost like any other item.
 
-**Classic.** Players use an ATM like a normal one. Deposit turns the bills in their pocket into account money. Withdraw does the opposite. Nothing has to sit inside the machine.
+Cash has to be enabled. The default pieces are a 1 coin, a 2 coin, then bills of 5, 10, 20, 50, 100, 200, and 500. Players get them by withdrawing at an ATM. Staff can also turn account money into cash for someone.
+
+## Wallet
+
+A wallet is a craft: leather around a piece of paper. Hold it in the main hand and right-click to open it. Only coins and bills go inside. Close it and they stay in the wallet instead of filling the inventory. The wallet glows when it holds cash.
+
+The usual size is 18 slots. Some players can craft a smaller or a larger one. Craft them one at a time.
+
+Loose cash and cash inside wallets both count as what you have on you. An ATM deposit can take from either. A withdraw always gives loose bills and coins.
+
+## Two ways to run the machines
+
+**Classic.** Deposit turns the cash you are holding into account money. Withdraw does the opposite. Nothing has to sit inside the machine.
 
 **Advanced bank.** Turn on `Economy.Cash.AdvancedBank`. The ATM only moves money that is physically inside a cassette. Staff fill and empty those cassettes at a bank vault, and a pilot board shows the network.
 
@@ -22,9 +34,9 @@ Players standing nearby see their own account and the cash in their pocket on th
 
 Right-click the sign.
 
-- **Deposit** moves cash from your pocket to your account.
-- **Withdraw** does the reverse and gives you bills.
-- **Group** and **Break** only change the bills you are already holding: larger notes, or smaller change.
+- **Deposit** moves cash from your pocket and your wallets to your account.
+- **Withdraw** does the reverse and gives you loose coins and bills.
+- **Group** and **Break** only change the loose cash you are holding, not what is inside a wallet: larger notes, or smaller change.
 
 Amounts are the presets, everything you can move, or a custom number typed in chat. `cancel` aborts that prompt.
 
