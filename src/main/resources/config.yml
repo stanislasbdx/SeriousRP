@@ -118,11 +118,13 @@ Economy:
       LoreTotal: "&7Content : &e%amount%%currency%"
       Recipe:
         Shape:
-          - "III"
-          - "I I"
-          - "III"
+          - "BIB"
+          - "IRI"
+          - "BIB"
         Ingredients:
+          B: IRON_BLOCK
           I: IRON_INGOT
+          R: BARREL
       EmptySlot: "&8Empty cassette slot"
       Installed: "&aCassette : &f%amount%%currency%"
       NoCassette: "&cThis ATM has no cassette"
@@ -145,6 +147,11 @@ Economy:
       MoreInside: "&eTake some bills out to reach the rest."
       ShiftCraft: "&cCraft cassettes one at a time"
       DeniedCraft: "&cYou can't craft cassettes"
+      LogButton: "&eCassette log"
+      LogTitle: "&8Cassette log"
+      LogTitleOne: "&8Cassette #%id%"
+      LogEmpty: "&7No cassette movement yet"
+      LogDenied: "&cYou can't read the cassette log"
       BreakConfirm: "&eBreak again to confirm. Installed cassettes will drop."
     Bank:
       SignHeader: "[sBank]"

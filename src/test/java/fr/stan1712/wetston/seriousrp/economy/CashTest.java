@@ -251,6 +251,9 @@ class CashTest {
 	void changeSettingsDefaultAndClampNonPositiveValues() {
 		assertEquals(64, Cash.fromConfig(new YamlConfiguration()).breakPieceCap());
 		assertEquals(20, Cash.fromConfig(new YamlConfiguration()).breakMaxDenomination());
+		assertEquals(List.of("BIB", "IRI", "BIB"), Cash.fromConfig(new YamlConfiguration()).cassetteRecipeShape());
+		assertEquals(Material.BARREL, Cash.fromConfig(new YamlConfiguration()).cassetteRecipeIngredients().get('R'));
+		assertEquals(Material.IRON_BLOCK, Cash.fromConfig(new YamlConfiguration()).cassetteRecipeIngredients().get('B'));
 		YamlConfiguration config = new YamlConfiguration();
 		config.set("Economy.Cash.Change.BreakPieceCap", 0);
 		config.set("Economy.Cash.Change.BreakMaxDenomination", -8);

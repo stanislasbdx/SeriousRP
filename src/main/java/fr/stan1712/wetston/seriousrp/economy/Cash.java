@@ -39,7 +39,12 @@ public final class Cash {
 	private static final int DEFAULT_CASSETTE_CAPACITY = 50_000;
 	private static final int DEFAULT_BANK_CAPACITY = 500_000;
 	private static final List<String> DEFAULT_RECIPE_SHAPE = List.of(" L ", "LPL", " L ");
-	private static final List<String> DEFAULT_CASSETTE_SHAPE = List.of("III", "I I", "III");
+	private static final List<String> DEFAULT_CASSETTE_SHAPE = List.of("BIB", "IRI", "BIB");
+	private static final Map<Character, Material> DEFAULT_CASSETTE_INGREDIENTS = Map.of(
+		'B', Material.IRON_BLOCK,
+		'I', Material.IRON_INGOT,
+		'R', Material.BARREL
+	);
 	private static final Pattern COLOR_CODE = Pattern.compile("§[0-9a-fk-orxA-FK-ORX]");
 
 	public record Denomination(int value, Material material, String displayName, Integer customModelData) {
@@ -233,7 +238,7 @@ public final class Cash {
 			config.getConfigurationSection("Economy.Cash.Cassette.Recipe.Ingredients")
 		);
 		if (cassetteIngredients.isEmpty()) {
-			cassetteIngredients = Map.of('I', Material.IRON_INGOT);
+			cassetteIngredients = DEFAULT_CASSETTE_INGREDIENTS;
 		}
 		int cassetteModel = config.getInt("Economy.Cash.Cassette.CustomModelData", 1);
 		Integer cassetteCustomModelData = cassetteModel > 0 ? cassetteModel : null;
