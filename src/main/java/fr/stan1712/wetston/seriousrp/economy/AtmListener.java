@@ -52,6 +52,7 @@ public final class AtmListener implements Listener {
 	static final int POCKET_SLOT = 5;
 	static final int DEPOSIT_START = 10;
 	static final int WITHDRAW_START = 19;
+	static final int LOG_SLOT = 28;
 	static final int COMPACT_SLOT = 30;
 	static final int BREAK_SLOT = 32;
 	static final int RENAME_SLOT = 34;
@@ -81,6 +82,7 @@ public final class AtmListener implements Listener {
 	private final NamespacedKey nameKey;
 	private final NamespacedKey cassettesKey;
 	private final NamespacedKey opKey;
+	private final NamespacedKey logKey;
 	private final NamespacedKey amountKey;
 	private final NamespacedKey allKey;
 	private final NamespacedKey customKey;
@@ -147,6 +149,7 @@ public final class AtmListener implements Listener {
 		this.nameKey = new NamespacedKey(plugin, Cash.ATM_NAME_PDC_KEY);
 		this.cassettesKey = new NamespacedKey(plugin, Cash.ATM_CASSETTES_PDC_KEY);
 		this.opKey = new NamespacedKey(plugin, OP_KEY);
+		this.logKey = new NamespacedKey(plugin, "srp-atm-log");
 		this.amountKey = new NamespacedKey(plugin, AMOUNT_KEY);
 		this.allKey = new NamespacedKey(plugin, ALL_KEY);
 		this.customKey = new NamespacedKey(plugin, CUSTOM_KEY);
@@ -291,6 +294,10 @@ public final class AtmListener implements Listener {
 			return;
 		}
 		var pdc = current.getItemMeta().getPersistentDataContainer();
+		if ("1".equals(pdc.get(logKey, PersistentDataType.STRING))) {
+			CassetteLog.open(player, inventories::create, logger, null);
+			return;
+		}
 		String opRaw = pdc.get(opKey, PersistentDataType.STRING);
 		if (opRaw == null) {
 			return;
@@ -668,6 +675,9 @@ public final class AtmListener implements Listener {
 			getConfigString("Economy.Cash.AtmGui.Compact")));
 		inventory.setItem(BREAK_SLOT, button(Material.IRON_NUGGET, Atm.Operation.BREAK, null, false, false,
 			getConfigString("Economy.Cash.AtmGui.Break")));
+		if (player.hasPermission(Atm.LOG_PERM)) {
+			inventory.setItem(LOG_SLOT, logButton());
+		}
 		if (inventory.getHolder() instanceof Holder holder && canRename(player, holder.location())) {
 			inventory.setItem(RENAME_SLOT, button(Material.NAME_TAG, Atm.Operation.RENAME, null, false, false,
 				getConfigString("Economy.Cash.AtmGui.Rename")));
@@ -961,6 +971,16 @@ public final class AtmListener implements Listener {
 		if (glow) {
 			Cash.applyGlow(meta);
 		}
+		item.setItemMeta(meta);
+		return item;
+	}
+
+	private ItemStack logButton() {
+		ItemStack item = new ItemStack(Material.PAPER);
+		ItemMeta meta = item.getItemMeta();
+		assert meta != null;
+		meta.setDisplayName(getConfigString("Economy.Cash.Cassette.LogButton"));
+		meta.getPersistentDataContainer().set(logKey, PersistentDataType.STRING, "1");
 		item.setItemMeta(meta);
 		return item;
 	}

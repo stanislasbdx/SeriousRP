@@ -43,6 +43,7 @@ public final class BankListener implements Listener {
 	static final int CASSETTE_SLOT = 13;
 	static final int EMPTY_SLOT = 15;
 	static final int FILL_START = 19;
+	static final int LOG_SLOT = 8;
 
 	enum Op {
 		EMPTY,
@@ -86,6 +87,7 @@ public final class BankListener implements Listener {
 	private final NamespacedKey opKey;
 	private final NamespacedKey amountKey;
 	private final NamespacedKey allKey;
+	private final NamespacedKey logKey;
 	private final MainThread mainThread;
 	private final InventoryFactory inventories;
 	private final Map<UUID, PinPrompt> prompts = new ConcurrentHashMap<>();
@@ -123,6 +125,7 @@ public final class BankListener implements Listener {
 		this.opKey = new NamespacedKey(plugin, OP_KEY);
 		this.amountKey = new NamespacedKey(plugin, AMOUNT_KEY);
 		this.allKey = new NamespacedKey(plugin, ALL_KEY);
+		this.logKey = new NamespacedKey(plugin, "srp-bank-log");
 		this.mainThread = mainThread;
 		this.inventories = inventories;
 	}
@@ -266,12 +269,16 @@ public final class BankListener implements Listener {
 			return;
 		}
 		String opRaw = current.getItemMeta().getPersistentDataContainer().get(opKey, PersistentDataType.STRING);
+		Inventory top = event.getView().getTopInventory();
+		Optional<Cassette.Payload> held = cassetteItems.read(top.getItem(CASSETTE_SLOT));
+		if ("1".equals(current.getItemMeta().getPersistentDataContainer().get(logKey, PersistentDataType.STRING))) {
+			CassetteLog.open(player, inventories::create, logger, held.map(Cassette.Payload::id).orElse(null));
+			return;
+		}
 		if (opRaw == null) {
 			return;
 		}
 		Op op = Op.valueOf(opRaw);
-		Inventory top = event.getView().getTopInventory();
-		Optional<Cassette.Payload> held = cassetteItems.read(top.getItem(CASSETTE_SLOT));
 		if (held.isEmpty()) {
 			player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.NoCassette"));
 			return;
@@ -485,17 +492,17 @@ public final class BankListener implements Listener {
 	private void openGui(Player player, Location location) {
 		Holder holder = new Holder(location);
 		Inventory inventory = inventories.create(holder, GUI_SIZE, getConfigString("Economy.Cash.Bank.Title"));
-		fillGui(inventory, location);
+		fillGui(inventory, player, location);
 		player.openInventory(inventory);
 	}
 
 	private void refresh(Player player, Location location) {
 		if (player.getOpenInventory().getTopInventory().getHolder() instanceof Holder) {
-			fillGui(player.getOpenInventory().getTopInventory(), location);
+			fillGui(player.getOpenInventory().getTopInventory(), player, location);
 		}
 	}
 
-	private void fillGui(Inventory inventory, Location location) {
+	private void fillGui(Inventory inventory, Player player, Location location) {
 		int stock = readStock(location.getBlock());
 		ItemStack sitting = inventory.getItem(CASSETTE_SLOT);
 		Optional<Cassette.Payload> payload = cassetteItems.read(sitting);
@@ -513,6 +520,9 @@ public final class BankListener implements Listener {
 		boolean roomInCassette = hasCassette && payload.get().total() < cash.cassetteCapacity();
 		inventory.setItem(STOCK_SLOT, info(Material.GOLD_BLOCK, cash.applyAmount(
 			getConfigString("Economy.Cash.Bank.Stock"), stock), stock > 0));
+		if (player.hasPermission(Atm.LOG_PERM)) {
+			inventory.setItem(LOG_SLOT, logButton());
+		}
 		inventory.setItem(EMPTY_SLOT, action(Material.HOPPER, Op.EMPTY, null, false, hasCash && roomInBank,
 			getConfigString("Economy.Cash.Bank.EmptyIntoBank")));
 		int slot = FILL_START;
@@ -528,6 +538,16 @@ public final class BankListener implements Listener {
 			inventory.setItem(slot, action(Material.SUNFLOWER, Op.FILL, null, true, canFill,
 				getConfigString("Economy.Cash.Bank.FillAll")));
 		}
+	}
+
+	private ItemStack logButton() {
+		ItemStack item = new ItemStack(Material.PAPER);
+		ItemMeta meta = item.getItemMeta();
+		assert meta != null;
+		meta.setDisplayName(getConfigString("Economy.Cash.Cassette.LogButton"));
+		meta.getPersistentDataContainer().set(logKey, PersistentDataType.STRING, "1");
+		item.setItemMeta(meta);
+		return item;
 	}
 
 	private ItemStack action(Material material, Op op, Integer amount, boolean all, boolean glow, String name) {

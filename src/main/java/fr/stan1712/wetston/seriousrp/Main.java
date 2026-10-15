@@ -16,6 +16,7 @@ import fr.stan1712.wetston.seriousrp.economy.BankListener;
 import fr.stan1712.wetston.seriousrp.economy.Cash;
 import fr.stan1712.wetston.seriousrp.economy.CashCommand;
 import fr.stan1712.wetston.seriousrp.economy.CassetteItems;
+import fr.stan1712.wetston.seriousrp.economy.CassetteLog;
 import fr.stan1712.wetston.seriousrp.economy.PilotListener;
 import fr.stan1712.wetston.seriousrp.economy.Wallet;
 import fr.stan1712.wetston.seriousrp.economy.WalletListener;
@@ -193,6 +194,7 @@ public final class Main extends JavaPlugin {
 					new BankListener(this, cash, cassetteItems, walletListener, atmLogger),
 					this
 				);
+				pluginManager.registerEvents(new CassetteLog(), this);
 				pluginManager.registerEvents(new PilotListener(this, cash, atmRegistry), this);
 
 				Objects.requireNonNull(getCommand("cash")).setExecutor(new CashCommand(this, cash, walletListener));

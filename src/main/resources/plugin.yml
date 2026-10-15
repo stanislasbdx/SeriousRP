@@ -72,6 +72,9 @@ permissions:
   seriousrp.economy.atm.service:
     description: Install or eject cassettes on ATMs
     default: op
+  seriousrp.economy.atm.log:
+    description: Read cassette movements from an ATM or a bank
+    default: op
   seriousrp.economy.atm.rename:
     description: Rename any ATM
     default: op

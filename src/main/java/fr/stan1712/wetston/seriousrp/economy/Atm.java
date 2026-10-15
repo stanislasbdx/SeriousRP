@@ -17,6 +17,7 @@ public final class Atm {
 	public static final String PILOT_CREATE_PERM = "seriousrp.economy.atm.pilot.create";
 	public static final String PILOT_OTHERS_PERM = "seriousrp.economy.atm.pilot.others";
 	public static final String RENAME_PERM = "seriousrp.economy.atm.rename";
+	public static final String LOG_PERM = "seriousrp.economy.atm.log";
 	public static final int NAME_LIMIT = 15;
 	public static final long PROMPT_TIMEOUT_MILLIS = 20_000L;
 	public static final long BREAK_CONFIRM_MILLIS = 10_000L;
