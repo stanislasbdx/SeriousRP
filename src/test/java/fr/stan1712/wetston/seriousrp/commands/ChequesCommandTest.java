@@ -172,5 +172,34 @@ class ChequesCommandTest extends ConfigBackedTest {
 		verify(chequeMeta).setDisplayName(contains("25"));
 		verify(chequeMeta).setLore(org.mockito.ArgumentMatchers.anyList());
 		verify(pdc).set(any(NamespacedKey.class), eq(PersistentDataType.STRING), contains("stan"));
+		verify(chequeMeta).setCustomModelData(1);
+	}
+
+	@Test
+	void createChequeItemSkipsCustomModelDataWhenDisabled() {
+		when(plugin.getName()).thenReturn("SeriousRP");
+		when(player.getName()).thenReturn("stan");
+		when(player.getDisplayName()).thenReturn("Stan");
+		when(player.getUniqueId()).thenReturn(java.util.UUID.fromString("11111111-1111-1111-1111-111111111111"));
+		org.bukkit.configuration.file.YamlConfiguration disabled = new org.bukkit.configuration.file.YamlConfiguration();
+		disabled.set("Economy.Cheque.CustomModelData", 0);
+		disabled.set("Economy.Cheque.Lores.Title", "Cheque %amount%");
+		disabled.set("Economy.Cheque.Lores.Value", "Value ");
+		disabled.set("Economy.Cheque.Lores.Author", "Author ");
+		disabled.set("Economy.Cheque.Lores.CreationDate", "Date ");
+		disabled.set("Economy.Cheque.Lores.Usage", "Use");
+		disabled.set("Economy.Currency", "€");
+		Utils.ConfigFactory.overrideConfig(disabled);
+
+		org.bukkit.inventory.meta.ItemMeta chequeMeta = mock(org.bukkit.inventory.meta.ItemMeta.class);
+		PersistentDataContainer pdc = mock(PersistentDataContainer.class);
+		when(chequeMeta.getPersistentDataContainer()).thenReturn(pdc);
+
+		try (org.mockito.MockedConstruction<ItemStack> ignored = org.mockito.Mockito.mockConstruction(ItemStack.class,
+			(mock, context) -> when(mock.getItemMeta()).thenReturn(chequeMeta))) {
+			org.junit.jupiter.api.Assertions.assertNotNull(new Cheques(plugin).createChequeItem(player, "25"));
+		}
+
+		verify(chequeMeta, never()).setCustomModelData(org.mockito.ArgumentMatchers.anyInt());
 	}
 }

@@ -9,6 +9,17 @@ import fr.stan1712.wetston.seriousrp.commands.medics.Medinfo;
 import fr.stan1712.wetston.seriousrp.commands.medics.Revive;
 import fr.stan1712.wetston.seriousrp.defaults.EnumModules;
 import fr.stan1712.wetston.seriousrp.defaults.ServerCompatibility;
+import fr.stan1712.wetston.seriousrp.economy.AtmListener;
+import fr.stan1712.wetston.seriousrp.economy.AtmLogger;
+import fr.stan1712.wetston.seriousrp.economy.AtmRegistry;
+import fr.stan1712.wetston.seriousrp.economy.BankListener;
+import fr.stan1712.wetston.seriousrp.economy.Cash;
+import fr.stan1712.wetston.seriousrp.economy.CashCommand;
+import fr.stan1712.wetston.seriousrp.economy.CassetteItems;
+import fr.stan1712.wetston.seriousrp.economy.CassetteLog;
+import fr.stan1712.wetston.seriousrp.economy.PilotListener;
+import fr.stan1712.wetston.seriousrp.economy.Wallet;
+import fr.stan1712.wetston.seriousrp.economy.WalletListener;
 import fr.stan1712.wetston.seriousrp.events.Bleeding;
 import fr.stan1712.wetston.seriousrp.events.Cheque;
 import fr.stan1712.wetston.seriousrp.events.Death;
@@ -27,6 +38,8 @@ public final class Main extends JavaPlugin {
 	private static final Logger _log = LoggerFactory.getLogger("SeriousRP - Core");
 	public final PluginManager pluginManager = getServer().getPluginManager();
 	public static Economy economy = null;
+	private WalletListener walletListener;
+	private CassetteItems cassetteItems;
 
 	public static final int SPIGOT_PLUGIN_ID = 31443;
 
@@ -152,6 +165,41 @@ public final class Main extends JavaPlugin {
 			_log.info("[{}] /cheque commands loaded", logStep);
 
 			pluginManager.registerEvents(new Cheque(this), this);
+
+			Cash cash = Cash.fromConfig(getConfig());
+			if (cash.isEnabled()) {
+				walletListener = new WalletListener(this, cash, new Wallet());
+				walletListener.registerRecipe();
+				pluginManager.registerEvents(walletListener, this);
+
+				cassetteItems = new CassetteItems(this, cash);
+				cassetteItems.registerRecipe();
+				pluginManager.registerEvents(cassetteItems, this);
+
+				AtmRegistry atmRegistry = new AtmRegistry(this);
+				AtmLogger atmLogger = new AtmLogger(this);
+				cassetteItems.use(walletListener, atmLogger);
+				AtmListener atmListener = new AtmListener(
+					this,
+					cash,
+					walletListener,
+					cassetteItems,
+					atmRegistry,
+					atmLogger
+				);
+				pluginManager.registerEvents(atmListener, this);
+				getServer().getScheduler().runTaskTimer(this, () -> atmListener.tickProximity(getServer().getOnlinePlayers()), 20L, 20L);
+
+				pluginManager.registerEvents(
+					new BankListener(this, cash, cassetteItems, walletListener, atmLogger),
+					this
+				);
+				pluginManager.registerEvents(new CassetteLog(), this);
+				pluginManager.registerEvents(new PilotListener(this, cash, atmRegistry), this);
+
+				Objects.requireNonNull(getCommand("cash")).setExecutor(new CashCommand(this, cash, walletListener));
+				_log.info("[{}] Physical cash, wallets and ATM loaded", logStep);
+			}
 		}
 		else _log.info("[{}] Economy > OFF", logStep);
 	}
@@ -211,6 +259,16 @@ public final class Main extends JavaPlugin {
 
 			logNewStep("loadCommands");
 			loadCommands();
+		}
+	}
+
+	@Override
+	public void onDisable() {
+		if (walletListener != null) {
+			walletListener.unregisterRecipe();
+		}
+		if (cassetteItems != null) {
+			cassetteItems.unregisterRecipe();
 		}
 	}
 }

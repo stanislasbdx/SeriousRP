@@ -2,6 +2,7 @@ package fr.stan1712.wetston.seriousrp.commands;
 
 import com.google.gson.Gson;
 import fr.stan1712.wetston.seriousrp.Main;
+import fr.stan1712.wetston.seriousrp.economy.Cash;
 import fr.stan1712.wetston.seriousrp.pojo.PCheque;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -89,6 +90,7 @@ public class Cheques implements CommandExecutor {
 		chequeLore.add("");
 		chequeLore.add(getConfigString("Economy.Cheque.Lores.Usage"));
 		chequeMeta.setLore(chequeLore);
+		Cash.applyCustomModelData(chequeMeta, getConfigInt("Economy.Cheque.CustomModelData", 1));
 
 		chequeItem.setItemMeta(chequeMeta);
 		return chequeItem;
