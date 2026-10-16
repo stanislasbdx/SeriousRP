@@ -385,8 +385,8 @@ public final class BankListener implements Listener {
 		}
 		int nextStock = stock + move;
 		writeStock(location.getBlock(), nextStock);
-		log("CASSETTE_EMPTY", player.getName()
-			+ " cassette=#" + Cassette.shortId(payload.id())
+		log("CASSETTE_EMPTY", CassetteLog.actor(player)
+			+ " cassette=#" + Cassette.shortId(payload.id()) + ":" + (-move)
 			+ " amount=" + move
 			+ " stock=" + nextStock);
 		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.Emptied"));
@@ -431,8 +431,8 @@ public final class BankListener implements Listener {
 			return Optional.empty();
 		}
 		writeStock(location.getBlock(), nextStock.getAsInt());
-		log("CASSETTE_FILL", player.getName()
-			+ " cassette=#" + Cassette.shortId(updated.get().id())
+		log("CASSETTE_FILL", CassetteLog.actor(player)
+			+ " cassette=#" + Cassette.shortId(updated.get().id()) + ":" + put
 			+ " amount=" + put
 			+ " stock=" + nextStock.getAsInt());
 		player.sendMessage(getShortPrefixString() + getConfigString("Economy.Cash.Bank.Filled"));

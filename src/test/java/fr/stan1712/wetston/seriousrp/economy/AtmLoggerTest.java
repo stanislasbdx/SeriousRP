@@ -44,6 +44,21 @@ class AtmLoggerTest {
 		assertEquals(1, one.size());
 		assertTrue(one.get(0).contains("cassette=#f4de5"));
 		assertEquals("§eCASSETTE_FILL", CassetteLog.actionName(one.get(0)));
-		assertTrue(CassetteLog.loreLines(one.get(0)).stream().anyMatch(line -> line.contains("cassette=#f4de5")));
+		List<String> lore = CassetteLog.loreLines(one.get(0));
+		assertTrue(lore.stream().anyMatch(line -> line.contains("§7User: §falice")));
+		assertTrue(lore.stream().anyMatch(line -> line.contains("§7Amount: §a+10€")));
+		assertTrue(lore.stream().anyMatch(line -> line.contains("#f4de5") && line.contains("§a+10€")));
+	}
+
+	@Test
+	void readableLoreShowsDisplayNameAndPerCassetteDelta() {
+		String line = "2026-10-16T11:46:19.100Z WITHDRAW stan1712 display=Stan+RP amount=100 cash=4265 cassettes=#2b084:-60,#f9a97:-40";
+		List<String> lore = CassetteLog.loreLines(line, "€");
+		assertEquals("§7User: §fStan RP", lore.get(0));
+		assertEquals("§7Amount: §c-100€", lore.get(1));
+		assertEquals("§7Cassettes: §f#2b084 §c-60€§7, §f#f9a97 §c-40€", lore.get(2));
+		assertTrue(lore.get(3).startsWith("§7Date: §f2026-10-16 "));
+		assertEquals("stan1712", CassetteLog.actor("stan1712", "stan1712"));
+		assertEquals("stan1712 display=Stan+RP", CassetteLog.actor("stan1712", "§aStan RP"));
 	}
 }

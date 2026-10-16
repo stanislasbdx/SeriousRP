@@ -9,7 +9,9 @@ import com.google.gson.JsonSyntaxException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public final class AtmCassettes {
@@ -61,6 +63,24 @@ public final class AtmCassettes {
 			list.add(Optional.empty());
 		}
 		return list;
+	}
+
+	public static String movementTags(
+		List<Optional<Cassette.Payload>> before,
+		List<Optional<Cassette.Payload>> after
+	) {
+		Map<String, Integer> previous = totalsByShortId(before);
+		Map<String, Integer> next = totalsByShortId(after);
+		StringBuilder tags = new StringBuilder();
+		for (String id : previous.keySet()) {
+			appendDelta(tags, id, next.getOrDefault(id, 0) - previous.get(id));
+		}
+		for (String id : next.keySet()) {
+			if (!previous.containsKey(id)) {
+				appendDelta(tags, id, next.get(id));
+			}
+		}
+		return tags.toString();
 	}
 
 	public static int total(List<Optional<Cassette.Payload>> slots) {
@@ -173,6 +193,31 @@ public final class AtmCassettes {
 	}
 
 	public record Eject(List<Optional<Cassette.Payload>> slots, Cassette.Payload cassette) {
+	}
+
+	private static Map<String, Integer> totalsByShortId(List<Optional<Cassette.Payload>> slots) {
+		Map<String, Integer> totals = new LinkedHashMap<>();
+		if (slots == null) {
+			return totals;
+		}
+		for (Optional<Cassette.Payload> slot : slots) {
+			if (slot.isEmpty()) {
+				continue;
+			}
+			String id = Cassette.shortId(slot.get().id());
+			totals.merge(id, slot.get().total(), Integer::sum);
+		}
+		return totals;
+	}
+
+	private static void appendDelta(StringBuilder tags, String id, int delta) {
+		if (delta == 0 || id == null || id.isBlank()) {
+			return;
+		}
+		if (!tags.isEmpty()) {
+			tags.append(',');
+		}
+		tags.append('#').append(id).append(':').append(delta);
 	}
 
 	private static List<Optional<Cassette.Payload>> copy(List<Optional<Cassette.Payload>> slots) {

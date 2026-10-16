@@ -3,6 +3,7 @@ package fr.stan1712.wetston.seriousrp.economy;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -110,5 +111,21 @@ class CassetteTest {
 		assertTrue(ejected.slots().get(0).isEmpty());
 		assertTrue(ejected.slots().get(1).isPresent());
 		assertTrue(AtmCassettes.eject(ejected.slots(), 0).isEmpty());
+	}
+
+	@Test
+	void movementTagsRecordTheDeltaOnEachCassette() {
+		Cassette.Payload first = Cassette.addValue(Cassette.empty(), 80, EURO, 100).orElseThrow();
+		Cassette.Payload second = Cassette.addValue(Cassette.empty(), 40, EURO, 100).orElseThrow();
+		List<Optional<Cassette.Payload>> before = AtmCassettes.install(
+			AtmCassettes.install(AtmCassettes.emptySlots(2), 0, first).orElseThrow(),
+			1,
+			second
+		).orElseThrow();
+		List<Optional<Cassette.Payload>> after = AtmCassettes.withdraw(before, 100, EURO).orElseThrow();
+		assertEquals(
+			"#" + Cassette.shortId(first.id()) + ":-80,#" + Cassette.shortId(second.id()) + ":-20",
+			AtmCassettes.movementTags(before, after)
+		);
 	}
 }

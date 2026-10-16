@@ -323,9 +323,11 @@ public final class CassetteItems implements Listener {
 		}
 		replaceCassette(player, holder, fit.kept());
 		if (fit.kept().total() != holder.previousTotal()) {
-			log("CASSETTE_EDIT", player.getName()
-				+ " cassette=#" + Cassette.shortId(holder.id())
-				+ " amount=" + fit.kept().total());
+			int delta = fit.kept().total() - holder.previousTotal();
+			log("CASSETTE_EDIT", CassetteLog.actor(player)
+				+ " cassette=#" + Cassette.shortId(holder.id()) + ":" + delta
+				+ " amount=" + Math.abs(delta)
+				+ " delta=" + delta);
 		}
 	}
 
@@ -363,8 +365,8 @@ public final class CassetteItems implements Listener {
 				getConfigString("Economy.Cash.Cassette.PinLost"),
 				payload.get().total()
 			));
-			log("CASSETTE_WIPE", player.getName()
-				+ " cassette=#" + Cassette.shortId(payload.get().id())
+			log("CASSETTE_WIPE", CassetteLog.actor(player)
+				+ " cassette=#" + Cassette.shortId(payload.get().id()) + ":" + (-payload.get().total())
 				+ " amount=" + payload.get().total());
 			return;
 		}
